@@ -1,51 +1,159 @@
-# Symfony Docker
+# Copain Back-End
 
-A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework,
-with [FrankenPHP](https://frankenphp.dev) and [Caddy](https://caddyserver.com/) inside!
+[BASE PROJECT](https://github.com/dunglas/symfony-docker)
 
-![CI](https://github.com/dunglas/symfony-docker/workflows/CI/badge.svg)
+## Informations
+
+Partie back de Brorder une application de gestion de commande. 
+Cette application est réalisé pour un camping afin que les clients puissent commander du pain la veille pour le lendemain.
+Le camping doit ensuite pouvoir gérer ses produits et les commandes.
+
+L'application tourne avec docker et API platform sur symfony.
 
 ## Getting Started
 
 1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
-2. Run `docker compose build --pull --no-cache` to build fresh images
-3. Run `docker compose up --wait` to set up and start a fresh Symfony project
-4. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
-5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+2. Run `make build` to build fresh images
+3. Run `make up` to set up and start
+4. Open SERVER_NAME address
+5. Run `make down` to stop the Docker containers.
 
-## Features
+## What was used :
 
-* Production, development and CI ready
-* Just 1 service by default
-* Blazing-fast performance thanks to [the worker mode of FrankenPHP](https://github.com/dunglas/frankenphp/blob/main/docs/worker.md) (automatically enabled in prod mode)
-* [Installation of extra Docker Compose services](docs/extra-services.md) with Symfony Flex
-* Automatic HTTPS (in dev and prod)
-* HTTP/3 and [Early Hints](https://symfony.com/blog/new-in-symfony-6-3-early-hints) support
-* Real-time messaging thanks to a built-in [Mercure hub](https://symfony.com/doc/current/mercure.html)
-* [Vulcain](https://vulcain.rocks) support
-* Native [XDebug](docs/xdebug.md) integration
-* Super-readable configuration
+### All the different packages
+```
+make composer c='require symfony/orm-pack'
+make composer c='require lexik/jwt-authentication-bundle'
+make composer c="require gesdinet/jwt-refresh-token-bundle"
+make composer c="require symfony/serializer-pack"
+make composer c="require doctrine/doctrine-migrations-bundle"
 
-**Enjoy!**
+make composer c='require --dev symfony/maker-bundle'
+make composer c="require --dev foundry orm-fixtures"
+make composer c="require --dev symfony/test-pack symfony/http-client"
+make composer c="require --dev dama/doctrine-test-bundle"
+```
 
-## Docs
+### On first time run
+```
+make sf c='lexik:jwt:generate-keypair'
+```
 
-1. [Options available](docs/options.md)
-2. [Using Symfony Docker with an existing project](docs/existing-project.md)
-3. [Support for extra services](docs/extra-services.md)
-4. [Deploying in production](docs/production.md)
-5. [Debugging with Xdebug](docs/xdebug.md)
-6. [TLS Certificates](docs/tls.md)
-7. [Using MySQL instead of PostgreSQL](docs/mysql.md)
-8. [Using Alpine Linux instead of Debian](docs/alpine.md)
-9. [Using a Makefile](docs/makefile.md)
-10. [Updating the template](docs/updating.md)
-11. [Troubleshooting](docs/troubleshooting.md)
+For ssl certificates on dev with FEDORA
+```
+sudo dnf install ca-certificates
+sudo update-ca-trust
+docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt /etc/pki/ca-trust/source/root.crt && sudo update-ca-trust
+```
 
-## License
+## For Production
 
-Symfony Docker is available under the MIT License.
+### To build
+```
+APP_ENV=prod \
+APP_SECRET=ChangeMe \
+CADDY_MERCURE_JWT_SECRET=ChangeThisMercureHubJWTSecretKey \
+docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
+```
 
-## Credits
+### To run
+```
+APP_ENV=prod \
+APP_SECRET=ChangeMe \
+CADDY_MERCURE_JWT_SECRET=ChangeThisMercureHubJWTSecretKey \
+docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
+```
 
-Created by [Kévin Dunglas](https://dunglas.dev), co-maintained by [Maxime Helias](https://twitter.com/maxhelias) and sponsored by [Les-Tilleuls.coop](https://les-tilleuls.coop).
+### All must have composer packages
+```
+make composer c='req symfony/orm-pack'
+make composer c='require api'
+make composer c='require lexik/jwt-authentication-bundle'
+make composer c='require symfony/serializer-pack'
+make composer c='require gesdinet/jwt-refresh-token-bundle'
+```
+
+
+## Checklist
+```
+##Step 1: Check Running Containers
+docker ps
+
+##Step 2: Check Service Health
+docker inspect --format='{{json .State.Health}}' $(docker ps -q --filter name=php)
+
+##Step 3: Test HTTP Connectivity
+curl -I SERVER_NAME
+
+##Step 4: Check Symfony Status
+docker compose exec -it php bin/console about
+# If symfony down
+docker compose exec -it php bin/console cache:clear
+
+##Step 5: Verify Database Connection
+docker compose exec -it php bin/console doctrine:query:sql "SELECT 1"
+
+##Step 6: Check Caddy & Mercure
+docker compose logs php | grep caddy
+```
+
+## To debug
+
+### Php container
+#### Connect to php container
+```
+make bash 
+```
+#### On the php container 
+```
+##Verify env variables
+env
+
+##Verify if app works inside container
+curl -X GET 'SERVER_NAME:PORT/api/products' -H 'accept: application/ld+json'
+```
+
+### Database
+#### Connect to DB 
+```
+Docker compose exec -it database bash
+```
+```
+psql -U app -d brorder
+
+SELECT * FROM product LIMIT 10;
+SELECT * FROM user LIMIT 10;
+
+## List users
+\du 
+
+```
+
+### From the server
+```
+curl -X 'GET' 'SERVER_NAME:PORT/api/products' \
+  -H 'accept: application/ld+json'
+
+curl -X GET 'SERVER_NAME:PORT/api/products' -H 'accept: application/ld+json'
+```
+
+### Users
+```
+curl -X 'POST' \
+  'SERVER_NAME:PORT/api/users' \
+  -H 'accept: application/ld+json' \
+  -H 'Authorization: Bearer token' \
+  -H 'Content-Type: application/ld+json' \
+  -d '{
+  "username": "test",
+  "roles": [
+    "USER"
+  ],
+  "password": "password"
+}'
+
+curl -X 'DELETE' \
+  'SERVER_NAME:PORT/api/users/{id}' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer token'
+```
