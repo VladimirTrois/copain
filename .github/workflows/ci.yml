@@ -40,10 +40,10 @@ jobs:
         run: docker compose up --wait --no-build
       -
         name: Check HTTP reachability
-        run: curl -v --fail-with-body http://localhost://${{HTTP_PORT}}
+        run: curl -v --fail-with-body http://localhost
       -
         name: Check HTTPS reachability
-        run: curl -vk --fail-with-body https://localhost://${{HTTPS_PORT}}
+        run: curl -vk --fail-with-body https://localhost
       -
         name: Check Mercure reachability
         run: curl -vkI --fail-with-body https://localhost/.well-known/mercure?topic=test
