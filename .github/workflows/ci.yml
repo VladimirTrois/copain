@@ -55,6 +55,22 @@ jobs:
         name: Run migrations
         run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
       -
+        name: Inject JWT keys
+        run: |
+          echo "${{ secrets.JWT_PRIVATE_KEY }}" > config/jwt/private.pem
+          echo "${{ secrets.JWT_PUBLIC_KEY }}" > config/jwt/public.pem
+          chmod 600 config/jwt/private.pem config/jwt/public.pem
+      -
+        name: Copy JWT keys into Docker container
+        run: |
+          docker cp config/jwt/private.pem php:/app/config/jwt/private.pem
+          docker cp config/jwt/public.pem php:/app/config/jwt/public.pem
+      -
+        name: Set JWT passphrase in .env.test
+        run: |
+          echo "JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}" >> .env.test
+          docker cp .env.test php:/app/.env.test
+      -
         name: Run PHPUnit
         run: docker compose exec -T php bin/phpunit
       -
