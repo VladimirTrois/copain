@@ -27,11 +27,13 @@ make composer c='require lexik/jwt-authentication-bundle'
 make composer c="require gesdinet/jwt-refresh-token-bundle"
 make composer c="require symfony/serializer-pack"
 make composer c="require doctrine/doctrine-migrations-bundle"
+make composer c="require symfony/uid" 
 
 make composer c='require --dev symfony/maker-bundle'
 make composer c="require --dev foundry orm-fixtures"
 make composer c="require --dev symfony/test-pack symfony/http-client"
 make composer c="require --dev dama/doctrine-test-bundle"
+make composer c="require --dev friendsofphp/php-cs-fixer"
 ```
 
 ### On first time run
