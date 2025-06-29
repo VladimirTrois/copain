@@ -26,6 +26,8 @@ make composer c='require symfony/orm-pack'
 make composer c='require lexik/jwt-authentication-bundle'
 make composer c="require gesdinet/jwt-refresh-token-bundle"
 make composer c="require symfony/serializer-pack"
+make composer c="require symfony/validator"
+make composer c="require symfony/serializer"
 make composer c="require doctrine/doctrine-migrations-bundle"
 make composer c="require symfony/uid" 
 
