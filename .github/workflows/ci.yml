@@ -1,5 +1,7 @@
 name: CI
 
+env:
+  JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
 on:
   push:
     branches:
@@ -19,6 +21,13 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v4
+      - 
+        name: Write JWT keys to disk  
+        run: |
+          mkdir -p config/jwt
+          echo "${{ secrets.JWT_PRIVATE_KEY }}" > config/jwt/private.pem
+          echo "${{ secrets.JWT_PUBLIC_KEY }}" > config/jwt/public.pem
+          chmod 600 config/jwt/private.pem config/jwt/public.pem
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -54,6 +63,13 @@ jobs:
       -
         name: Run migrations
         run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
+      - name: Check env in container
+        run: docker compose exec -T php printenv | grep JWT
+      - 
+        name: Check JWT key exists
+        run: |
+          ls -l config/jwt
+          cat config/jwt/private.pem | head -n 1
       -
         name: Run PHPUnit
         run: docker compose exec -T php bin/phpunit
