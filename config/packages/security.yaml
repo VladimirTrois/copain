@@ -14,6 +14,12 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api_token_refresh:
+            pattern:  ^/api/token/refresh
+            stateless: true
+            provider: app_user_provider
+            refresh_jwt:
+                check_path: gesdinet_jwt_refresh_token
         login:
             pattern: ^/api/login
             stateless: true
@@ -38,6 +44,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/refresh/token, roles: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

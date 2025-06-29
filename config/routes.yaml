@@ -9,6 +9,6 @@ login:
     path: /api/login
     methods: ["POST"]
 
-api_refresh_token:
+gesdinet_jwt_refresh_token:
     path: /api/token/refresh
     methods: ["POST"]

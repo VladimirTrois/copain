@@ -12,13 +12,13 @@ class UserFixtures extends Fixture
 
     // Creates real fixtures
     public const USERS = [
-        ['user@user.com', 'password',],
-        ['admin@admin.com', 'admin',['ROLE_ADMIN']],
+        ['user@user.com', 'password', ['ROLE_USER']],
+        ['admin@admin.com', 'admin', ['ROLE_ADMIN']],
     ];
 
     public function load(ObjectManager $manager): void
     {
-        $users = UserFactory::createMany(count(self::USERS),static function (int $i) {
+        $users = UserFactory::createMany(count(self::USERS), static function (int $i) {
             return [
                 'email' => self::USERS[$i - 1][0],
                 'password' => self::USERS[$i - 1][1],

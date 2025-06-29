@@ -6,7 +6,7 @@ use App\Factory\UserFactory;
 
 final class AuthTest extends BaseTestCase
 {
-    public function testLoginWithValidCredentials(): void
+    public function testUserCanLoginWithCorrectCredentials(): void
     {
         $client = static::createClient();
 
@@ -28,13 +28,59 @@ final class AuthTest extends BaseTestCase
         $this->assertArrayHasKey('token', $data);
     }
 
-    public function testLoginWithInvalidCredentials(): void
+    public function testLoginFailsWithWrongCredentials(): void
     {
         $client = static::createClient();
 
         $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'nonexistent@example.com',
             'password' => 'wrongpass',
+        ]));
+
+        $this->assertResponseStatusCodeSame(401);
+    }
+
+    public function testUserCanRefreshJwtUsingValidRefreshToken()
+    {
+        $client = static::createClient();
+
+        // First register a user
+        $user = UserFactory::createOne(array_merge([
+            'email' => self::EMAIL_USER,
+            'password' => self::PASSWORD_USER,
+            'roles' => ['ROLE_USER'],
+        ]));
+
+        // Then login
+        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => self::EMAIL_USER,
+            'password' => self::PASSWORD_USER,
+        ]));
+
+        $oldData = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('refresh_token', $oldData);
+
+        // Need to sleep to advance test environment
+        // otherwise $oldData['token'] === $newData['token']
+        sleep(1);
+
+        $client->request('POST', '/api/token/refresh', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'refresh_token' => $oldData['refresh_token'],
+        ]));
+
+        $this->assertResponseIsSuccessful();
+        $newData = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('token', $newData);
+        $this->assertNotEquals($oldData['token'], $newData['token']);
+    }
+
+    public function testRefreshFailsWithInvalidToken(): void
+    {
+        $client = static::createClient();
+
+        $client->request('POST', '/api/token/refresh', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'refresh_token' => 'invalid-token',
         ]));
 
         $this->assertResponseStatusCodeSame(401);
