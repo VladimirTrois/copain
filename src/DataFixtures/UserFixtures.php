@@ -4,9 +4,10 @@ namespace App\DataFixtures;
 
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements FixtureGroupInterface
 {
     public const NUMBEROFUSERS = 30;
 
@@ -26,6 +27,13 @@ class UserFixtures extends Fixture
             ];
         });
 
+        UserFactory::createMany(self::NUMBEROFUSERS);
+
         $manager->flush();
+    }
+
+    public static function getGroups(): array
+    {
+        return ['all', 'user'];
     }
 }

@@ -7,10 +7,12 @@ use App\Entity\Traits\Timestampable;
 use App\Repository\BusinessRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UlidType;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: BusinessRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_NAME', fields: ['name'])]
 class Business
 {
     use Timestampable;
@@ -23,6 +25,7 @@ class Business
     private ?Ulid $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['business:read', 'business:write'])]
     private ?string $name = null;
 
     public function getId(): ?Ulid

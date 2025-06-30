@@ -1,12 +1,13 @@
 <?php
 
-// api/tests/UserTest.php
+// api/tests/BusinessTest.php
 
-namespace App\Tests;
+namespace App\Admin\Tests;
 
-use App\Factory\UserFactory;
+use App\Factory\BusinessFactory;
+use App\Tests\BaseTestCase;
 
-class UserTest extends BaseTestCase
+class BusinessTest extends BaseTestCase
 {
     public const NUMBERSOFUSERS = 30;
 
@@ -14,9 +15,9 @@ class UserTest extends BaseTestCase
     {
         $client = $this->createClientAsAdmin();
 
-        UserFactory::createMany(self::NUMBERSOFUSERS);
+        BusinessFactory::createMany(self::NUMBERSOFUSERS);
 
-        $client->request('GET', '/api/users');
+        $client->request('GET', '/api/businesses');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
@@ -29,13 +30,13 @@ class UserTest extends BaseTestCase
     {
         $client = $this->createClientAsAdmin();
 
-        $user = UserFactory::createOne();
+        $business = BusinessFactory::createOne();
 
-        $client->request('GET', '/api/users/'.$user->getId());
+        $client->request('GET', '/api/businesses/'.$business->getId());
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame($user->getEmail(), $data['email']);
+        $this->assertSame($business->getName(), $data['name']);
     }
 
     public function testCreateAsAdmin(): void
@@ -43,14 +44,12 @@ class UserTest extends BaseTestCase
         $client = $this->createClientAsAdmin();
 
         $payload = [
-            'email' => 'newuser@example.com',
-            'plainPassword' => 'newpassword',
-            'roles' => ['ROLE_USER'],
+            'name' => 'newbusiness',
         ];
 
         $client->request(
             'POST',
-            '/api/users',
+            '/api/businesses',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -59,23 +58,22 @@ class UserTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame($payload['email'], $data['email']);
+        $this->assertSame($payload['name'], $data['name']);
     }
 
     public function testUpdateAsAdmin(): void
     {
         $client = $this->createClientAsAdmin();
 
-        $user = UserFactory::createOne(['roles' => []]);
+        $business = BusinessFactory::createOne();
 
         $payload = [
-            'email' => 'updated@example.com',
-            'roles' => ['ROLE_ADMIN'],
+            'name' => 'business',
         ];
 
         $client->request(
             'PATCH',
-            '/api/users/'.$user->getId(),
+            '/api/businesses/'.$business->getId(),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -84,17 +82,16 @@ class UserTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame($payload['email'], $data['email']);
-        $this->assertContains('ROLE_ADMIN', $data['roles']);
+        $this->assertSame($payload['name'], $data['name']);
     }
 
     public function testDeleteAsAdmin(): void
     {
         $client = $this->createClientAsAdmin();
 
-        $user = UserFactory::createOne();
+        $business = BusinessFactory::createOne();
 
-        $client->request('DELETE', '/api/users/'.$user->getId());
+        $client->request('DELETE', '/api/businesses/'.$business->getId());
 
         $this->assertResponseStatusCodeSame(204);
     }

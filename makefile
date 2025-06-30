@@ -70,8 +70,6 @@ createDB: sf
 migrateDB: c=doctrine:migrations:migrate
 migrateDB: sf 
 
-loadDB: c=doctrine:fixtures:load --no-interaction
-loadDB: sf
-
-loadMoreDB: c=doctrine:fixtures:load --group=append --append
-loadMoreDB: sf
+loadDB: 
+		@$(eval c ?=)
+		@$(SYMFONY) doctrine:fixtures:load $(c)
