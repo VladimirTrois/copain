@@ -73,3 +73,6 @@ migrateDB: sf
 loadDB: 
 		@$(eval c ?=)
 		@$(SYMFONY) doctrine:fixtures:load $(c)
+
+migration: c=make:migration
+migration: sf

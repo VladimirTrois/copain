@@ -3,13 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UlidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -18,23 +18,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: UlidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.ulid_generator')]
-    #[Groups(['user:read'])]
-    private ?Ulid $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    #[Groups(['user:collection', 'user:read'])]
+    private ?int $id;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank(groups: ['create', 'update'])]
     #[Assert\Email(groups: ['create', 'update'])]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:collection', 'user:read', 'user:write'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:collection', 'user:read', 'user:write'])]
     private array $roles = [];
 
     /**
@@ -52,7 +51,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[SerializedName('password')]
     private ?string $plainPassword = null;
 
-    public function getId(): ?Ulid
+    /**
+     * @var Collection<int, BusinessUser>
+     */
+    #[ORM\OneToMany(targetEntity: BusinessUser::class, mappedBy: 'user', orphanRemoval: true, cascade: ['persist'])]
+    #[Groups(['user:read', 'user:write'])]
+    private Collection $businesses;
+
+    public function __construct()
+    {
+        $this->businesses = new ArrayCollection();
+    }
+
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -141,5 +152,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, BusinessUser>
+     */
+    public function getBusinesses(): Collection
+    {
+        return $this->businesses;
+    }
+
+    public function addBusiness(BusinessUser $business): static
+    {
+        if (!$this->businesses->contains($business)) {
+            $this->businesses->add($business);
+            $business->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBusiness(BusinessUser $business): static
+    {
+        if ($this->businesses->removeElement($business)) {
+            // set the owning side to null (unless already changed)
+            if ($business->getUser() === $this) {
+                $business->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

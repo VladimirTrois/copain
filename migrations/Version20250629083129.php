@@ -21,13 +21,10 @@ final class Version20250629083129 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE "user" (id UUID NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))
+            CREATE TABLE "user" (id SERIAL NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON "user" (email)
-        SQL);
-        $this->addSql(<<<'SQL'
-            COMMENT ON COLUMN "user".id IS '(DC2Type:ulid)'
         SQL);
     }
 

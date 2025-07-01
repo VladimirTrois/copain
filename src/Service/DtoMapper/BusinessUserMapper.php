@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Service\DtoMapper;
+
+use App\Dto\BusinessUser\BusinessUserDto;
+use App\Entity\BusinessUser;
+
+final class BusinessUserMapper
+{
+    public function __construct(private BusinessMapper $businessMapper)
+    {
+    }
+
+    public function toDto(BusinessUser $businessUser): BusinessUserDto
+    {
+        return new BusinessUserDto(
+            $this->businessMapper->toDto($businessUser->getBusiness()),
+            $businessUser->getResponsibilities()
+        );
+    }
+}

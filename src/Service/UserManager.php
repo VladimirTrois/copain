@@ -4,7 +4,10 @@
 
 namespace App\Service;
 
+use App\Dto\User\UserShowDto;
 use App\Entity\User;
+use App\Repository\UserRepository;
+use App\Service\DtoMapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,7 +22,31 @@ class UserManager
         private SerializerInterface $serializer,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $hasher,
+        private UserRepository $userRepository,
+        private UserMapper $userMapper,
     ) {
+    }
+
+    /**
+     * Get all users as a list of ListDto.
+     *
+     * @return ListDto[]
+     */
+    public function getAllUsersListDto(): array
+    {
+        $users = $this->userRepository->findAll();
+
+        return array_map(fn ($user) => $this->userMapper->toListDto($user), $users);
+    }
+
+    public function getUserShowDto(int $id): ?UserShowDto
+    {
+        $user = $this->userRepository->find($id);
+        if (!$user) {
+            return null;
+        }
+
+        return $this->userMapper->toShowDto($user);
     }
 
     /**

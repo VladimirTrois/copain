@@ -13,7 +13,7 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        BusinessFactory::createMany(self::NUMBEROFBUSINESSES);
+        $businesses = BusinessFactory::createMany(self::NUMBEROFBUSINESSES);
 
         $manager->flush();
     }

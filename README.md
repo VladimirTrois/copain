@@ -120,10 +120,10 @@ curl -X GET 'SERVER_NAME:PORT/api/products' -H 'accept: application/ld+json'
 ### Database
 #### Connect to DB 
 ```
-Docker compose exec -it database bash
+docker compose exec -it database bash
 ```
 ```
-psql -U app -d brorder
+psql -U app -d copain
 
 SELECT * FROM product LIMIT 10;
 SELECT * FROM user LIMIT 10;

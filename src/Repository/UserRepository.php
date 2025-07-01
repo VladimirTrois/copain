@@ -33,6 +33,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findOneWithBusinesses(int $userId): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.businesses', 'bu')
+            ->addSelect('bu')
+            ->leftJoin('bu.business', 'b')
+            ->addSelect('b')
+            ->where('u.id = :id')
+            ->setParameter('id', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

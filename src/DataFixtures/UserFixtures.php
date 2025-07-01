@@ -27,13 +27,19 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
             ];
         });
 
-        UserFactory::createMany(self::NUMBEROFUSERS);
+        // UserFactory::createMany(self::NUMBEROFUSERS);
 
         $manager->flush();
     }
 
     public static function getGroups(): array
     {
-        return ['all', 'user'];
+        return ['all', 'user', 'test'];
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+        ];
     }
 }
