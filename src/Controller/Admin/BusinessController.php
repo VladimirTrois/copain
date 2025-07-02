@@ -2,9 +2,10 @@
 
 // src/Controller/BusinessController.php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Repository\BusinessRepository;
+use App\Repository\BusinessUserRepository;
 use App\Service\BusinessManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,13 +14,14 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_USER')]
 #[Route('/api/businesses', name: 'api_businesses_')]
 class BusinessController extends AbstractController
 {
     public function __construct(
         private BusinessManager $businessManager,
         private BusinessRepository $businessRepository,
+        private BusinessUserRepository $businessUserRepository,
     ) {
     }
 
@@ -28,7 +30,7 @@ class BusinessController extends AbstractController
     {
         $businesses = $this->businessRepository->findAll();
 
-        return $this->json($businesses, 200, [], ['groups' => ['business:read']]);
+        return $this->json($businesses, 200, [], ['groups' => ['business:list']]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]

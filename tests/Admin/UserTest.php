@@ -1,8 +1,6 @@
 <?php
 
-// api/tests/UserTest.php
-
-namespace App\Admin\Tests;
+namespace App\Tests\Adimn;
 
 use App\Factory\BusinessFactory;
 use App\Factory\BusinessUserFactory;

@@ -24,13 +24,14 @@ class BusinessUser
 
     #[ORM\ManyToOne(inversedBy: 'businesses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['business:read'])]
     private ?User $user;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'business:read'])]
     private array $responsibilities = [];
 
     public function __construct()

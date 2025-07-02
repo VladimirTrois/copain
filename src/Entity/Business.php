@@ -22,11 +22,11 @@ class Business
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['business:read', 'user:read'])]
+    #[Groups(['business:list', 'business:read', 'user:read'])]
     private ?int $id;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['business:read', 'business:write', 'user:read'])]
+    #[Groups(['business:list', 'business:read', 'business:write', 'user:read'])]
     #[Assert\NotNull()]
     private ?string $name = null;
 

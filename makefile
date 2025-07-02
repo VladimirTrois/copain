@@ -74,5 +74,17 @@ loadDB:
 		@$(eval c ?=)
 		@$(SYMFONY) doctrine:fixtures:load $(c)
 
+loadDB: 
+		@$(SYMFONY) doctrine:fixtures:load --no-interaction
+
 migration: c=make:migration
 migration: sf
+
+## —— Debug ————————————————————————————————————————————————————————————————————
+xdebug-log:
+	docker exec -it symfony_app tail -f /tmp/xdebug.log
+
+## —— Code Style  ——————————————————————————————————————————————————————————————
+php-cs:
+	@$(eval c ?=)
+	@$(PHP_CONT) vendor/bin/php-cs-fixer $(c)

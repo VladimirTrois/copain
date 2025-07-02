@@ -2,7 +2,7 @@
 
 // src/Controller/UserController.php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Repository\UserRepository;
 use App\Service\UserManager;

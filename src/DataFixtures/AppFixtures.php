@@ -11,15 +11,17 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const NUMBEROFBUSINESSES = 30;
+
     public function load(ObjectManager $manager): void
     {
-        $user = UserFactory::createOne();
+        // $user = UserFactory::createOne();
 
-        $business = BusinessFactory::createOne();
+        // $business = BusinessFactory::createOne();
 
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
+        // BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
 
-        $manager->flush();
+        // $manager->flush();
     }
 
     public static function getGroups(): array

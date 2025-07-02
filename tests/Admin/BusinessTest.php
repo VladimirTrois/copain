@@ -2,10 +2,9 @@
 
 // api/tests/BusinessTest.php
 
-namespace App\Admin\Tests;
+namespace App\Tests;
 
 use App\Factory\BusinessFactory;
-use App\Tests\BaseTestCase;
 
 class BusinessTest extends BaseTestCase
 {

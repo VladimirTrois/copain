@@ -9,37 +9,36 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const NUMBEROFUSERS = 30;
+    public const USER_EMAIL = 'user@user.com';
+    public const USER_PASSWORD = 'password';
+    public const ADMIN_EMAIL = 'admin@admin.com';
+    public const ADMIN_PASSWORD = 'admin';
 
-    // Creates real fixtures
-    public const USERS = [
-        ['user@user.com', 'password', ['ROLE_USER']],
-        ['admin@admin.com', 'admin', ['ROLE_ADMIN']],
-    ];
+    public const NUMBEROFUSERS = 10;
 
     public function load(ObjectManager $manager): void
     {
-        $users = UserFactory::createMany(count(self::USERS), static function (int $i) {
-            return [
-                'email' => self::USERS[$i - 1][0],
-                'password' => self::USERS[$i - 1][1],
-                'roles' => self::USERS[$i - 1][2],
-            ];
-        });
+        // Admin
+        $admin = UserFactory::createOne([
+            'email' => self::ADMIN_EMAIL,
+            'password' => self::ADMIN_PASSWORD,
+            'roles' => ['ROLE_ADMIN'],
+        ]);
 
-        // UserFactory::createMany(self::NUMBEROFUSERS);
+        // Regular User
+        $user = UserFactory::createOne([
+            'email' => self::USER_EMAIL,
+            'password' => self::USER_PASSWORD,
+            'roles' => ['ROLE_USER'],
+        ]);
+
+        UserFactory::createMany(self::NUMBEROFUSERS);
 
         $manager->flush();
     }
 
     public static function getGroups(): array
     {
-        return ['all', 'user', 'test'];
-    }
-
-    public function getDependencies(): array
-    {
-        return [
-        ];
+        return ['all', 'user'];
     }
 }
