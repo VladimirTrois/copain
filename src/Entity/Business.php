@@ -88,4 +88,15 @@ class Business
 
         return $this;
     }
+
+    public function isOwnedBy(User $user): bool
+    {
+        foreach ($this->getBusinessUsers() as $bu) {
+            if ($bu->getUser() === $user && in_array('owner', $bu->getResponsibilities(), true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

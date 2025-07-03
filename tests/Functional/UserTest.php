@@ -115,4 +115,28 @@ final class UserTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(403);
     }
+
+    public function testOwnerCanAddUserToHisBusiness(): void
+    {
+        $client = $this->createClientAsUser();
+
+        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $business = BusinessFactory::createOne();
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
+
+        $newUser = UserFactory::createOne();
+
+        $payload = [
+            'email' => $newUser->getEmail(),
+            'responsibilities' => ['employee'],
+        ];
+
+        $client->request('POST', '/api/businesses/'.$business->getId().'/users', [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload)
+        );
+
+        $this->assertResponseIsSuccessful(200);
+    }
 }

@@ -74,7 +74,7 @@ loadDB:
 		@$(eval c ?=)
 		@$(SYMFONY) doctrine:fixtures:load $(c)
 
-loadDB: 
+reloadDB: 
 		@$(SYMFONY) doctrine:fixtures:load --no-interaction
 
 migration: c=make:migration
