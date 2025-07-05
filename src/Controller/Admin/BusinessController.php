@@ -10,6 +10,7 @@ use App\Service\BusinessManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -30,7 +31,7 @@ class BusinessController extends AbstractController
     {
         $businesses = $this->businessRepository->findAll();
 
-        return $this->json($businesses, 200, [], ['groups' => ['business:list']]);
+        return $this->json($businesses, Response::HTTP_OK, [], ['groups' => ['business:list']]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -38,10 +39,10 @@ class BusinessController extends AbstractController
     {
         $business = $this->businessRepository->find($id);
         if (!$business) {
-            return $this->json(['error' => 'business not found'], 404);
+            return $this->json(['error' => 'business not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($business, 200, [], ['groups' => ['business:read']]);
+        return $this->json($business, Response::HTTP_OK, [], ['groups' => ['business:read']]);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
@@ -50,11 +51,11 @@ class BusinessController extends AbstractController
         try {
             $business = $this->businessManager->createFromJson($request->getContent());
 
-            return $this->json($business, 201, [], ['groups' => ['business:read']]);
+            return $this->json($business, Response::HTTP_CREATED, [], ['groups' => ['business:read']]);
         } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], 422);
+            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], 400);
+            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -63,17 +64,17 @@ class BusinessController extends AbstractController
     {
         $business = $this->businessRepository->find($id);
         if (!$business) {
-            return $this->json(['error' => 'business not found'], 404);
+            return $this->json(['error' => 'business not found'], Response::HTTP_NOT_FOUND);
         }
 
         try {
             $updatedbusiness = $this->businessManager->updateFromJson($business, $request->getContent());
 
-            return $this->json($updatedbusiness, 200, [], ['groups' => ['business:read']]);
+            return $this->json($updatedbusiness, Response::HTTP_OK, [], ['groups' => ['business:read']]);
         } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], 422);
+            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], 400);
+            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -82,12 +83,12 @@ class BusinessController extends AbstractController
     {
         $business = $this->businessRepository->find($id);
         if (!$business) {
-            return $this->json(['error' => 'business not found'], 404);
+            return $this->json(['error' => 'business not found'], Response::HTTP_NOT_FOUND);
         }
 
         $this->businessManager->delete($business);
 
         // 204 No Content is appropriate for successful deletes without body
-        return $this->json(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

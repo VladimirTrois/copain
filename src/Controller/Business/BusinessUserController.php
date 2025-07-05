@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BusinessUserController extends AbstractController
@@ -30,13 +31,13 @@ class BusinessUserController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'Unauthorized'], 401);
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
         try {
             $business = $this->businessManager->getBusinessIfOwnedByUser($businessId, $user);
         } catch (\Throwable $e) {
-            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: 403);
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
         }
 
         $usersDto = array_map(
@@ -52,7 +53,7 @@ class BusinessUserController extends AbstractController
     {
         $currentUser = $this->getUser();
         if (!$currentUser) {
-            return $this->json(['error' => 'Unauthorized'], 401);
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -60,16 +61,16 @@ class BusinessUserController extends AbstractController
         $responsibilities = $data['responsibilities'] ?? [];
 
         if (!$email || !is_array($responsibilities)) {
-            return $this->json(['error' => 'Invalid payload'], 400);
+            return $this->json(['error' => 'Invalid payload'], Response::HTTP_BAD_REQUEST);
         }
 
         try {
             $business = $this->businessManager->getBusinessIfOwnedByUser($businessId, $currentUser);
             $this->businessManager->addUserToBusiness($business, $email, $responsibilities, $currentUser);
         } catch (\Throwable $e) {
-            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->json(['message' => 'User added to business'], 201);
+        return $this->json(['message' => 'User added to business'], Response::HTTP_CREATED);
     }
 }

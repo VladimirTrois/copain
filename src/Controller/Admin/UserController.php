@@ -5,11 +5,13 @@
 namespace App\Controller\Admin;
 
 use App\Repository\UserRepository;
+use App\Service\UserInvitationManager;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -24,6 +26,7 @@ class UserController extends AbstractController
         private UserManager $userManager,
         private UserRepository $userRepository,
         private SerializerInterface $serializer,
+        private UserInvitationManager $userInvitationManager,
     ) {
     }
 
@@ -32,7 +35,7 @@ class UserController extends AbstractController
     {
         $usersDto = $this->userManager->getAllUsersListDto();
 
-        return $this->json($usersDto, 200);
+        return $this->json($usersDto, Response::HTTP_OK);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -40,23 +43,28 @@ class UserController extends AbstractController
     {
         $userDto = $this->userManager->getUserShowDto($id);
         if (!$userDto) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($userDto, 200);
+        return $this->json($userDto, Response::HTTP_OK);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         try {
+            // 1. Create the user (but no password yet)
             $user = $this->userManager->createFromJson($request->getContent());
 
-            return $this->json($user, 201, [], ['groups' => ['user:read']]);
+            // 2. Send invitation email with password setup token
+            $this->userInvitationManager->sendInvitation($user);
+
+            // 3. Return success
+            return $this->json($user, Response::HTTP_CREATED, [], ['groups' => ['user:read']]);
         } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], 422);
+            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], 400);
+            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -65,7 +73,7 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
         try {
@@ -73,9 +81,9 @@ class UserController extends AbstractController
 
             return $this->json($updatedUser, 200, [], ['groups' => ['user:read']]);
         } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], 422);
+            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], 400);
+            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -84,12 +92,12 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
         $this->userManager->delete($user);
 
         // 204 No Content is appropriate for successful deletes without body
-        return $this->json(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }
