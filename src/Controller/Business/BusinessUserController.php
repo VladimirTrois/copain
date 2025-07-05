@@ -27,7 +27,7 @@ class BusinessUserController extends AbstractController
     }
 
     #[Route('/api/businesses/{businessId}/users', name: 'business_users_list', methods: ['GET'])]
-    public function listUsers(int $businessId): JsonResponse
+    public function listBusinessUsers(int $businessId): JsonResponse
     {
         $user = $this->getUser();
         if (!$user) {

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\User;
 
-use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;

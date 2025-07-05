@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\User;
 
 use App\Factory\UserFactory;
+use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthTest extends BaseTestCase
