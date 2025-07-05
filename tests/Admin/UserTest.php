@@ -6,6 +6,7 @@ use App\Factory\BusinessFactory;
 use App\Factory\BusinessUserFactory;
 use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserTest extends BaseTestCase
 {
@@ -112,7 +113,7 @@ class UserTest extends BaseTestCase
             json_encode($payload)
         );
 
-        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame($payload['email'], $data['email']);
     }
@@ -151,6 +152,6 @@ class UserTest extends BaseTestCase
 
         $client->request('DELETE', '/api/users/'.$user->getId());
 
-        $this->assertResponseStatusCodeSame(204);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
     }
 }

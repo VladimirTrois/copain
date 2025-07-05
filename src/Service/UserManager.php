@@ -14,6 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class UserManager
 {
@@ -24,6 +25,7 @@ class UserManager
         private UserPasswordHasherInterface $hasher,
         private UserRepository $userRepository,
         private UserMapper $userMapper,
+        private ResetPasswordHelperInterface $resetPasswordHelper,
     ) {
     }
 

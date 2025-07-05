@@ -22,7 +22,7 @@ final class UserTest extends BaseTestCase
 
         $client->request('GET', '/api/users/ '.$user->getId().'/businesses');
 
-        $this->assertResponseIsSuccessful(200);
+        $this->assertResponseIsSuccessful();
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertCount($numberOfBusinesses, $data);
@@ -46,7 +46,7 @@ final class UserTest extends BaseTestCase
 
         $client->request('GET', '/api/me/businesses');
 
-        $this->assertResponseIsSuccessful(200);
+        $this->assertResponseIsSuccessful();
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertCount($numberOfBusinesses, $data);
@@ -88,7 +88,7 @@ final class UserTest extends BaseTestCase
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/users');
 
-        $this->assertResponseIsSuccessful(200);
+        $this->assertResponseIsSuccessful();
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertCount($numberOfEmployees + 1, $data);
@@ -137,6 +137,6 @@ final class UserTest extends BaseTestCase
             json_encode($payload)
         );
 
-        $this->assertResponseIsSuccessful(200);
+        $this->assertResponseIsSuccessful();
     }
 }

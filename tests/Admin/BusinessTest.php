@@ -5,6 +5,7 @@
 namespace App\Tests;
 
 use App\Factory\BusinessFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class BusinessTest extends BaseTestCase
 {
@@ -55,7 +56,7 @@ class BusinessTest extends BaseTestCase
             json_encode($payload)
         );
 
-        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame($payload['name'], $data['name']);
     }
@@ -91,7 +92,9 @@ class BusinessTest extends BaseTestCase
         $business = BusinessFactory::createOne();
 
         $client->request('DELETE', '/api/businesses/'.$business->getId());
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
-        $this->assertResponseStatusCodeSame(204);
+        $client->request('GET', '/api/businesses/'.$business->getId());
+        $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY);
     }
 }

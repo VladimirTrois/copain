@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use App\Factory\UserFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AuthTest extends BaseTestCase
 {
@@ -37,7 +38,7 @@ final class AuthTest extends BaseTestCase
             'password' => 'wrongpass',
         ]));
 
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
     public function testUserCanRefreshJwtUsingValidRefreshToken()
@@ -83,6 +84,6 @@ final class AuthTest extends BaseTestCase
             'refresh_token' => 'invalid-token',
         ]));
 
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -25,11 +25,15 @@ L'application tourne avec docker et API platform sur symfony.
 make composer c='require symfony/orm-pack'
 make composer c='require lexik/jwt-authentication-bundle'
 make composer c="require gesdinet/jwt-refresh-token-bundle"
+make composer c="require symfonycasts/reset-password-bundle"
 make composer c="require symfony/serializer-pack"
 make composer c="require symfony/validator"
 make composer c="require symfony/serializer"
 make composer c="require doctrine/doctrine-migrations-bundle"
 make composer c="require symfony/uid" 
+make composer c="require symfony/mailer"
+make composer c="require symfony/twig-bundle"
+make composer c="require symfony/messenger"
 
 make composer c='require --dev symfony/maker-bundle'
 make composer c="require --dev foundry orm-fixtures"
