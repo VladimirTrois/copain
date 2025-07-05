@@ -37,9 +37,16 @@ class Business
     #[Groups(['business:read'])]
     private Collection $businessUsers;
 
+    /**
+     * @var Collection<int, Article>
+     */
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'business', orphanRemoval: true)]
+    private Collection $articles;
+
     public function __construct()
     {
         $this->businessUsers = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,5 +105,53 @@ class Business
         }
 
         return false;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): static
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setBusiness($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): static
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getBusiness() === $this) {
+                $article->setBusiness(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function hasUser(User $user): bool
+    {
+        return $this->getBusinessUsers()->exists(
+            fn ($key, BusinessUser $bu) => $bu->getUser()->getId() === $user->getId()
+        );
+    }
+
+    public function getResponsibilitiesFor(User $user): array
+    {
+        foreach ($this->getBusinessUsers() as $bu) {
+            if ($bu->getUser()->getId() === $user->getId()) {
+                return $bu->getResponsibilities();
+            }
+        }
+
+        return [];
     }
 }
