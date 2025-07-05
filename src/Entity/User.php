@@ -39,14 +39,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
     /**
      * Plain password, not stored in DB.
      */
-    #[Assert\NotBlank(groups: ['create'])] // Require password on create
-    #[Assert\Length(min: 6, groups: ['create', 'update'])]
+    #[Assert\Length(min: 6)]
     #[Groups(['user:write'])]
     #[SerializedName('password')]
     private ?string $plainPassword = null;
@@ -125,6 +124,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function hasPassword(): bool
+    {
+        return null !== $this->password;
     }
 
     /**
