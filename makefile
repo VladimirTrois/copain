@@ -41,19 +41,19 @@ bash: ## Connect to the FrankenPHP container via bash so up and down arrows go t
 	@$(PHP_CONT) bash
 
 test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
-	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit "$(or $(c),)"
+	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(or $(c),)
 
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
-	@$(COMPOSER) "$(or $(c),list)"
+	@$(COMPOSER) $(or $(c),list)
 
 vendor: ## Install vendors according to the current composer.lock file
 	@$(COMPOSER) install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
-	@$(SYMFONY) "$(or $(c),list)"
+	@$(SYMFONY) $(or $(c),list)
 
 cc: ## Clear the cache
 	$(SYMFONY) c:c 
@@ -69,7 +69,7 @@ migrateDB: ## Migrate the database
 	$(SYMFONY) doctrine:migrations:migrate --no-interaction
 
 loadDB: ## Load fixtures or pass the parameter "c=" to run a given command, example: make loadDB c="--append"
-	@$(SYMFONY) doctrine:fixtures:load "$(or $(c),)"
+	@$(SYMFONY) doctrine:fixtures:load $(or $(c),)
 
 reloadDB: ## Reload fixtures no interaction
 	@$(SYMFONY) doctrine:fixtures:load --no-interaction
@@ -85,4 +85,4 @@ xdebug-log: ## Show xdebug logs
 
 ## —— Code Style  ——————————————————————————————————————————————————————————————
 php-cs: ## Run php-cs-fixer list or pass the parameter "c=" to run a given command, example: make php-cs c='fix --dry-run'
-	@$(PHP_CONT) vendor/bin/php-cs-fixer "$(or $(c),list)"
+	@$(PHP_CONT) vendor/bin/php-cs-fixer $(or $(c),list)
