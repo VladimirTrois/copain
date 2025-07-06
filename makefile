@@ -11,7 +11,7 @@ SYMFONY  = $(PHP) bin/console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help build up start down logs sh composer vendor sf cc test
+.PHONY        : help build up start down logs sh bash test rebuild composer vendor sf cc dropDB createDB migrateDB loadDB reloadDB newMigration rebootDB xdebug-log php-cs
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -29,6 +29,8 @@ start: build up ## Build and start the containers
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans
 
+rebuild: down build up ## Tear down and rebuild everything
+
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
 
@@ -39,52 +41,48 @@ bash: ## Connect to the FrankenPHP container via bash so up and down arrows go t
 	@$(PHP_CONT) bash
 
 test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
-	@$(eval c ?=)
-	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit "$(or $(c),)"
 
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
-	@$(eval c ?=)
-	@$(COMPOSER) $(c)
+	@$(COMPOSER) "$(or $(c),list)"
 
 vendor: ## Install vendors according to the current composer.lock file
-vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
-vendor: composer
+	@$(COMPOSER) install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
-	@$(eval c ?=)
-	@$(SYMFONY) $(c)
+	@$(SYMFONY) "$(or $(c),list)"
 
-cc: c=c:c ## Clear the cache
-cc: sf
+cc: ## Clear the cache
+	$(SYMFONY) c:c 
 
 ## —— Database ———————————————————————————————————————————————————————————————
-dropDB: c=doctrine:database:drop --force
-dropDB: sf
+dropDB: ## Drop the database
+	$(SYMFONY) doctrine:database:drop --force
 
-createDB: c=doctrine:database:create
-createDB: sf
+createDB: ## Create the database
+	$(SYMFONY) doctrine:database:create
 
-migrateDB: c=doctrine:migrations:migrate
-migrateDB: sf 
+migrateDB: ## Migrate the database
+	$(SYMFONY) doctrine:migrations:migrate --no-interaction
 
-loadDB: 
-		@$(eval c ?=)
-		@$(SYMFONY) doctrine:fixtures:load $(c)
+loadDB: ## Load fixtures or pass the parameter "c=" to run a given command, example: make loadDB c="--append"
+	@$(SYMFONY) doctrine:fixtures:load "$(or $(c),)"
 
-reloadDB: 
-		@$(SYMFONY) doctrine:fixtures:load --no-interaction
+reloadDB: ## Reload fixtures no interaction
+	@$(SYMFONY) doctrine:fixtures:load --no-interaction
 
-migration: c=make:migration
-migration: sf
+newMigration: ## Create a new migration
+	$(SYMFONY) make:migration
+
+rebootDB: dropDB createDB migrateDB loadDB ## Drop, create, migrate and load
 
 ## —— Debug ————————————————————————————————————————————————————————————————————
-xdebug-log:
-	docker exec -it symfony_app tail -f /tmp/xdebug.log
+xdebug-log: ## Show xdebug logs
+	@$(PHP_CONT) tail -f /tmp/xdebug.log
 
 ## —— Code Style  ——————————————————————————————————————————————————————————————
-php-cs:
-	@$(eval c ?=)
-	@$(PHP_CONT) vendor/bin/php-cs-fixer $(c)
+php-cs: ## Run php-cs-fixer list or pass the parameter "c=" to run a given command, example: make php-cs c='fix --dry-run'
+	@$(PHP_CONT) vendor/bin/php-cs-fixer "$(or $(c),list)"
