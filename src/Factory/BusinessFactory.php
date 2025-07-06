@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Business;
+use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -44,5 +45,31 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return $this
             // ->afterInstantiate(function(Business $business): void {})
         ;
+    }
+
+    public static function addBusinessToUser(User $user, array $responsibilities = ['owner']): object
+    {
+        $business = BusinessFactory::createOne();
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => $responsibilities,
+        ]);
+
+        return $business;
+    }
+
+    public static function addBusinessesToUser(User $user, int $count, array $responsibilities = ['owner']): array
+    {
+        $businesses = BusinessFactory::createMany($count);
+        foreach ($businesses as $business) {
+            BusinessUserFactory::createOne([
+                'user' => $user,
+                'business' => $business,
+                'responsibilities' => $responsibilities,
+            ]);
+        }
+
+        return $businesses;
     }
 }

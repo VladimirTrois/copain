@@ -1,7 +1,6 @@
 <?php
 
 use App\Factory\BusinessFactory;
-use App\Factory\BusinessUserFactory;
 use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 
@@ -13,10 +12,7 @@ class UserBusiness extends BaseTestCase
         $numberOfBusinesses = 5;
 
         $user = UserFactory::find(['email' => self::EMAIL_USER]);
-        $businesses = BusinessFactory::createMany($numberOfBusinesses);
-        foreach ($businesses as $business) {
-            BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
-        }
+        BusinessFactory::addBusinessesToUser($user, $numberOfBusinesses);
 
         $client->request('GET', '/api/users/ '.$user->getId().'/businesses');
 
@@ -37,10 +33,7 @@ class UserBusiness extends BaseTestCase
         $numberOfBusinesses = 5;
 
         $user = UserFactory::find(['email' => self::EMAIL_USER]);
-        $businesses = BusinessFactory::createMany($numberOfBusinesses);
-        foreach ($businesses as $business) {
-            $businessUser = BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
-        }
+        BusinessFactory::addBusinessesToUser($user, $numberOfBusinesses);
 
         $client->request('GET', '/api/me/businesses');
 
@@ -61,10 +54,7 @@ class UserBusiness extends BaseTestCase
         $numberOfBusinesses = 5;
 
         $user1 = UserFactory::createOne();
-        $businesses = BusinessFactory::createMany($numberOfBusinesses);
-        foreach ($businesses as $business) {
-            BusinessUserFactory::createOne(['user' => $user1, 'business' => $business, 'responsibilities' => ['owner']]);
-        }
+        BusinessFactory::addBusinessesToUser($user1, $numberOfBusinesses);
 
         $client->request('GET', '/api/users/'.$user1->getId().'/businesses');
 
