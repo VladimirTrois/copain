@@ -27,4 +27,18 @@ class BusinessAccessGuard
 
         return $business;
     }
+
+    public function getBusinessIfUserBelongs(int $businessId, User $user): Business
+    {
+        $business = $this->repo->find($businessId);
+        if (!$business) {
+            throw new NotFoundHttpException('Business not found.');
+        }
+
+        if (!$business->hasUser($user)) {
+            throw new AccessDeniedException('You do not belong to this business.');
+        }
+
+        return $business;
+    }
 }
