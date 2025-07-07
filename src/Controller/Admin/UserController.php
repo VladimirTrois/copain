@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -52,20 +51,14 @@ class UserController extends AbstractController
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        try {
-            // 1. Create the user (but no password yet)
-            $user = $this->userManager->createFromJson($request->getContent());
+        // 1. Create the user (but no password yet)
+        $user = $this->userManager->createFromJson($request->getContent());
 
-            // 2. Send invitation email with password setup token
-            $this->userInvitationManager->sendInvitation($user);
+        // 2. Send invitation email with password setup token
+        $this->userInvitationManager->sendInvitation($user);
 
-            // 3. Return success
-            return $this->json($user, Response::HTTP_CREATED, [], ['groups' => ['user:read']]);
-        } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        // 3. Return success
+        return $this->json($user, Response::HTTP_CREATED, [], ['groups' => ['user:read']]);
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
@@ -76,15 +69,9 @@ class UserController extends AbstractController
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
-        try {
-            $updatedUser = $this->userManager->updateFromJson($user, $request->getContent());
+        $updatedUser = $this->userManager->updateFromJson($user, $request->getContent());
 
-            return $this->json($updatedUser, 200, [], ['groups' => ['user:read']]);
-        } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        return $this->json($updatedUser, 200, [], ['groups' => ['user:read']]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

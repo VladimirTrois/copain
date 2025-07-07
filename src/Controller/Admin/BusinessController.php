@@ -10,8 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -37,11 +35,7 @@ class BusinessController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(string $id): JsonResponse
     {
-        try {
-            $business = $this->businessService->findBusiness($id);
-        } catch (NotFoundHttpException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
-        }
+        $business = $this->businessService->findBusiness($id);
 
         return $this->json($business, Response::HTTP_OK, [], ['groups' => ['business:read']]);
     }
@@ -49,56 +43,40 @@ class BusinessController extends AbstractController
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        try {
-            $business = $this->serializer->deserialize($request->getContent(), Business::class, 'json', [
-                'groups' => ['business:write'],
-            ]);
+        $business = $this->serializer->deserialize($request->getContent(), Business::class, 'json', [
+            'groups' => ['business:write'],
+        ]);
 
-            $business = $this->businessService->createBusiness($business);
+        $business = $this->businessService->createBusiness($business);
 
-            return $this->json($business, Response::HTTP_CREATED, [], ['groups' => ['business:read']]);
-        } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        return $this->json($business, Response::HTTP_CREATED, [], ['groups' => ['business:read']]);
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(string $id, Request $request): JsonResponse
     {
-        try {
-            $business = $this->businessService->findBusiness($id);
+        $business = $this->businessService->findBusiness($id);
 
-            // Deserialize into existing entity (Symfony will hydrate object)
-            $this->serializer->deserialize(
-                $request->getContent(),
-                Business::class,
-                'json',
-                [
-                    'object_to_populate' => $business,
-                    'groups' => ['business:write'],
-                ]
-            );
+        // Deserialize into existing entity (Symfony will hydrate object)
+        $this->serializer->deserialize(
+            $request->getContent(),
+            Business::class,
+            'json',
+            [
+                'object_to_populate' => $business,
+                'groups' => ['business:write'],
+            ]
+        );
 
-            $updatedbusiness = $this->businessService->updateBusiness($business);
+        $updatedbusiness = $this->businessService->updateBusiness($business);
 
-            return $this->json($updatedbusiness, Response::HTTP_OK, [], ['groups' => ['business:read']]);
-        } catch (UnprocessableEntityHttpException $e) {
-            return $this->json(['error' => 'Validation failed', 'details' => json_decode($e->getMessage())], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => 'Invalid input', 'details' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        return $this->json($updatedbusiness, Response::HTTP_OK, [], ['groups' => ['business:read']]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(string $id): JsonResponse
     {
-        try {
-            $business = $this->businessService->findBusiness($id);
-        } catch (NotFoundHttpException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
-        }
+        $business = $this->businessService->findBusiness($id);
 
         $this->businessService->delete($business);
 

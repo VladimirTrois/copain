@@ -48,11 +48,7 @@ class ResetPasswordController extends AbstractController
             return $this->json(['message' => 'If the email exists, a reset link will be sent.']);
         }
 
-        try {
-            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-        } catch (ResetPasswordExceptionInterface $e) {
-            return $this->json(['message' => 'Reset already requested.'], Response::HTTP_TOO_MANY_REQUESTS);
-        }
+        $resetToken = $this->resetPasswordHelper->generateResetToken($user);
 
         $emailMessage = (new TemplatedEmail())
             ->from(new Address('vladimir.trois@gmail.com', 'Copain'))
@@ -61,12 +57,8 @@ class ResetPasswordController extends AbstractController
             ->htmlTemplate('reset_password.html.twig')
             ->context(['resetToken' => $resetToken]);
 
-        try {
-            $this->mailer->send($emailMessage);
-            $this->logger->info('Email sent successfully');
-        } catch (\Exception $e) {
-            $this->logger->error('Error sending email: '.$e->getMessage());
-        }
+        $this->mailer->send($emailMessage);
+        $this->logger->info('Email sent successfully');
 
         return $this->json(['message' => 'Reset email sent if address is valid.']);
     }
