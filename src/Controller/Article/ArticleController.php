@@ -57,7 +57,14 @@ class ArticleController extends AbstractController
     {
         $user = $this->getUser();
         $business = $this->businessAccessGuard->getBusinessIfUserBelongs($businessId, $user);
-        $updatedArticle = $this->articleService->ownerUpdateArticle($id, $business, $request->getContent());
+        $article = $this->articleService->findArticle(['id' => $id]);
+
+        $this->serializer->deserialize($request->getContent(), Article::class, 'json', [
+            'object_to_populate' => $article,
+            'groups' => ['article:write'],
+        ]);
+
+        $updatedArticle = $this->articleService->ownerUpdateArticle($article, $business, $request->getContent());
 
         return $this->json($updatedArticle, Response::HTTP_OK, [], ['groups' => ['article:read']]);
     }

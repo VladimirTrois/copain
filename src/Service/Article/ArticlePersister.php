@@ -26,13 +26,8 @@ class ArticlePersister
         return $article;
     }
 
-    public function updateArticleFromJson(Article $article, string $json): Article
+    public function updateArticle(Article $article): Article
     {
-        $this->serializer->deserialize($json, Article::class, 'json', [
-            'object_to_populate' => $article,
-            'groups' => ['article:write'],
-        ]);
-
         $this->validator->validate($article);
 
         $this->em->flush();

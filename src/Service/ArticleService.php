@@ -31,6 +31,11 @@ class ArticleService
         return $this->articleFinder->findOneByIdAndBusinessId($articleId, $businessId);
     }
 
+    public function findArticle(array $criteria): ?Article
+    {
+        return $this->articleFinder->findOneBy($criteria);
+    }
+
     public function ownerCreateArticleForBusiness(Article $article, Business $business): Article
     {
         $article->setBusiness($business);
@@ -38,11 +43,9 @@ class ArticleService
         return $this->articlePersister->createArticle($article);
     }
 
-    public function ownerUpdateArticle(int $articleId, Business $business, string $json): Article
+    public function ownerUpdateArticle(Article $article): Article
     {
-        $article = $this->articleFinder->findOneByIdAndBusinessId($articleId, $business->getId());
-
-        return $this->articlePersister->updateArticleFromJson($article, $json);
+        return $this->articlePersister->updateArticle($article);
     }
 
     public function ownerDeleteArticle(int $articleId): void
