@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Admin;
 
+use App\Enum\Responsibility;
 use App\Factory\BusinessFactory;
 use App\Factory\BusinessUserFactory;
 use App\Factory\UserFactory;
@@ -51,7 +52,7 @@ class UserTest extends BaseTestCase
 
         $user = UserFactory::createOne();
         $business = BusinessFactory::createOne();
-        $businessUser = BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
+        $businessUser = BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
 
         $client->request('GET', '/api/users/'.$user->getId());
 
@@ -91,7 +92,7 @@ class UserTest extends BaseTestCase
 
         // Check responsibilities array
         $this->assertIsArray($businessData['responsibilities']);
-        $this->assertContains('owner', $businessData['responsibilities']);
+        $this->assertContains(Responsibility::OWNER->value, $businessData['responsibilities']);
     }
 
     public function testCreateAsAdmin(): void

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\User;
 
+use App\Enum\Responsibility;
 use App\Factory\BusinessFactory;
 use App\Factory\BusinessUserFactory;
 use App\Factory\UserFactory;
@@ -16,10 +17,10 @@ final class OwnerTest extends BaseTestCase
 
         $user = UserFactory::find(['email' => self::EMAIL_USER]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
         $otherUsers = UserFactory::createMany($numberOfEmployees);
         foreach ($otherUsers as $otherUser) {
-            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => ['employee']]);
+            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => [Responsibility::SELLER]]);
         }
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/users');
@@ -41,10 +42,10 @@ final class OwnerTest extends BaseTestCase
 
         $user = UserFactory::createOne();
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
         $otherUsers = UserFactory::createMany($numberOfEmployees);
         foreach ($otherUsers as $otherUser) {
-            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => ['employee']]);
+            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => [Responsibility::SELLER]]);
         }
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/users');
@@ -58,7 +59,7 @@ final class OwnerTest extends BaseTestCase
 
         $user = UserFactory::find(['email' => self::EMAIL_USER]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => ['owner']]);
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
 
         $newUser = UserFactory::createOne();
 

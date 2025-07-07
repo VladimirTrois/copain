@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\BusinessUser;
+use App\Enum\Responsibility;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -33,7 +34,7 @@ final class BusinessUserFactory extends PersistentProxyObjectFactory
     {
         return [
             'business' => BusinessFactory::new(),
-            'responsibilities' => ['owner'],
+            'responsibilities' => [Responsibility::OWNER],
             'user' => UserFactory::new(),
         ];
     }

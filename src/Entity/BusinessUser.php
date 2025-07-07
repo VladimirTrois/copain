@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Responsibility;
 use App\Repository\BusinessUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -27,10 +28,7 @@ class BusinessUser
     #[Groups(['business:read'])]
     private ?User $user;
 
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
+    #[ORM\Column(type: 'json')]
     #[Groups(['user:read', 'user:write', 'business:read'])]
     private array $responsibilities = [];
 
@@ -67,13 +65,16 @@ class BusinessUser
         return $this;
     }
 
+    /**
+     * @return Responsibility[]
+     */
     public function getResponsibilities(): array
     {
         return $this->responsibilities;
     }
 
     /**
-     * @param list<string> $responsibilities
+     * @param Responsibility[] $responsibilities
      */
     public function setResponsibilities(array $responsibilities): static
     {

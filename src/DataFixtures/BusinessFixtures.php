@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Enum\Responsibility;
 use App\Factory\BusinessFactory;
 use App\Factory\BusinessUserFactory;
 use App\Factory\UserFactory;
@@ -23,7 +24,7 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
         BusinessUserFactory::createOne([
             'user' => $admin,
             'business' => $adminBusiness,
-            'responsibilities' => ['owner'],
+            'responsibilities' => [Responsibility::OWNER],
         ]);
 
         // Add businesses owned by regular user
@@ -35,7 +36,7 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
             BusinessUserFactory::createOne([
                 'user' => $user,
                 'business' => $business,
-                'responsibilities' => ['owner'],
+                'responsibilities' => [Responsibility::OWNER],
             ]);
             $userBusinesses[] = $business;
         }

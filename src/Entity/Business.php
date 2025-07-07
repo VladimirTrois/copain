@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\SoftDeleteable;
 use App\Entity\Traits\Timestampable;
+use App\Enum\Responsibility;
 use App\Repository\BusinessRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -129,7 +130,10 @@ class Business
     public function isOwnedBy(User $user): bool
     {
         foreach ($this->getBusinessUsers() as $bu) {
-            if ($bu->getUser() === $user && in_array('owner', $bu->getResponsibilities(), true)) {
+            if (
+                $bu->getUser() === $user
+                && in_array(Responsibility::OWNER, $bu->getResponsibilities(), true)
+            ) {
                 return true;
             }
         }
@@ -144,10 +148,13 @@ class Business
         );
     }
 
+    /**
+     * @return Responsibility[]
+     */
     public function getResponsibilitiesFor(User $user): array
     {
         foreach ($this->getBusinessUsers() as $bu) {
-            if ($bu->getUser()->getId() === $user->getId()) {
+            if ($bu->getUser()?->getId() === $user->getId()) {
                 return $bu->getResponsibilities();
             }
         }
