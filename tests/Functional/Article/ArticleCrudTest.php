@@ -71,7 +71,7 @@ class ArticleCrudTest extends BaseTestCase
             json_encode($payload)
         );
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testUpdateArticle(): void
@@ -142,7 +142,7 @@ class ArticleCrudTest extends BaseTestCase
             json_encode($payload)
         );
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testDeleteArticle(): void

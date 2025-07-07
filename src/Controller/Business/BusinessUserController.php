@@ -33,13 +33,7 @@ class BusinessUserController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
-
-        try {
-            $businessUsers = $this->businessService->listUsersOfOwnedBusiness($businessId, $user);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
-        }
-
+        $businessUsers = $this->businessService->listUsersOfOwnedBusiness($businessId, $user);
         $usersDto = array_map(
             fn ($businessUser) => $this->userMapper->toListDto($businessUser->getUser()),
             $businessUsers
@@ -64,11 +58,7 @@ class BusinessUserController extends AbstractController
             return $this->json(['error' => 'Invalid payload'], Response::HTTP_BAD_REQUEST);
         }
 
-        try {
-            $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $currentUser);
-        } catch (\Throwable $e) {
-            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
-        }
+        $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $currentUser);
 
         return $this->json(['message' => 'User added to business'], Response::HTTP_CREATED);
     }

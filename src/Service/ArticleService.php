@@ -6,81 +6,48 @@ use App\Entity\Article;
 use App\Entity\Business;
 use App\Repository\ArticleRepository;
 use App\Repository\BusinessRepository;
+use App\Service\Article\ArticleFinder;
 use App\Service\Article\ArticlePersister;
 use App\Service\Business\BusinessAccessGuard;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticleService
 {
     public function __construct(
         private ArticleRepository $articleRepository,
         private ArticlePersister $articlePersister,
+        private ArticleFinder $articleFinder,
         private BusinessAccessGuard $businessAccessGuard,
         private BusinessRepository $businessRepository,
     ) {
     }
 
-    public function listByBusinessId(int $businessId): array
+    public function publicListByBusinessId(int $businessId): array
     {
-        $business = $this->businessRepository->find($businessId);
-        if (!$business) {
-            throw new NotFoundHttpException('Business not found.');
-        }
-
-        return $this->articleRepository->findBy(['business' => $business]);
+        return $this->articleFinder->listByBusinessId($businessId);
     }
 
-    public function findOneByIdAndBusinessId(int $articleId, int $businessId): ?Article
+    public function publicFindOneByIdAndBusinessId(int $articleId, int $businessId): ?Article
     {
-        $business = $this->businessRepository->find($businessId);
-        if (!$business) {
-            throw new NotFoundHttpException('Business not found.');
-        }
-
-        $article = $this->articleRepository->findOneBy([
-            'id' => $articleId,
-            'business' => $business,
-        ]);
-
-        if (!$article) {
-            throw new NotFoundHttpException('Article not found.');
-        }
-
-        return $article;
+        return $this->articleFinder->findOneByIdAndBusinessId($articleId, $businessId);
     }
 
-    public function listByBusiness(Business $business): array
-    {
-        return $this->articleRepository->findBy(['business' => $business]);
-    }
-
-    public function findOneByIdAndBusiness(int $id, Business $business): Article
-    {
-        $article = $this->articleRepository->findOneBy(['id' => $id, 'business' => $business]);
-        if (!$article) {
-            throw new NotFoundHttpException('Article not found.');
-        }
-
-        return $article;
-    }
-
-    public function createArticleForBusiness(Article $article, Business $business): Article
+    public function ownerCreateArticleForBusiness(Article $article, Business $business): Article
     {
         $article->setBusiness($business);
 
         return $this->articlePersister->createArticle($article);
     }
 
-    public function updateArticle(int $id, Business $business, string $json): Article
+    public function ownerUpdateArticle(int $articleId, Business $business, string $json): Article
     {
-        $article = $this->findOneByIdAndBusiness($id, $business);
+        $article = $this->articleFinder->findOneByIdAndBusinessId($articleId, $business->getId());
 
         return $this->articlePersister->updateArticleFromJson($article, $json);
     }
 
-    public function deleteArticle(int $id, Business $business): void
+    public function ownerDeleteArticle(int $articleId): void
     {
-        $article = $this->findOneByIdAndBusiness($id, $business);
+        $article = $this->articleFinder->findOneBy(['id' => $articleId]);
         $this->articlePersister->deleteArticle($article);
     }
 }
