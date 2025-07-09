@@ -4,6 +4,7 @@
 
 namespace App\Tests;
 
+use App\Factory\CustomerFactory;
 use App\Factory\UserFactory;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -19,8 +20,7 @@ abstract class BaseTestCase extends WebTestCase
     public const PASSWORD_USER = 'password';
     public const EMAIL_ADMIN = 'admin@admin.com';
     public const PASSWORD_ADMIN = 'admin';
-    public const URL_BASE = 'http://localhost/api';
-    public const URL_LOGIN = self::URL_BASE.'/login';
+    public const EMAIL_CUSTOMER = 'customer@customer.com';
 
     private ?string $token = null;
 
@@ -62,6 +62,23 @@ abstract class BaseTestCase extends WebTestCase
         $token = $jwtManager->create($user);
 
         // 4. Set auth header manually on existing client
+        $client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
+
+        return $client;
+    }
+
+    protected function createClientAsCustomer(array $userData = []): KernelBrowser
+    {
+        $client = static::createClient();
+        $container = $client->getContainer();
+
+        $customer = CustomerFactory::createOne(array_merge([
+            'email' => self::EMAIL_CUSTOMER,
+        ], $userData));
+
+        $jwtManager = $container->get(JWTTokenManagerInterface::class);
+        $token = $jwtManager->create($customer);
+
         $client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
 
         return $client;

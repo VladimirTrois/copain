@@ -40,6 +40,8 @@ make composer c="require --dev foundry orm-fixtures"
 make composer c="require --dev symfony/test-pack symfony/http-client"
 make composer c="require --dev dama/doctrine-test-bundle"
 make composer c="require --dev friendsofphp/php-cs-fixer"
+make composer c="require --dev symfony/web-profiler-bundle"
+
 ```
 
 ### On first time run

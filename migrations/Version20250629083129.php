@@ -24,7 +24,7 @@ final class Version20250629083129 extends AbstractMigration
             CREATE TABLE "user" (id SERIAL NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255), PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON "user" (email)
+            CREATE UNIQUE INDEX USER_UNIQUE_IDENTIFIER_EMAIL ON "user" (email)
         SQL);
     }
 

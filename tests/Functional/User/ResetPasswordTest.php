@@ -7,7 +7,7 @@ use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
-class ResetPasswordControllerTest extends BaseTestCase
+class ResetPasswordTest extends BaseTestCase
 {
     public function testRequestResetPasswordWithoutEmail(): void
     {
@@ -92,8 +92,10 @@ class ResetPasswordControllerTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertJson($client->getResponse()->getContent());
-
-        // Optionally assert email was sent, e.g., check mailer spool or mock
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailTextBodyContains($email, 'Password Reset');
+        $this->assertEmailHtmlBodyContains($email, 'button');
     }
 
     public function testResetPasswordWithValidToken(): void

@@ -6,7 +6,7 @@ use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AuthTest extends BaseTestCase
+final class UserAuthTest extends BaseTestCase
 {
     public function testUserCanLoginWithCorrectCredentials(): void
     {

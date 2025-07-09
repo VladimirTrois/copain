@@ -4,35 +4,68 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        # Used to authenticate users
+        user_provider:
             entity:
                 class: App\Entity\User
                 property: email
-        # used to reload user from session & other features (e.g. switch_user)
+        # Used to authenticate customers
+        customer_provider:
+            entity:
+                class: App\Entity\Customer
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        customer_magic_login:
+            pattern:  ^/api/customer/login
+            provider: customer_provider
+            stateless: true
+            login_link:
+                check_route: login_magic_link_check
+                signature_properties: [email]
+                max_uses: 1
+                lifetime: 600
+                success_handler: App\Security\Authentication\MagicLinkSuccessHandler
+
+        customer_token_refresh:
+            pattern:  ^/api/customer/token/refresh
+            stateless: true
+            provider: customer_provider
+            refresh_jwt:
+                check_path: customer_gesdinet_jwt_refresh_token
+
         api_token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
-            provider: app_user_provider
+            provider: user_provider
             refresh_jwt:
                 check_path: gesdinet_jwt_refresh_token
+
         login:
             pattern: ^/api/login
             stateless: true
             json_login:
                 check_path: /api/login
+                provider: user_provider
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        customer_api:
+            pattern: ^/api/customer
+            stateless: true
+            jwt: ~
+            provider: customer_provider    
+
         api:
             pattern:   ^/api
             stateless: true
             jwt: ~
+            provider: user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -43,8 +76,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/refresh/token, roles: PUBLIC_ACCESS }
+        - { path: ^/api/customer/(login|token/refresh), roles: PUBLIC_ACCESS }
+        - { path: ^/api/customer, roles: ROLE_CUSTOMER }
+        - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
