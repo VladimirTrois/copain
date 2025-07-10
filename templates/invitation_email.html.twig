@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Set Your Password{% endblock %}
+
+{% block body %}
+  <h1>Welcome to Copain 🎉</h1>
+
+  <p>Hi {{ user.firstName|default('there') }},</p>
+
+  <p>You're invited to join <strong>Copain</strong>. Please set your password to activate your account:</p>
+
+  <a class="btn" href="{{ setupUrl }}">Set Your Password</a>
+
+  <p>This link will expire on {{ expiresAt|date('F j, Y \\a\\t g:i A') }}.</p>
+
+  <p>If you didn’t expect this email, you can safely ignore it.</p>
+{% endblock %}

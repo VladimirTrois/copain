@@ -5,7 +5,7 @@
 namespace App\Controller\Admin;
 
 use App\Repository\UserRepository;
-use App\Service\UserInvitationManager;
+use App\Service\User\UserInvitationService;
 use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +25,7 @@ class UserController extends AbstractController
         private UserManager $userManager,
         private UserRepository $userRepository,
         private SerializerInterface $serializer,
-        private UserInvitationManager $userInvitationManager,
+        private UserInvitationService $userInvitationService,
     ) {
     }
 
@@ -55,7 +55,7 @@ class UserController extends AbstractController
         $user = $this->userManager->createFromJson($request->getContent());
 
         // 2. Send invitation email with password setup token
-        $this->userInvitationManager->sendInvitation($user);
+        $this->userInvitationService->sendPasswordSetUpInvitation($user);
 
         // 3. Return success
         return $this->json($user, Response::HTTP_CREATED, [], ['groups' => ['user:read']]);
