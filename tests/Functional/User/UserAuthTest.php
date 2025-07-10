@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class UserAuthTest extends BaseTestCase
 {
-    public function testUserCanLoginWithCorrectCredentials(): void
+    public function testLoginSucceedsWithValidCredentials(): void
     {
         $client = static::createClient();
 
@@ -42,7 +42,7 @@ final class UserAuthTest extends BaseTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testUserCanRefreshJwtUsingValidRefreshToken()
+    public function testRefreshSucceedsWithValidToken()
     {
         $client = static::createClient();
 
