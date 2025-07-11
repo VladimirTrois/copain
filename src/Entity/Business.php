@@ -44,10 +44,17 @@ class Business
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'business', orphanRemoval: true)]
     private Collection $articles;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'business', orphanRemoval: true)]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->businessUsers = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -160,5 +167,35 @@ class Business
         }
 
         return [];
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setBusiness($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getBusiness() === $this) {
+                $order->setBusiness(null);
+            }
+        }
+
+        return $this;
     }
 }
