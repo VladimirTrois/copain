@@ -50,7 +50,7 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
                     BusinessUserFactory::createOne([
                         'user' => $employee,
                         'business' => $business,
-                        'responsibilities' => ['employee'],
+                        'responsibilities' => [Responsibility::SELLER],
                     ]);
                 }
             }

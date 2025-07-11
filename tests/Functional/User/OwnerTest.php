@@ -65,7 +65,7 @@ final class OwnerTest extends BaseTestCase
 
         $payload = [
             'email' => $newUser->getEmail(),
-            'responsibilities' => ['employee'],
+            'responsibilities' => [Responsibility::SELLER->value],
         ];
 
         $client->request('POST', '/api/businesses/'.$business->getId().'/users', [],

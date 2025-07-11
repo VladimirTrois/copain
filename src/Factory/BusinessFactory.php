@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Entity\Business;
 use App\Entity\User;
+use App\Enum\Responsibility;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -47,7 +48,7 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         ;
     }
 
-    public static function addBusinessToUser(User $user, array $responsibilities = ['owner']): object
+    public static function addBusinessToUser(User $user, array $responsibilities = [Responsibility::OWNER]): object
     {
         $business = BusinessFactory::createOne();
         BusinessUserFactory::createOne([
@@ -59,7 +60,7 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return $business;
     }
 
-    public static function addBusinessesToUser(User $user, int $count, array $responsibilities = ['owner']): array
+    public static function addBusinessesToUser(User $user, int $count, array $responsibilities = [Responsibility::OWNER]): array
     {
         $businesses = BusinessFactory::createMany($count);
         foreach ($businesses as $business) {

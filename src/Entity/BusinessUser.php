@@ -6,6 +6,7 @@ use App\Enum\Responsibility;
 use App\Repository\BusinessUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BusinessUserRepository::class)]
 #[ORM\Table(name: 'business_user')]
@@ -30,6 +31,7 @@ class BusinessUser
 
     #[ORM\Column(type: 'json')]
     #[Groups(['user:read', 'user:write', 'business:read'])]
+    #[Assert\Choice(callback: [Responsibility::class, 'cases'], message: 'Invalid responsibility.')]
     private array $responsibilities = [];
 
     public function __construct()
@@ -65,20 +67,17 @@ class BusinessUser
         return $this;
     }
 
-    /**
-     * @return Responsibility[]
-     */
     public function getResponsibilities(): array
     {
-        return $this->responsibilities;
+        return array_map(fn (string $value) => Responsibility::from($value), $this->responsibilities);
     }
 
-    /**
-     * @param Responsibility[] $responsibilities
-     */
-    public function setResponsibilities(array $responsibilities): static
+    public function setResponsibilities(array $responsibilities): self
     {
-        $this->responsibilities = $responsibilities;
+        $this->responsibilities = array_map(
+            fn ($r) => $r instanceof Responsibility ? $r->value : Responsibility::from($r)->value,
+            $responsibilities
+        );
 
         return $this;
     }
