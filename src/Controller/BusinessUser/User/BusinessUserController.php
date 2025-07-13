@@ -1,13 +1,11 @@
 <?php
 
-// src/Controller/BusinessUserController.php
+namespace App\Controller\BusinessUser\User;
 
-namespace App\Controller\Business;
-
+use App\Mapper\UserMapper;
 use App\Repository\BusinessRepository;
 use App\Repository\UserRepository;
 use App\Service\BusinessService;
-use App\Service\DtoMapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

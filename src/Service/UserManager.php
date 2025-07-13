@@ -6,8 +6,8 @@ namespace App\Service;
 
 use App\Dto\User\UserShowDto;
 use App\Entity\User;
+use App\Mapper\UserMapper;
 use App\Repository\UserRepository;
-use App\Service\DtoMapper\UserMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

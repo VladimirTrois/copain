@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller\BusinessUser;
 
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,14 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api')]
-class UserBusinessController extends AbstractController
+class BusinessController extends AbstractController
 {
     public function __construct(
         private UserRepository $userRepository,
     ) {
     }
 
-    // For admin or user fetching businesses for a specific user
     #[Route('/users/{id}/businesses', name: 'api_user_businesses', methods: ['GET'])]
     public function listUserBusinesses(int $id): JsonResponse
     {

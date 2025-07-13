@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Article;
+namespace App\Controller\BusinessUser\Article;
 
 use App\Entity\Article;
 use App\Service\ArticleService;

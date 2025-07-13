@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Dto\BusinessUser;
+namespace App\Dto\User\BusinessUser;
 
-use App\Dto\Business\BusinessShowDto;
+use App\Dto\User\Business\BusinessShowDto;
 
 final class BusinessUserDto
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\DtoMapper;
+namespace App\Mapper;
 
 use App\Dto\User\UserListDto;
 use App\Dto\User\UserShowDto;

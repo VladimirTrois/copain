@@ -23,7 +23,6 @@ class CustomerLoginTest extends BaseTestCase
         $customer = CustomerFactory::createOne();
 
         $magicLinkUrl = $this->sendLoginRequestAndGetMagicLink($customer->getEmail());
-        dump($magicLinkUrl);
         $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
 
         $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl);

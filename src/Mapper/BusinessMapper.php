@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\DtoMapper;
+namespace App\Mapper;
 
-use App\Dto\Business\BusinessShowDto;
+use App\Dto\User\Business\BusinessShowDto;
 use App\Entity\Business;
 
 final class BusinessMapper

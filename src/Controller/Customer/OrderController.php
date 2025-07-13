@@ -2,12 +2,9 @@
 
 namespace App\Controller\Customer;
 
-use App\Entity\Order;
-use App\Service\Customer\OrderService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Customer\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -25,7 +22,7 @@ class OrderController extends AbstractController
     {
         $orders = $this->orderService->listCustomerOrders($this->getUser());
 
-        return $this->json($orders, Response::HTTP_OK, [], ['groups' => 'order:read']);
+        return $this->json($orders, Response::HTTP_OK, []);
     }
 
     // #[Route('', name: 'create', methods: ['POST'])]

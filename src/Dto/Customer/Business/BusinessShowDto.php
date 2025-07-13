@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Dto\Business;
+namespace App\Dto\Customer\Business;
 
 final class BusinessShowDto
 {
     public function __construct(
-        public int $id,
         public string $name,
     ) {
     }
