@@ -16,7 +16,7 @@ class TokenController extends AbstractController
     }
 
     #[Route('/api/customer/login/complete', name: 'customer_login_complete', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('ROLE_CUSTOMER')]
     public function getToken(): JsonResponse
     {
         $user = $this->getUser();

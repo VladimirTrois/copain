@@ -5,10 +5,6 @@ controllers:
     type: attribute
 
 # api/config/routes.yaml
-login:
-    path: /api/login
-    methods: ["POST"]
-
 gesdinet_jwt_refresh_token:
     path: /api/token/refresh
     methods: ["POST"]
@@ -17,10 +13,10 @@ customer_gesdinet_jwt_refresh_token:
     path: /api/customer/token/refresh
     methods: ["POST"]
 
-api_customer:
-    path: /api/customer
-    methods: ["POST"]
-
-login_magic_link_check:
+customer_login_check:
     path: /api/customer/login
     methods: ["GET"]
+
+user_login:
+    path: /api/login
+    methods: ["POST"]

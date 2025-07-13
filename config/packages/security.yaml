@@ -19,23 +19,23 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        customer_magic_login:
-            pattern:  ^/api/customer/login
-            provider: customer_provider
-            stateless: true
-            login_link:
-                check_route: login_magic_link_check
-                signature_properties: [email]
-                max_uses: 1
-                lifetime: 600
-                success_handler: App\Security\Authentication\MagicLinkSuccessHandler
-
         customer_token_refresh:
             pattern:  ^/api/customer/token/refresh
             stateless: true
             provider: customer_provider
             refresh_jwt:
                 check_path: customer_gesdinet_jwt_refresh_token
+
+        customer_login:
+            pattern:  ^/api/customer/login
+            provider: customer_provider
+            stateless: true
+            login_link:
+                check_route: customer_login_check
+                signature_properties: [email]
+                max_uses: 1
+                lifetime: 600
+                success_handler: App\Security\Authentication\CustomerLoginSuccessHandler
 
         api_token_refresh:
             pattern:  ^/api/token/refresh
@@ -44,11 +44,11 @@ security:
             refresh_jwt:
                 check_path: gesdinet_jwt_refresh_token
 
-        login:
+        api_login:
             pattern: ^/api/login
             stateless: true
             json_login:
-                check_path: /api/login
+                check_path: user_login
                 provider: user_provider
                 username_path: email
                 password_path: password

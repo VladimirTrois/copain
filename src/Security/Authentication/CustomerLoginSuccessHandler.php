@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 
-class MagicLinkSuccessHandler implements AuthenticationSuccessHandlerInterface
+class CustomerLoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
     public function __construct(
         private JWTTokenManagerInterface $jwtManager,
