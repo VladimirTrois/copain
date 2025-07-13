@@ -8,9 +8,10 @@ use App\Factory\OrderFactory;
 use App\Factory\OrderItemFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class OrderFixtures extends Fixture implements FixtureGroupInterface
+class OrderFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -23,13 +24,17 @@ class OrderFixtures extends Fixture implements FixtureGroupInterface
             $businessCount = rand(1, count($businesses));
             for ($i = 0; $i < $businessCount; ++$i) {
                 $business = $businesses[$i];
-                // Then for each business, create an order for that business.
+                // Create an order for that business.
                 $order = OrderFactory::createOne(['customer' => $customer, 'business' => $business]);
-                // Then add to that order a random number of OrderItems with a random article from that business
-                $articleCount = $business->getArticles()->count();
-                $numberOfItems = rand(1, $articleCount);
-                for ($j = 0; $j < $numberOfItems; ++$j) {
-                    OrderItemFactory::createOne(['order' => $order, 'article' => $business->getArticles()->get($j)]);
+                // Add to that order a random number of articles from that business
+                $articles = $business->getArticles()->toArray();
+                if (empty($articles)) {
+                    continue;
+                }
+                $selectedArticles = array_rand($articles, rand(2, count($articles)));
+                foreach ($selectedArticles as $articleId) {
+                    $article = $articles[$articleId];
+                    OrderItemFactory::createOne(['order' => $order, 'article' => $article]);
                 }
             }
         }
@@ -39,5 +44,13 @@ class OrderFixtures extends Fixture implements FixtureGroupInterface
     public static function getGroups(): array
     {
         return ['all', 'order'];
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            BusinessFixtures::class,
+            CustomerFixtures::class,
+        ];
     }
 }
