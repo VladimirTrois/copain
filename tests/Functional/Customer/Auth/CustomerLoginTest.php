@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Customer;
+namespace App\Tests\Functional\Customer\Auth;
 
 use App\Factory\CustomerFactory;
 use App\Tests\BaseTestCase;
@@ -73,7 +73,7 @@ class CustomerLoginTest extends BaseTestCase
 
         $this->client->request(
             'POST',
-            '/api/customer/login',
+            '/api/customers/login',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

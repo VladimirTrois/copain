@@ -15,7 +15,7 @@ class TokenController extends AbstractController
     ) {
     }
 
-    #[Route('/api/customer/login/complete', name: 'customer_login_complete', methods: ['GET'])]
+    #[Route('/api/customers/login/complete', name: 'customer_login_complete', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER')]
     public function getToken(): JsonResponse
     {

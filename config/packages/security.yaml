@@ -20,14 +20,14 @@ security:
             security: false
 
         customer_token_refresh:
-            pattern:  ^/api/customer/token/refresh
+            pattern:  ^/api/customers/token/refresh
             stateless: true
             provider: customer_provider
             refresh_jwt:
                 check_path: customer_gesdinet_jwt_refresh_token
 
         customer_login:
-            pattern:  ^/api/customer/login
+            pattern:  ^/api/customers/login
             provider: customer_provider
             stateless: true
             login_link:
@@ -76,8 +76,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/customer/(login|token/refresh), roles: PUBLIC_ACCESS }
-        - { path: ^/api/customer, roles: ROLE_CUSTOMER }
+        - { path: ^/api/customers/(login|token/refresh), roles: PUBLIC_ACCESS }
+        - { path: ^/api/customers, roles: ROLE_CUSTOMER }
         - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }

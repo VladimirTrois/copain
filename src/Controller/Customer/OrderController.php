@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/customer/orders', name: 'api_customer_orders_')]
+#[Route('/api/customers/orders', name: 'api_customers_orders_')]
 #[IsGranted('ROLE_CUSTOMER')]
 class OrderController extends AbstractController
 {

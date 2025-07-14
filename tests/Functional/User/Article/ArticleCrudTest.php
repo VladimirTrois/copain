@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Article;
+namespace App\Tests\Functional\User\Article;
 
 use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;

@@ -22,7 +22,7 @@ class AuthController extends AbstractController
     ) {
     }
 
-    #[Route('/api/customer/login', name: 'customer_send_magic_link', methods: ['POST'])]
+    #[Route('/api/customers/login', name: 'customer_send_magic_link', methods: ['POST'])]
     public function customerRequestLogin(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

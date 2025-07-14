@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Customer;
+namespace App\Tests\Functional\Customer\Auth;
 
 use App\Entity\RefreshToken;
 use App\Factory\CustomerFactory;
@@ -48,7 +48,7 @@ class CustomerRefreshTokenTest extends BaseTestCase
      */
     public function testInvalidRefreshTokenIsRejected(): void
     {
-        $this->client->request('POST', '/api/customer/token/refresh', [], [], [
+        $this->client->request('POST', '/api/customers/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
             'refresh_token' => 'invalid-token',
@@ -62,7 +62,7 @@ class CustomerRefreshTokenTest extends BaseTestCase
      */
     private function verifyRefreshTokenCanRefreshJwt(string $refreshToken): void
     {
-        $this->client->request('POST', '/api/customer/token/refresh', [], [], [
+        $this->client->request('POST', '/api/customers/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
             'refresh_token' => $refreshToken,

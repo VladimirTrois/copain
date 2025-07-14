@@ -31,10 +31,18 @@ final class OrderFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
+        $pickUpDate = self::faker()->dateTimeBetween('-6 months', '+6 months');
+        $isValidatedByCustomer = self::faker()->boolean(80);
+        $isValidatedByBusiness = $isValidatedByCustomer && self::faker()->boolean(80);
+        $isPickedUp = $isValidatedByBusiness && $pickUpDate < new \DateTime();
+
         return [
             'business' => BusinessFactory::new(),
             'customer' => CustomerFactory::new(),
-            'pickUpDate' => self::faker()->dateTime(),
+            'pickUpDate' => $pickUpDate,
+            'isValidatedByCustomer' => $isValidatedByCustomer,
+            'isValidatedByBusiness' => $isValidatedByBusiness,
+            'isPickedUp' => $isPickedUp,
         ];
     }
 

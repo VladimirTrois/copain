@@ -10,11 +10,11 @@ gesdinet_jwt_refresh_token:
     methods: ["POST"]
 
 customer_gesdinet_jwt_refresh_token:
-    path: /api/customer/token/refresh
+    path: /api/customers/token/refresh
     methods: ["POST"]
 
 customer_login_check:
-    path: /api/customer/login
+    path: /api/customers/login
     methods: ["GET"]
 
 user_login:
