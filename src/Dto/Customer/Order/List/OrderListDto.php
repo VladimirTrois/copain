@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Dto\Customer\Order;
+namespace App\Dto\Customer\Order\List;
 
 use App\Dto\Customer\Business\BusinessListDto;
 
-final class OrderShowDto
+final class OrderListDto
 {
     public function __construct(
+        public int $id,
         public string $createdAt,
         public string $pickUpDate,
         public ?bool $isPickedUp,

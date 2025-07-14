@@ -26,4 +26,20 @@ class OrderTest extends BaseTestCase
         $this->assertIsArray($data);
         $this->assertCount(self::NUMBERSOFORDERS, $data);
     }
+
+    public function testShowOrder(): void
+    {
+        $client = $this->createClientAsCustomer();
+
+        $customer = CustomerFactory::find(['email' => self::EMAIL_CUSTOMER]);
+
+        $order = OrderFactory::createOne(['customer' => $customer]);
+
+        $client->request('GET', '/api/customers/orders/'.$order->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertIsArray($data);
+    }
 }

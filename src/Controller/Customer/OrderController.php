@@ -20,9 +20,17 @@ class OrderController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        $orders = $this->orderService->listCustomerOrders($this->getUser());
+        $orders = $this->orderService->listOrdersByCustomer($this->getUser());
 
         return $this->json($orders, Response::HTTP_OK, []);
+    }
+
+    #[Route('/{orderId}', name: 'show', methods: ['GET'])]
+    public function show(int $orderId): JsonResponse
+    {
+        $order = $this->orderService->findOrder($orderId, $this->getUser());
+
+        return $this->json($order, Response::HTTP_OK, []);
     }
 
     // #[Route('', name: 'create', methods: ['POST'])]

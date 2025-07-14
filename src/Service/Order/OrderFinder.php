@@ -14,12 +14,12 @@ class OrderFinder
 
     public function find(int|string $id): Order
     {
-        $business = $this->repo->find($id);
-        if (!$business) {
+        $order = $this->repo->find($id);
+        if (!$order) {
             throw new NotFoundHttpException('Order not found.');
         }
 
-        return $business;
+        return $order;
     }
 
     public function listByCustomer(int $customerId): array
