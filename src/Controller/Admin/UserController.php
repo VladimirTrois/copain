@@ -6,7 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Repository\UserRepository;
 use App\Service\User\UserInvitationService;
-use App\Service\UserManager;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,7 +22,7 @@ class UserController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserManager $userManager,
+        private UserService $userService,
         private UserRepository $userRepository,
         private SerializerInterface $serializer,
         private UserInvitationService $userInvitationService,
@@ -32,7 +32,7 @@ class UserController extends AbstractController
     #[Route('', name: 'user_list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        $usersDto = $this->userManager->getAllUsersListDto();
+        $usersDto = $this->userService->getAllUsersListDto();
 
         return $this->json($usersDto, Response::HTTP_OK);
     }
@@ -40,7 +40,7 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(string $id): JsonResponse
     {
-        $userDto = $this->userManager->getUserShowDto($id);
+        $userDto = $this->userService->getUserShowDto($id);
         if (!$userDto) {
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
@@ -52,7 +52,7 @@ class UserController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         // 1. Create the user (but no password yet)
-        $user = $this->userManager->createFromJson($request->getContent());
+        $user = $this->userService->createFromJson($request->getContent());
 
         // 2. Send invitation email with password setup token
         $this->userInvitationService->sendPasswordSetUpInvitation($user);
@@ -69,7 +69,7 @@ class UserController extends AbstractController
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $updatedUser = $this->userManager->updateFromJson($user, $request->getContent());
+        $updatedUser = $this->userService->updateFromJson($user, $request->getContent());
 
         return $this->json($updatedUser, 200, [], ['groups' => ['user:read']]);
     }
@@ -82,7 +82,7 @@ class UserController extends AbstractController
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $this->userManager->delete($user);
+        $this->userService->delete($user);
 
         // 204 No Content is appropriate for successful deletes without body
         return $this->json(null, Response::HTTP_NO_CONTENT);

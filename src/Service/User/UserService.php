@@ -2,7 +2,7 @@
 
 // src/Service/UserManager.php
 
-namespace App\Service;
+namespace App\Service\User;
 
 use App\Dto\User\UserShowDto;
 use App\Entity\User;
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
-class UserManager
+class UserService
 {
     public function __construct(
         private EntityManagerInterface $em,

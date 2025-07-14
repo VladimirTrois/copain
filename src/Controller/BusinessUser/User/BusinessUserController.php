@@ -5,7 +5,7 @@ namespace App\Controller\BusinessUser\User;
 use App\Mapper\UserMapper;
 use App\Repository\BusinessRepository;
 use App\Repository\UserRepository;
-use App\Service\BusinessService;
+use App\Service\Business\BusinessService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

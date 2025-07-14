@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Service\Customer\Order;
+namespace App\Service\Order;
 
 use App\Dto\Customer\Order\Show\OrderShowDto;
 use App\Entity\Customer;
 use App\Mapper\Customer\Order\OrderDtoMapper;
-use App\Service\Order\OrderFinder;
 
 class OrderService
 {

@@ -5,7 +5,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Business;
-use App\Service\BusinessService;
+use App\Service\Business\BusinessService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

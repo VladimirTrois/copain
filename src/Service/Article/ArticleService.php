@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Article;
 
 use App\Entity\Article;
 use App\Entity\Business;
 use App\Repository\ArticleRepository;
 use App\Repository\BusinessRepository;
-use App\Service\Article\ArticleFinder;
-use App\Service\Article\ArticlePersister;
 use App\Service\Business\BusinessAccessGuard;
 
 class ArticleService

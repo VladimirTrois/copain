@@ -2,7 +2,7 @@
 
 namespace App\Controller\Customer;
 
-use App\Service\Customer\Order\OrderService;
+use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

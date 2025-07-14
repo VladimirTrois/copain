@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Business;
 
 use App\Entity\Business;
 use App\Entity\User;
-use App\Service\Business\BusinessAccessGuard;
-use App\Service\Business\BusinessFinder;
-use App\Service\Business\BusinessPersister;
+use App\Service\BusinessUser\BusinessUserService;
 
 class BusinessService
 {

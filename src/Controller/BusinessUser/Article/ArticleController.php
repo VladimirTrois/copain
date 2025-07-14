@@ -3,7 +3,7 @@
 namespace App\Controller\BusinessUser\Article;
 
 use App\Entity\Article;
-use App\Service\ArticleService;
+use App\Service\Article\ArticleService;
 use App\Service\Business\BusinessAccessGuard;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
