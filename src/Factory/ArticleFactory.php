@@ -33,6 +33,7 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     {
         return [
             'business' => BusinessFactory::new(),
+            'price' => self::faker()->randomNumber(2),
             'isAvailable' => self::faker()->boolean(),
             'name' => self::faker()->words(3, true),
             'rank' => self::faker()->randomNumber(2),

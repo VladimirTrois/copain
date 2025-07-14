@@ -24,26 +24,33 @@ class OrderFixtures extends Fixture implements FixtureGroupInterface, DependentF
             $businessCount = rand(1, count($businesses));
             for ($i = 0; $i < $businessCount; ++$i) {
                 $business = $businesses[$i];
+
                 // Create an order for that business.
                 $order = OrderFactory::createOne(['customer' => $customer, 'business' => $business]);
+
                 // Add to that order a random number of articles from that business
                 $articles = $business->getArticles()->toArray();
-                if (empty($articles)) {
+                $articleCount = count($articles);
+
+                if ($articleCount < 1) {
                     continue;
                 }
-                $selectedArticles = array_rand($articles, rand(2, count($articles)));
-                foreach ($selectedArticles as $articleId) {
-                    $article = $articles[$articleId];
+
+                $randomCount = rand(1, $articleCount);
+                $selectedKeys = (array) array_rand($articles, $randomCount);
+
+                foreach ($selectedKeys as $key) {
+                    $article = $articles[$key];
                     OrderItemFactory::createOne(['order' => $order, 'article' => $article]);
                 }
             }
+            $manager->flush();
         }
-        $manager->flush();
     }
 
     public static function getGroups(): array
     {
-        return ['all', 'order'];
+        return ['all_after_core', 'order'];
     }
 
     public function getDependencies(): array
@@ -51,6 +58,7 @@ class OrderFixtures extends Fixture implements FixtureGroupInterface, DependentF
         return [
             BusinessFixtures::class,
             CustomerFixtures::class,
+            ArticleFixtures::class,
         ];
     }
 }
