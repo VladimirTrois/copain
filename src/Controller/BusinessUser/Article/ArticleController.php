@@ -10,9 +10,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/businesses/{businessId}/articles')]
+#[IsGranted('ROLE_USER')]
 class ArticleController extends AbstractController
 {
     public function __construct(
@@ -25,7 +27,8 @@ class ArticleController extends AbstractController
     #[Route('', name: 'business_article_list', methods: ['GET'])]
     public function list(int $businessId): JsonResponse
     {
-        $articles = $this->articleService->publicListByBusinessId($businessId);
+        $business = $this->businessAccessGuard->getBusinessIfUserBelongs($businessId, $this->getUser());
+        $articles = $this->articleService->findBy(['business' => $business]);
 
         return $this->json($articles, Response::HTTP_OK, [], ['groups' => ['article:read']]);
     }
@@ -33,7 +36,8 @@ class ArticleController extends AbstractController
     #[Route('/{id}', name: 'business_article_show', methods: ['GET'])]
     public function show(int $businessId, int $id): JsonResponse
     {
-        $article = $this->articleService->publicFindOneByIdAndBusinessId($id, $businessId);
+        $business = $this->businessAccessGuard->getBusinessIfUserBelongs($businessId, $this->getUser());
+        $article = $this->articleService->findOneBy(['id' => $id, 'business' => $business]);
 
         return $this->json($article, Response::HTTP_OK, [], ['groups' => ['article:read']]);
     }
@@ -57,7 +61,7 @@ class ArticleController extends AbstractController
     {
         $user = $this->getUser();
         $business = $this->businessAccessGuard->getBusinessIfUserBelongs($businessId, $user);
-        $article = $this->articleService->findArticle(['id' => $id]);
+        $article = $this->articleService->find($id);
 
         $this->serializer->deserialize($request->getContent(), Article::class, 'json', [
             'object_to_populate' => $article,

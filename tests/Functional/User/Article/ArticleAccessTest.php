@@ -4,6 +4,8 @@ namespace App\Tests\Functional\User\Article;
 
 use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;
+use App\Factory\BusinessUserFactory;
+use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,11 +13,13 @@ class ArticleAccessTest extends BaseTestCase
 {
     public const NUMBERSOFARTICLES = 10;
 
-    public function testListArticlesFromBusiness(): void
+    public function testUserCanListArticlesForTheirBusiness(): void
     {
         $client = $this->createClientAsUser();
 
+        $user = UserFactory::find(['email' => self::EMAIL_USER]);
         $business = BusinessFactory::createOne();
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
         ArticleFactory::createMany(self::NUMBERSOFARTICLES, ['business' => $business]);
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/articles');
@@ -27,11 +31,13 @@ class ArticleAccessTest extends BaseTestCase
         $this->assertGreaterThanOrEqual(self::NUMBERSOFARTICLES, count($data));
     }
 
-    public function testShow(): void
+    public function testUserCanShowArticleOfTheirBusiness(): void
     {
         $client = $this->createClientAsUser();
 
+        $user = UserFactory::find(['email' => self::EMAIL_USER]);
         $business = BusinessFactory::createOne();
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
         $article = ArticleFactory::createOne(['business' => $business]);
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/articles/'.$article->getId());
@@ -41,7 +47,7 @@ class ArticleAccessTest extends BaseTestCase
         $this->assertSame($article->getName(), $data['name']);
     }
 
-    public function testListArticlesFromBusinessInexistent(): void
+    public function testListArticlesFromNonexistentBusinessReturnsNotFound(): void
     {
         $client = $this->createClientAsUser();
 
@@ -50,11 +56,13 @@ class ArticleAccessTest extends BaseTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testShowArticleInexistent(): void
+    public function testShowNonexistentArticleReturnsNotFound(): void
     {
         $client = $this->createClientAsUser();
 
+        $user = UserFactory::find(['email' => self::EMAIL_USER]);
         $business = BusinessFactory::createOne();
+        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
 
         $client->request('GET', '/api/businesses/'.$business->getId().'/articles/00');
 

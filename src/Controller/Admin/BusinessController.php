@@ -35,7 +35,7 @@ class BusinessController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(string $id): JsonResponse
     {
-        $business = $this->businessService->findBusiness($id);
+        $business = $this->businessService->find($id);
 
         return $this->json($business, Response::HTTP_OK, [], ['groups' => ['business:read']]);
     }
@@ -55,7 +55,7 @@ class BusinessController extends AbstractController
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(string $id, Request $request): JsonResponse
     {
-        $business = $this->businessService->findBusiness($id);
+        $business = $this->businessService->find($id);
 
         // Deserialize into existing entity (Symfony will hydrate object)
         $this->serializer->deserialize(
@@ -76,7 +76,7 @@ class BusinessController extends AbstractController
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(string $id): JsonResponse
     {
-        $business = $this->businessService->findBusiness($id);
+        $business = $this->businessService->find($id);
 
         $this->businessService->delete($business);
 

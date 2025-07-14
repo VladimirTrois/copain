@@ -4,32 +4,26 @@ namespace App\Service\Article;
 
 use App\Entity\Article;
 use App\Entity\Business;
-use App\Repository\ArticleRepository;
-use App\Repository\BusinessRepository;
-use App\Service\Business\BusinessAccessGuard;
 
 class ArticleService
 {
     public function __construct(
-        private ArticleRepository $articleRepository,
         private ArticlePersister $articlePersister,
         private ArticleFinder $articleFinder,
-        private BusinessAccessGuard $businessAccessGuard,
-        private BusinessRepository $businessRepository,
     ) {
     }
 
-    public function publicListByBusinessId(int $businessId): array
+    public function find(int|string $id): Article
     {
-        return $this->articleFinder->listByBusinessId($businessId);
+        return $this->articleFinder->find($id);
     }
 
-    public function publicFindOneByIdAndBusinessId(int $articleId, int $businessId): ?Article
+    public function findBy(array $criteria): array
     {
-        return $this->articleFinder->findOneByIdAndBusinessId($articleId, $businessId);
+        return $this->articleFinder->findBy($criteria);
     }
 
-    public function findArticle(array $criteria): ?Article
+    public function findOneBy(array $criteria): ?Article
     {
         return $this->articleFinder->findOneBy($criteria);
     }

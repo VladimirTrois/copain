@@ -12,7 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/api/businesses/{businessId}/users', name: 'business_users_')]
+#[IsGranted('ROLE_USER')]
 class BusinessUserController extends AbstractController
 {
     public function __construct(
@@ -24,7 +27,7 @@ class BusinessUserController extends AbstractController
     ) {
     }
 
-    #[Route('/api/businesses/{businessId}/users', name: 'business_users_list', methods: ['GET'])]
+    #[Route('', name: 'list', methods: ['GET'])]
     public function listBusinessUsers(int $businessId): JsonResponse
     {
         $user = $this->getUser();
@@ -40,7 +43,7 @@ class BusinessUserController extends AbstractController
         return $this->json($usersDto);
     }
 
-    #[Route('/api/businesses/{businessId}/users', name: 'business_users_add', methods: ['POST'])]
+    #[Route('', name: 'add', methods: ['POST'])]
     public function addUserToBusiness(int $businessId, Request $request): JsonResponse
     {
         $currentUser = $this->getUser();

@@ -5,6 +5,7 @@ namespace App\Controller\Customer;
 use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -39,13 +40,9 @@ class OrderController extends AbstractController
     //     $user = $this->getUser();
     //     $data = json_decode($request->getContent(), true);
 
-    //     try {
-    //         $order = $this->orderService->createOrder($user, $data);
-    //     } catch (\Throwable $e) {
-    //         return $this->json(['error' => $e->getMessage()], 400);
-    //     }
+    //     $order = $this->orderService->createOrder($user, $data);
 
-    //     return $this->json($order, 201, [], ['groups' => 'order:read']);
+    //     return $this->json($order, Response::HTTP_CREATED, []);
     // }
 
     // #[Route('/{id}', name: 'api_orders_update', methods: ['PUT', 'PATCH'])]

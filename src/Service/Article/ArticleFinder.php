@@ -4,7 +4,6 @@ namespace App\Service\Article;
 
 use App\Entity\Article;
 use App\Exception\ArticleNotFoundException;
-use App\Exception\BusinessNotFoundException;
 use App\Repository\ArticleRepository;
 use App\Repository\BusinessRepository;
 
@@ -16,33 +15,24 @@ class ArticleFinder
     ) {
     }
 
-    public function listByBusinessId(int $businessId): array
+    public function find(int $id): Article
     {
-        $business = $this->businessRepository->find($businessId);
-        if (!$business) {
-            throw new BusinessNotFoundException();
-        }
-
-        return $this->articleRepository->findBy(['business' => $business]);
-    }
-
-    public function findOneByIdAndBusinessId(int $articleId, int $businessId): ?Article
-    {
-        $business = $this->businessRepository->find($businessId);
-        if (!$business) {
-            throw new BusinessNotFoundException();
-        }
-
-        $article = $this->articleRepository->findOneBy([
-            'id' => $articleId,
-            'business' => $business,
-        ]);
-
+        $article = $this->articleRepository->find($id);
         if (!$article) {
             throw new ArticleNotFoundException();
         }
 
         return $article;
+    }
+
+    public function findBy(array $criteria): array
+    {
+        $articles = $this->articleRepository->findBy($criteria);
+        if (!$articles) {
+            throw new ArticleNotFoundException();
+        }
+
+        return $articles;
     }
 
     public function findOneBy(array $criteria): ?Article

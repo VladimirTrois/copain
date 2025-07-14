@@ -21,7 +21,17 @@ class BusinessService
         return $this->businessFinder->listAll();
     }
 
-    public function findBusiness(int|string $id): Business
+    public function findOneBy(array $criteria): Business
+    {
+        return $this->businessFinder->findOneBy($criteria);
+    }
+
+    public function findBy(array $criteria): array
+    {
+        return $this->businessFinder->findBy($criteria);
+    }
+
+    public function find(int|string $id): Business
     {
         return $this->businessFinder->find($id);
     }
