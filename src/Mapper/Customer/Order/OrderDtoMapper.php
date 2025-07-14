@@ -35,7 +35,6 @@ final class OrderDtoMapper
     {
         $orderItems = array_map(
             fn ($item) => new OrderItemDto(
-                id: $item->getId(),
                 quantity: $item->getQuantity(),
                 article: new OrderItemArticleDto(
                     name: $item->getArticle()->getName(),

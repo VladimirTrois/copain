@@ -14,7 +14,18 @@ class OrderFinder
 
     public function find(int|string $id): Order
     {
-        $order = $this->repo->find($id);
+        $order = $this->repo->createQueryBuilder('o')
+            ->leftJoin('o.orderItems', 'oi')
+            ->addSelect('oi')
+            ->leftJoin('oi.article', 'a')
+            ->addSelect('a')
+            ->leftJoin('o.business', 'b')
+            ->addSelect('b')
+            ->where('o.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
         if (!$order) {
             throw new NotFoundHttpException('Order not found.');
         }

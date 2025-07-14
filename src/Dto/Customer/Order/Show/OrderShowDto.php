@@ -9,8 +9,8 @@ final class OrderShowDto
         public readonly string $pickUpDate,
         public readonly ?bool $isPickedUp,
         public readonly ?bool $isValidatedByBusiness,
-        /** @var OrderItemDto[] */
         public readonly BusinessDto $business,
+        /** @var OrderItemDto[] */
         public readonly array $orderItems,
     ) {
     }
