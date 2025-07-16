@@ -56,10 +56,16 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
         customer_api:
-            pattern: ^/api/customer
+            pattern: ^/api/customers
             stateless: true
             jwt: ~
-            provider: customer_provider    
+            provider: customer_provider  
+            login_link:
+                check_route: customer_login_check
+                signature_properties: [email]
+                max_uses: 1
+                lifetime: 600
+                success_handler: App\Security\Authentication\CustomerLoginSuccessHandler  
 
         api:
             pattern:   ^/api
@@ -77,7 +83,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/public, roles: PUBLIC_ACCESS }
+        - { path: ^/api/customers/public/orders, roles: PUBLIC_ACCESS }
         - { path: ^/api/customers/(login|token/refresh), roles: PUBLIC_ACCESS }
+        - { path: ^/api/customers/(register|orders), roles: PUBLIC_ACCESS }
         - { path: ^/api/customers, roles: ROLE_CUSTOMER }
         - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }

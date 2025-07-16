@@ -2,9 +2,9 @@
 
 namespace App\Controller\Customer;
 
-use App\Entity\Customer;
+use App\Service\Customer\CustomerMagicLink;
+use App\Service\Customer\CustomerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +19,12 @@ class AuthController extends AbstractController
     private bool $isDev;
 
     public function __construct(
-        private readonly LoginLinkHandlerInterface $loginLinkHandler,
-        private readonly MailerInterface $mailer,
-        private readonly EntityManagerInterface $entityManager,
+        private LoginLinkHandlerInterface $loginLinkHandler,
+        private MailerInterface $mailer,
+        private EntityManagerInterface $entityManager,
         KernelInterface $kernel,
+        private CustomerMagicLink $customerMagicLink,
+        private CustomerService $customerService,
     ) {
         $this->isDev = 'dev' === $kernel->getEnvironment();
     }
@@ -31,44 +33,18 @@ class AuthController extends AbstractController
     public function customerRequestLogin(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $email = $data['email'] ?? null;
 
+        $email = $data['email'] ?? null;
         if (!$email) {
             throw new BadRequestHttpException('Email is required.');
         }
 
-        $customer = $this->entityManager->getRepository(Customer::class)->findOneBy(['email' => $email]);
-
+        $customer = $this->customerService->findOneBy(['email' => $email]);
         if (!$customer) {
             return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.']);
         }
 
-        // Generate one-time login link
-        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($customer);
-        $url = $loginLinkDetails->getUrl();
-
-        // Remove email, keep other keys as extra query parameters
-        $extraParams = $data;
-        unset($extraParams['email']);
-
-        if (!empty($extraParams)) {
-            $separator = str_contains($url, '?') ? '&' : '?';
-            $url .= $separator.http_build_query($extraParams);
-        }
-
-        $lifetimeInSeconds = 600;
-
-        $emailMessage = (new TemplatedEmail())
-            ->from('no-reply@yourapp.com')
-            ->to($customer->getEmail())
-            ->subject('Your Login Link')
-            ->htmlTemplate('customer_magic_link.html.twig')
-            ->context([
-                'login_link_url' => $url,
-                'expires_in_minutes' => ceil($lifetimeInSeconds / 60),
-            ]);
-
-        $this->mailer->send($emailMessage);
+        $url = $this->customerMagicLink->sendMagicLink($customer, $data);
 
         if ($this->isDev) {
             return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.', 'url' => $url]);
