@@ -10,7 +10,7 @@ class BusinessService
 {
     public function __construct(
         private BusinessUserService $businessUserService,
-        private BusinessAccessGuard $accessGuard,
+        private BusinessAccess $accessGuard,
         private BusinessPersister $businessPersister,
         private BusinessFinder $businessFinder,
     ) {

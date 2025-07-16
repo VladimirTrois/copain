@@ -8,7 +8,7 @@ use App\Repository\BusinessRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class BusinessAccessGuard
+class BusinessAccess
 {
     public function __construct(private BusinessRepository $repo)
     {
