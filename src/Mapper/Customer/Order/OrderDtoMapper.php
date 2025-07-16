@@ -45,6 +45,7 @@ final class OrderDtoMapper
         );
 
         return new OrderShowDto(
+            id: $order->getId(),
             createdAt: $order->getCreatedAt()->format(DATE_ATOM),
             pickUpDate: $order->getPickUpDate()->format(DATE_ATOM),
             isPickedUp: $order->isPickedUp(),
