@@ -63,4 +63,21 @@ class BusinessService
         $business = $this->accessGuard->getBusinessIfOwnedByUser($businessId, $owner);
         $this->businessUserService->addUserToBusiness($business, $email, $roles);
     }
+
+    public function getBusinessesForUser(User $user): array
+    {
+        $businessUsers = $user->getBusinesses();
+
+        $businessesData = [];
+        foreach ($businessUsers as $businessUser) {
+            $business = $businessUser->getBusiness();
+            $businessesData[] = [
+                'id' => $business->getId(),
+                'name' => $business->getName(),
+                'responsibilities' => $businessUser->getResponsibilities(),
+            ];
+        }
+
+        return $businessesData;
+    }
 }

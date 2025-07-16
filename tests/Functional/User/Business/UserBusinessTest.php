@@ -6,7 +6,7 @@ use App\Factory\BusinessFactory;
 use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 
-class UserBusiness extends BaseTestCase
+class UserBusinessTest extends BaseTestCase
 {
     public function testUserCanListHisBusinessesById()
     {
