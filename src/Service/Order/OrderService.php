@@ -21,9 +21,9 @@ class OrderService
         return array_map([$this->orderDtoMapper, 'toListDto'], $orders);
     }
 
-    public function findOrder(int $orderId): OrderShowDto
+    public function findOrderForCustomer(int $orderId, Customer $customer): OrderShowDto
     {
-        $order = $this->orderFinder->find($orderId);
+        $order = $this->orderFinder->findOneBy(['id' => $orderId, 'customer' => $customer->getId()]);
 
         return $this->orderDtoMapper->toShowDto($order);
     }

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/customers/orders', name: 'api_customers_orders_')]
@@ -19,19 +20,19 @@ class OrderController extends AbstractController
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(): JsonResponse
+    public function list(UserInterface $user): JsonResponse
     {
-        $orders = $this->orderService->listOrdersByCustomer($this->getUser());
+        $orders = $this->orderService->listOrdersByCustomer($user);
 
         return $this->json($orders, Response::HTTP_OK, []);
     }
 
     #[Route('/{orderId}', name: 'show', methods: ['GET'])]
-    public function show(int $orderId): JsonResponse
+    public function show(int $orderId, UserInterface $user): JsonResponse
     {
-        $order = $this->orderService->findOrder($orderId, $this->getUser());
+        $orderDTO = $this->orderService->findOrderForCustomer($orderId, $user);
 
-        return $this->json($order, Response::HTTP_OK, []);
+        return $this->json($orderDTO, Response::HTTP_OK, []);
     }
 
     // #[Route('', name: 'create', methods: ['POST'])]

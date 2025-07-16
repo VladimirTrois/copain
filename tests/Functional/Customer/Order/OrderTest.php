@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Customer\Order;
 use App\Factory\CustomerFactory;
 use App\Factory\OrderFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderTest extends BaseTestCase
 {
@@ -41,5 +42,18 @@ class OrderTest extends BaseTestCase
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
+    }
+
+    public function testNotFoundOnGetAnotherCustomerOrder(): void
+    {
+        $client = $this->createClientAsCustomer();
+
+        $customer1 = CustomerFactory::createOne();
+
+        $order = OrderFactory::createOne(['customer' => $customer1]);
+
+        $client->request('GET', '/api/customers/orders/'.$order->getId());
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 }

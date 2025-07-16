@@ -3,8 +3,8 @@
 namespace App\Service\Order;
 
 use App\Entity\Order;
+use App\Exception\OrderNotFoundException;
 use App\Repository\OrderRepository;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderFinder
 {
@@ -27,7 +27,18 @@ class OrderFinder
             ->getOneOrNullResult();
 
         if (!$order) {
-            throw new NotFoundHttpException('Order not found.');
+            throw new OrderNotFoundException();
+        }
+
+        return $order;
+    }
+
+    public function findOneBy(array $criteria): Order
+    {
+        $order = $this->repo->findOneBy($criteria);
+
+        if (!$order) {
+            throw new OrderNotFoundException();
         }
 
         return $order;
