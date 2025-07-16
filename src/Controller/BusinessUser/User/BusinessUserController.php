@@ -3,15 +3,13 @@
 namespace App\Controller\BusinessUser\User;
 
 use App\Mapper\UserMapper;
-use App\Repository\BusinessRepository;
-use App\Repository\UserRepository;
 use App\Service\Business\BusinessService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/businesses/{businessId}/users', name: 'business_users_')]
@@ -19,21 +17,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BusinessUserController extends AbstractController
 {
     public function __construct(
-        private BusinessRepository $businessRepository,
-        private UserRepository $userRepository,
         private BusinessService $businessService,
         private UserMapper $userMapper,
-        private EntityManagerInterface $entityManager,
     ) {
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
-    public function listBusinessUsers(int $businessId): JsonResponse
+    public function listBusinessUsers(int $businessId, UserInterface $user): JsonResponse
     {
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        }
         $businessUsers = $this->businessService->listUsersOfOwnedBusiness($businessId, $user);
         $usersDto = array_map(
             fn ($businessUser) => $this->userMapper->toListDto($businessUser->getUser()),
@@ -44,13 +35,8 @@ class BusinessUserController extends AbstractController
     }
 
     #[Route('', name: 'add', methods: ['POST'])]
-    public function addUserToBusiness(int $businessId, Request $request): JsonResponse
+    public function addUserToBusiness(int $businessId, Request $request, UserInterface $user): JsonResponse
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        }
-
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
         $responsibilities = $data['responsibilities'] ?? [];
@@ -59,7 +45,7 @@ class BusinessUserController extends AbstractController
             return $this->json(['error' => 'Invalid payload'], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $currentUser);
+        $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $user);
 
         return $this->json(['message' => 'User added to business'], Response::HTTP_CREATED);
     }
