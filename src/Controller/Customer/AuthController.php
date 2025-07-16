@@ -9,17 +9,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class AuthController extends AbstractController
 {
+    private bool $isDev;
+
     public function __construct(
         private readonly LoginLinkHandlerInterface $loginLinkHandler,
         private readonly MailerInterface $mailer,
         private readonly EntityManagerInterface $entityManager,
+        KernelInterface $kernel,
     ) {
+        $this->isDev = 'dev' === $kernel->getEnvironment();
     }
 
     #[Route('/api/customers/login', name: 'customer_send_magic_link', methods: ['POST'])]
@@ -64,6 +69,10 @@ class AuthController extends AbstractController
             ]);
 
         $this->mailer->send($emailMessage);
+
+        if ($this->isDev) {
+            return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.', 'url' => $url]);
+        }
 
         return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.']);
     }
