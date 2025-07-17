@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('api/public/businesses/{businessId}/articles', name: 'public_business_article_')]
-class BusinessArticleController extends AbstractController
+class PublicCatalogController extends AbstractController
 {
     public function __construct(
         private ArticleService $articleService,

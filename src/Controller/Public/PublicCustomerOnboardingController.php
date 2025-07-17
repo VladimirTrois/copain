@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 // PublicOrderController.php
 #[Route('/api/customers', name: 'api_customers_')]
-class PublicCustomerController extends AbstractController
+class PublicCustomerOnboardingController extends AbstractController
 {
     public function __construct(
         private OrderService $orderService,
