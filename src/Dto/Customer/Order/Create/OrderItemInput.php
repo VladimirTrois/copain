@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class OrderItemInput
 {
-    #[Assert\NotBlank]
+    #[Assert\NotNull]
     public int $articleId;
 
     #[Assert\Positive]

@@ -2,11 +2,12 @@
 
 namespace App\Dto\Customer\Order\Create;
 
+use App\Validator\Constraints as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class OrderCreateInput
 {
-    #[Assert\NotBlank]
+    #[Assert\NotNull]
     public int $businessId;
 
     #[Assert\NotBlank]
@@ -18,5 +19,6 @@ final class OrderCreateInput
      */
     #[Assert\Valid]
     #[Assert\Count(min: 1)]
+    #[AppAssert\UniqueArticleIds]
     public array $items = [];
 }
