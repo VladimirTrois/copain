@@ -135,4 +135,56 @@ class OrderTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
+
+    public function testCreateOrderFailsWithDuplicateArticles(): void
+    {
+        $client = static::createClientAsCustomer();
+
+        $business = BusinessFactory::createOne();
+        $article = ArticleFactory::createOne(['business' => $business]);
+
+        $payload = [
+            'businessId' => $business->getId(),
+            'pickUpDate' => '2025-11-30',
+            'items' => [
+                ['articleId' => $article->getId(), 'quantity' => 2],
+                ['articleId' => $article->getId(), 'quantity' => 3],
+            ],
+        ];
+
+        $client->request('POST', '/api/customers/orders', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertStringContainsString('Duplicate articleId', json_encode($response));
+    }
+
+    public function testCreateOrderFailsWithArticleFromAnotherBusiness(): void
+    {
+        $client = $this->createClientAsCustomer();
+
+        $business1 = BusinessFactory::createOne();
+        $business2 = BusinessFactory::createOne();
+
+        $article1 = ArticleFactory::createOne(['business' => $business1]);
+        $article2 = ArticleFactory::createOne(['business' => $business2]);
+
+        $payload = [
+            'businessId' => $business1->getId(),
+            'pickUpDate' => '2025-11-30',
+            'items' => [
+                ['articleId' => $article1->getId(), 'quantity' => 1],
+                ['articleId' => $article2->getId(), 'quantity' => 1],
+            ],
+        ];
+
+        $client->request('POST', '/api/customers/orders', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertStringContainsString('An article is not from the business.', json_encode($response));
+    }
 }
