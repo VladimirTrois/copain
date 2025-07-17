@@ -20,12 +20,6 @@ class Customer implements UserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
-
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phoneNumber = null;
 
@@ -46,6 +40,12 @@ class Customer implements UserInterface
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'customer', orphanRemoval: true)]
     private Collection $orders;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = [];
 
     public function __construct()
     {
@@ -85,7 +85,7 @@ class Customer implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // guarantee every user at least has ROLE_CUSTOMER
         $roles[] = 'ROLE_CUSTOMER';
 
         return array_unique($roles);
