@@ -23,4 +23,14 @@ class OrderPersister
 
         return $order;
     }
+
+    public function updateOrder(Order $order): Order
+    {
+        $this->validator->validate($order);
+
+        // No need to call persist() if $order is already managed
+        $this->em->flush();
+
+        return $order;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\SoftDeleteable;
 use App\Entity\Traits\Timestampable;
+use App\Exception\BusinessLogicException;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -45,7 +46,7 @@ class Order
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $orderItems;
 
     public function __construct()
@@ -140,6 +141,9 @@ class Order
 
     public function addOrderItem(OrderItem $orderItem): static
     {
+        if (!$this->business->isArticleFromBusiness($orderItem->getArticle())) {
+            throw new BusinessLogicException('An article is not from the business.');
+        }
         if (!$this->orderItems->contains($orderItem)) {
             $this->orderItems->add($orderItem);
             $orderItem->setOrder($this);

@@ -6,6 +6,7 @@ use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;
 use App\Factory\CustomerFactory;
 use App\Factory\OrderFactory;
+use App\Factory\OrderItemFactory;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -63,7 +64,6 @@ class OrderTest extends BaseTestCase
     {
         $client = $this->createClientAsCustomer();
 
-        // Assuming ArticleFactory exists and creates articles with valid IDs
         $business = BusinessFactory::createOne();
         $article = ArticleFactory::createOne(['business' => $business]);
 
@@ -186,5 +186,46 @@ class OrderTest extends BaseTestCase
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertStringContainsString('An article is not from the business.', json_encode($response));
+    }
+
+    public function testUpdateOrder(): void
+    {
+        $client = $this->createClientAsCustomer();
+
+        $customer = CustomerFactory::find(['email' => self::EMAIL_CUSTOMER]);
+
+        $business = BusinessFactory::createOne();
+        $oldArticle = ArticleFactory::createOne(['business' => $business]);
+        $newArticle = ArticleFactory::createOne(['business' => $business]);
+        $order = OrderFactory::createOne(['customer' => $customer, 'business' => $business]);
+        OrderItemFactory::createOne(['order' => $order, 'article' => $oldArticle]);
+
+        $payload = [
+            'pickUpDate' => '2025-11-30',
+            'items' => [
+                [
+                    'articleId' => $newArticle->getId(),
+                    'quantity' => 1,
+                ],
+            ],
+        ];
+
+        $client->request(
+            'PATCH',
+            '/api/customers/orders/'.$order->getId(),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode($payload)
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $order = OrderFactory::find(['id' => $order->getId()]);
+        $orderItem = $order->getOrderItems()->first();
+        $this->assertNotNull($orderItem);
+        $this->assertEquals($newArticle->getId(), $orderItem->getArticle()->getId());
+        $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
     }
 }

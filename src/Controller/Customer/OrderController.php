@@ -3,7 +3,7 @@
 namespace App\Controller\Customer;
 
 use App\Dto\Customer\Order\Create\OrderCreateInput;
-use App\Entity\Order;
+use App\Dto\Customer\Order\Update\OrderUpdateInput;
 use App\Service\EntityValidator;
 use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +37,8 @@ class OrderController extends AbstractController
     #[Route('/{orderId}', name: 'show', methods: ['GET'])]
     public function show(int $orderId, UserInterface $user): JsonResponse
     {
-        $orderDTO = $this->orderService->findOrderForCustomer($orderId, $user);
+        $order = $this->orderService->findOrderForCustomer($orderId, $user);
+        $orderDTO = $this->orderService->mapOrderToShowDto($order);
 
         return $this->json($orderDTO, Response::HTTP_OK, []);
     }
@@ -50,25 +51,24 @@ class OrderController extends AbstractController
         $input = $this->serializer->deserialize($json, OrderCreateInput::class, 'json');
         $this->validator->validate($input);
 
-        $orderDTO = $this->orderService->createOrderForCustomer($input, $user);
+        $order = $this->orderService->createOrderForCustomer($input, $user);
+        $orderDTO = $this->orderService->mapOrderToShowDto($order);
 
         return $this->json($orderDTO, Response::HTTP_CREATED, []);
     }
 
-    // #[Route('/{id}', name: 'api_orders_update', methods: ['PUT', 'PATCH'])]
-    // public function update(Order $order, Request $request, EntityManagerInterface $em): JsonResponse
-    // {
-    //     $user = $this->getUser();
+    #[Route('/{orderId}', name: 'api_orders_update', methods: ['PUT', 'PATCH'])]
+    public function update(int $orderId, Request $request, UserInterface $user): JsonResponse
+    {
+        $order = $this->orderService->findOrderForCustomer($orderId, $user);
 
-    //     if ($order->getCustomer() !== $user) {
-    //         return $this->json(['error' => 'Access denied'], 403);
-    //     }
+        $json = $request->getContent();
 
-    //     $data = json_decode($request->getContent(), true);
-    //     // Update logic here (you can offload to a service or manually patch fields)
+        $orderInput = $this->serializer->deserialize($json, OrderUpdateInput::class, 'json');
+        $this->validator->validate($orderInput);
 
-    //     $em->flush();
+        $orderDTO = $this->orderService->updateOrderForCustomer($order, $orderInput, $user);
 
-    //     return $this->json($order, 200, [], ['groups' => 'order:read']);
-    // }
+        return $this->json($orderDTO, Response::HTTP_CREATED, []);
+    }
 }

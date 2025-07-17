@@ -56,7 +56,8 @@ class PublicCustomerOnboardingController extends AbstractController
             $customer = $this->customerService->createCustomer($input->customer);
         }
 
-        $orderDto = $this->orderService->createOrderForCustomer($input->order, $customer);
+        $order = $this->orderService->createOrderForCustomer($input->order, $customer);
+        $orderDto = $this->orderService->mapOrderToShowDto($order);
 
         // Send magic link using $input->email and the generated token (attach order ID for confirmation)
         $url = $this->customerMagicLink->sendMagicLink($customer, ['order_token' => $orderDto->id]);
