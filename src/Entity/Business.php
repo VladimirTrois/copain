@@ -134,6 +134,11 @@ class Business
         return $this;
     }
 
+    public function isArticleFromBusiness(Article $article): bool
+    {
+        return $this->articles->contains($article);
+    }
+
     public function isOwnedBy(User $user): bool
     {
         foreach ($this->getBusinessUsers() as $bu) {

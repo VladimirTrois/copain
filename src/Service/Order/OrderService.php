@@ -15,6 +15,7 @@ class OrderService
         private OrderDtoMapper $orderDtoMapper,
         private OrderInputMapper $orderInputMapper,
         private OrderPersister $orderPersister,
+        private OrderBusinessRulesChecker $orderBusinessRulesChecker,
     ) {
     }
 
@@ -32,9 +33,10 @@ class OrderService
         return $this->orderDtoMapper->toShowDto($order);
     }
 
-    public function createOrderForCustomer(OrderCreateInput $input, Customer $customer): OrderShowDto
+    public function createOrderForCustomer(OrderCreateInput $orderInput, Customer $customer): OrderShowDto
     {
-        $order = $this->orderInputMapper->mapToEntity($input, $customer);
+        $this->orderBusinessRulesChecker->validateOrderInput($orderInput);
+        $order = $this->orderInputMapper->mapToEntity($orderInput, $customer);
         $order = $this->orderPersister->createOrder($order);
 
         return $this->orderDtoMapper->toShowDto($order);
