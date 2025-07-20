@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -27,16 +26,22 @@ class OrderController extends AbstractController
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(UserInterface $customer): JsonResponse
+    public function list(): JsonResponse
     {
+        /** @var \App\Entity\Customer $customer */
+        $customer = $this->getUser();
+
         $orders = $this->orderService->listOrdersByCustomer($customer);
 
         return $this->json($orders, Response::HTTP_OK, []);
     }
 
     #[Route('/{orderId}', name: 'show', methods: ['GET'])]
-    public function show(int $orderId, UserInterface $customer): JsonResponse
+    public function show(int $orderId): JsonResponse
     {
+        /** @var \App\Entity\Customer $customer */
+        $customer = $this->getUser();
+
         $order = $this->orderService->findOrderForCustomer($orderId, $customer);
         $orderDTO = $this->orderService->mapOrderToShowDto($order);
 
@@ -44,8 +49,11 @@ class OrderController extends AbstractController
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
-    public function create(Request $request, UserInterface $customer): JsonResponse
+    public function create(Request $request): JsonResponse
     {
+        /** @var \App\Entity\Customer $customer */
+        $customer = $this->getUser();
+
         $json = $request->getContent();
 
         $input = $this->serializer->deserialize($json, OrderCreateInput::class, 'json');
@@ -58,8 +66,11 @@ class OrderController extends AbstractController
     }
 
     #[Route('/{orderId}', name: 'api_orders_update', methods: ['PUT', 'PATCH'])]
-    public function update(int $orderId, Request $request, UserInterface $customer): JsonResponse
+    public function update(int $orderId, Request $request): JsonResponse
     {
+        /** @var \App\Entity\Customer $customer */
+        $customer = $this->getUser();
+
         $order = $this->orderService->findOrderForCustomer($orderId, $customer);
 
         $json = $request->getContent();
