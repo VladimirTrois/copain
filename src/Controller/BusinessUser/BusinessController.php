@@ -3,27 +3,24 @@
 namespace App\Controller\BusinessUser;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Service\Business\BusinessService;
 use App\Service\User\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/api')]
 class BusinessController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
         private BusinessService $businessService,
         private UserService $userService,
     ) {
     }
 
     #[Route('/users/{id}/businesses', name: 'api_user_businesses', methods: ['GET'])]
-    public function listUserBusinesses(int $id, UserInterface $currentUser): JsonResponse
+    public function listUserBusinesses(int $id, User $currentUser): JsonResponse
     {
         // Fetch the user by id
         $user = $this->userService->findUser($id);
@@ -44,7 +41,7 @@ class BusinessController extends AbstractController
 
     // Shortcut route for the authenticated user to list their businesses
     #[Route('/me/businesses', name: 'api_me_businesses', methods: ['GET'])]
-    public function listMyBusinesses(UserInterface $user): JsonResponse
+    public function listMyBusinesses(User $user): JsonResponse
     {
         $businesses = $this->businessService->getBusinessesForUser($user);
 
