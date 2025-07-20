@@ -5,7 +5,7 @@ env:
 on:
   push:
     branches:
-      - main
+      - [main, dev]
   pull_request: ~
   workflow_dispatch: ~
 
@@ -33,7 +33,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: Build Docker images
-        uses: docker/bake-action@v6
+        uses: docker/build-push-action@v3
         with:
           pull: true
           load: true
@@ -44,6 +44,8 @@ jobs:
             *.cache-from=type=gha,scope=${{github.ref}}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{github.ref}},mode=max
+          tags: |
+            ci-${{ github.sha }}
       -
         name: Start services
         run: docker compose up --wait --no-build
