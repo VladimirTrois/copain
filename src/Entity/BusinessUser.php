@@ -22,12 +22,12 @@ class BusinessUser
     #[ORM\ManyToOne(inversedBy: 'businessUsers')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['user:read', 'user:write'])]
-    private ?Business $business = null;
+    private Business $business = null;
 
     #[ORM\ManyToOne(inversedBy: 'businesses')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['business:read'])]
-    private ?User $user;
+    private User $user;
 
     #[ORM\Column(type: 'json')]
     #[Groups(['user:read', 'user:write', 'business:read'])]
@@ -43,24 +43,24 @@ class BusinessUser
         return $this->id;
     }
 
-    public function getBusiness(): ?Business
+    public function getBusiness(): Business
     {
         return $this->business;
     }
 
-    public function setBusiness(?Business $business): static
+    public function setBusiness(Business $business): static
     {
         $this->business = $business;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 

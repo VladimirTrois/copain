@@ -36,6 +36,9 @@ class BusinessService
         return $this->businessFinder->find($id);
     }
 
+    /**
+     * @return \App\Entity\BusinessUser[]
+     */
     public function listUsersOfOwnedBusiness(int $businessId, User $user): array
     {
         $business = $this->accessGuard->getBusinessIfOwnedByUser($businessId, $user);
