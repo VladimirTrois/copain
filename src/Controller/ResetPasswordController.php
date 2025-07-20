@@ -36,14 +36,22 @@ class ResetPasswordController extends AbstractController
     public function requestResetPassword(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $email = $data['email'] ?? null;
 
-        if (! $email) {
+        if (! is_array($data)) {
             return $this->json([
-                'error' => 'Email is required',
+                'error' => 'Invalid JSON payload',
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        $email = $data['email'] ?? null;
+
+        if (! is_string($email)) {
+            return $this->json([
+                'error' => 'Invalid payload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var User|null $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy([
             'email' => $email,
         ]);
@@ -55,9 +63,10 @@ class ResetPasswordController extends AbstractController
         }
 
         $resetToken = $this->resetPasswordHelper->generateResetToken($user);
+        $address = new Address('vladimir.trois@gmail.com', 'Copain');
 
         $emailMessage = (new TemplatedEmail())
-            ->from(new Address('vladimir.trois@gmail.com', 'Copain'))
+            ->from($address)
             ->to($user->getEmail())
             ->subject('Password Reset Request')
             ->htmlTemplate('reset_password.html.twig')
@@ -77,12 +86,19 @@ class ResetPasswordController extends AbstractController
     public function resetPassword(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+
+        if (! is_array($data)) {
+            return $this->json([
+                'error' => 'Invalid JSON payload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         $token = $data['token'] ?? null;
         $newPassword = $data['password'] ?? null;
 
-        if (! $token || ! $newPassword) {
+        if (! is_string($token) || ! is_string($newPassword)) {
             return $this->json([
-                'error' => 'Token and password are required',
+                'error' => 'Invalid payload',
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -96,6 +112,7 @@ class ResetPasswordController extends AbstractController
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
+
         $this->resetPasswordHelper->removeResetRequest($token);
 
         $this->entityManager->flush();

@@ -27,7 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(groups: ['create', 'update'])]
     #[Assert\Email(groups: ['create', 'update'])]
     #[Groups(['user:collection', 'user:read', 'user:write'])]
-    private ?string $email = null;
+    private ?string $email;
 
     /**
      * @var list<string> The user roles
@@ -53,7 +53,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, BusinessUser>
      */
-    #[ORM\OneToMany(targetEntity: BusinessUser::class, mappedBy: 'user', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: BusinessUser::class, mappedBy: 'user', orphanRemoval: true, cascade: [
+        'persist',
+        'remove',
+    ])]
     #[Groups(['user:read', 'user:write'])]
     private Collection $businesses;
 
@@ -67,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -179,9 +182,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBusiness(BusinessUser $business): static
     {
         if ($this->businesses->removeElement($business)) {
-            // set the owning side to null (unless already changed)
             if ($business->getUser() === $this) {
-                $business->setUser(null);
+                // Technically no need to null it — Doctrine + orphanRemoval handles it.
+                // Just for clarity, it is possible to add log or assert.
             }
         }
 
