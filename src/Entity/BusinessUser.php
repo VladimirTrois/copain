@@ -67,6 +67,9 @@ class BusinessUser
         return $this;
     }
 
+    /**
+     * @return Responsibility[]
+     */
     public function getResponsibilities(): array
     {
         return array_map(fn (string $value) => Responsibility::from($value), $this->responsibilities);

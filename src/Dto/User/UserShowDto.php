@@ -2,11 +2,12 @@
 
 namespace App\Dto\User;
 
-use App\Dto\BusinessUser\BusinessUserDto;
+use App\Dto\User\BusinessUser\BusinessUserDto;
 
 final class UserShowDto
 {
     /**
+     * @param string[] $roles
      * @param BusinessUserDto[] $businesses
      */
     public function __construct(
