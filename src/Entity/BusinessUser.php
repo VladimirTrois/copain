@@ -22,7 +22,7 @@ class BusinessUser
     #[ORM\ManyToOne(inversedBy: 'businessUsers')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['user:read', 'user:write'])]
-    private Business $business = null;
+    private Business $business;
 
     #[ORM\ManyToOne(inversedBy: 'businesses')]
     #[ORM\JoinColumn(nullable: false)]

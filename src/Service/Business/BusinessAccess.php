@@ -4,7 +4,6 @@ namespace App\Service\Business;
 
 use App\Entity\Business;
 use App\Entity\User;
-use App\Repository\BusinessRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,13 +11,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class BusinessAccess
 {
     public function __construct(
-        private BusinessRepository $repo
+        private BusinessFinder $businessFinder,
     ) {
     }
 
     public function getBusinessIfOwnedByUser(int $businessId, User $user): Business
     {
-        $business = $this->repo->find($businessId);
+        $business = $this->businessFinder->find($businessId);
         if (! $business) {
             throw new NotFoundHttpException('Business not found.');
         }
@@ -32,7 +31,7 @@ class BusinessAccess
 
     public function getBusinessIfUserBelongs(int $businessId, UserInterface $user): Business
     {
-        $business = $this->repo->find($businessId);
+        $business = $this->businessFinder->find($businessId);
         if (! $business) {
             throw new NotFoundHttpException('Business not found.');
         }

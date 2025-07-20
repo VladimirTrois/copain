@@ -20,29 +20,35 @@ class BusinessController extends AbstractController
     }
 
     #[Route('/users/{id}/businesses', name: 'api_user_businesses', methods: ['GET'])]
-    public function listUserBusinesses(int $id, User $currentUser): JsonResponse
+    public function listUserBusinesses(int $id): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         // Fetch the user by id
-        $user = $this->userService->findUser($id);
+        $targetUser = $this->userService->findUser($id);
 
         // Authorization check: allow if admin or if fetching own businesses
-        $isAdmin = in_array('ROLE_ADMIN', $currentUser->getRoles(), true);
-        $isSelf = $currentUser->getUserIdentifier() === $user->getUserIdentifier();
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
+        $isSelf = $user->getUserIdentifier() === $targetUser->getUserIdentifier();
         if (! $isAdmin && ! $isSelf) {
             return $this->json([
                 'error' => 'Access denied',
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $businesses = $this->businessService->getBusinessesForUser($user);
+        $businesses = $this->businessService->getBusinessesForUser($targetUser);
 
         return $this->json($businesses);
     }
 
     // Shortcut route for the authenticated user to list their businesses
     #[Route('/me/businesses', name: 'api_me_businesses', methods: ['GET'])]
-    public function listMyBusinesses(User $user): JsonResponse
+    public function listMyBusinesses(): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $businesses = $this->businessService->getBusinessesForUser($user);
 
         return $this->json($businesses);

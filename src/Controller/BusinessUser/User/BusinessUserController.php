@@ -2,7 +2,6 @@
 
 namespace App\Controller\BusinessUser\User;
 
-use App\Entity\User;
 use App\Mapper\UserMapper;
 use App\Service\Business\BusinessService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,8 +22,10 @@ class BusinessUserController extends AbstractController
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
-    public function listBusinessUsers(int $businessId, User $user): JsonResponse
+    public function listBusinessUsers(int $businessId): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
         $businessUsers = $this->businessService->listUsersOfOwnedBusiness($businessId, $user);
         $usersDto = array_map(
             fn ($businessUser) => $this->userMapper->toListDto($businessUser->getUser()),
@@ -35,8 +36,11 @@ class BusinessUserController extends AbstractController
     }
 
     #[Route('', name: 'add', methods: ['POST'])]
-    public function addUserToBusiness(int $businessId, Request $request, User $user): JsonResponse
+    public function addUserToBusiness(int $businessId, Request $request): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $data = json_decode($request->getContent(), true);
 
         if (! is_array($data)) {

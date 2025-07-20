@@ -27,47 +27,47 @@ class OrderController extends AbstractController
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(UserInterface $user): JsonResponse
+    public function list(UserInterface $customer): JsonResponse
     {
-        $orders = $this->orderService->listOrdersByCustomer($user);
+        $orders = $this->orderService->listOrdersByCustomer($customer);
 
         return $this->json($orders, Response::HTTP_OK, []);
     }
 
     #[Route('/{orderId}', name: 'show', methods: ['GET'])]
-    public function show(int $orderId, UserInterface $user): JsonResponse
+    public function show(int $orderId, UserInterface $customer): JsonResponse
     {
-        $order = $this->orderService->findOrderForCustomer($orderId, $user);
+        $order = $this->orderService->findOrderForCustomer($orderId, $customer);
         $orderDTO = $this->orderService->mapOrderToShowDto($order);
 
         return $this->json($orderDTO, Response::HTTP_OK, []);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
-    public function create(Request $request, UserInterface $user): JsonResponse
+    public function create(Request $request, UserInterface $customer): JsonResponse
     {
         $json = $request->getContent();
 
         $input = $this->serializer->deserialize($json, OrderCreateInput::class, 'json');
         $this->validator->validate($input);
 
-        $order = $this->orderService->createOrderForCustomer($input, $user);
+        $order = $this->orderService->createOrderForCustomer($input, $customer);
         $orderDTO = $this->orderService->mapOrderToShowDto($order);
 
         return $this->json($orderDTO, Response::HTTP_CREATED, []);
     }
 
     #[Route('/{orderId}', name: 'api_orders_update', methods: ['PUT', 'PATCH'])]
-    public function update(int $orderId, Request $request, UserInterface $user): JsonResponse
+    public function update(int $orderId, Request $request, UserInterface $customer): JsonResponse
     {
-        $order = $this->orderService->findOrderForCustomer($orderId, $user);
+        $order = $this->orderService->findOrderForCustomer($orderId, $customer);
 
         $json = $request->getContent();
 
         $orderInput = $this->serializer->deserialize($json, OrderUpdateInput::class, 'json');
         $this->validator->validate($orderInput);
 
-        $orderDTO = $this->orderService->updateOrderForCustomer($order, $orderInput, $user);
+        $orderDTO = $this->orderService->updateOrderForCustomer($order, $orderInput, $customer);
 
         return $this->json($orderDTO, Response::HTTP_CREATED, []);
     }
