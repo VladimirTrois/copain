@@ -42,7 +42,7 @@ class UserService
         return array_map(fn ($user) => $this->userMapper->toListDto($user), $users);
     }
 
-    public function findUser(int $id): ?User
+    public function findUser(int $id): User
     {
         return $this->userFinder->find($id);
     }
