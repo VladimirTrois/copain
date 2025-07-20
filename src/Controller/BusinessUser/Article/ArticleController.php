@@ -56,6 +56,7 @@ class ArticleController extends AbstractController
     public function create(int $businessId, Request $request, UserInterface $user): JsonResponse
     {
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
+
         $article = $this->serializer->deserialize($request->getContent(), Article::class, 'json', [
             'groups' => ['article:write'],
         ]);
@@ -70,15 +71,16 @@ class ArticleController extends AbstractController
     #[Route('/{id}', name: 'article_update', methods: ['PATCH'])]
     public function update(int $businessId, int $id, Request $request, UserInterface $user): JsonResponse
     {
-        $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
+        $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
         $article = $this->articleService->find($id);
+        $json = $request->getContent();
 
-        $this->serializer->deserialize($request->getContent(), Article::class, 'json', [
+        $this->serializer->deserialize($json, Article::class, 'json', [
             'object_to_populate' => $article,
             'groups' => ['article:write'],
         ]);
 
-        $updatedArticle = $this->articleService->ownerUpdateArticle($article, $business, $request->getContent());
+        $updatedArticle = $this->articleService->ownerUpdateArticle($article);
 
         return $this->json($updatedArticle, Response::HTTP_OK, [], [
             'groups' => ['article:read'],
@@ -88,8 +90,8 @@ class ArticleController extends AbstractController
     #[Route('/{id}', name: 'article_delete', methods: ['DELETE'])]
     public function delete(int $businessId, int $id, UserInterface $user): JsonResponse
     {
-        $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
-        $this->articleService->ownerDeleteArticle($id, $business);
+        $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
+        $this->articleService->ownerDeleteArticle($id);
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }

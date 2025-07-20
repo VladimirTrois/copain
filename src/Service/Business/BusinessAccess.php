@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\BusinessRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class BusinessAccess
 {
@@ -29,7 +30,7 @@ class BusinessAccess
         return $business;
     }
 
-    public function getBusinessIfUserBelongs(int $businessId, User $user): Business
+    public function getBusinessIfUserBelongs(int $businessId, UserInterface $user): Business
     {
         $business = $this->repo->find($businessId);
         if (! $business) {
