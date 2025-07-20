@@ -16,7 +16,9 @@ class ArticleCrudTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::addBusinessToUser($user);
 
         $payload = [
@@ -32,10 +34,12 @@ class ArticleCrudTest extends BaseTestCase
 
         $client->request(
             'POST',
-            '/api/businesses/'.$business->getId().'/articles',
+            '/api/businesses/' . $business->getId() . '/articles',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -64,10 +68,12 @@ class ArticleCrudTest extends BaseTestCase
 
         $client->request(
             'POST',
-            '/api/businesses/'.$business->getId().'/articles',
+            '/api/businesses/' . $business->getId() . '/articles',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -78,9 +84,13 @@ class ArticleCrudTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::addBusinessToUser($user);
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $payload = [
             'name' => 'updatedArticle',
@@ -95,10 +105,12 @@ class ArticleCrudTest extends BaseTestCase
 
         $client->request(
             'PATCH',
-            '/api/businesses/'.$business->getId().'/articles/'.$article->getId(),
+            '/api/businesses/' . $business->getId() . '/articles/' . $article->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -120,7 +132,9 @@ class ArticleCrudTest extends BaseTestCase
 
         $user1 = UserFactory::createOne();
         $business = BusinessFactory::addBusinessToUser($user1);
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $payload = [
             'name' => 'updatedArticle',
@@ -135,10 +149,12 @@ class ArticleCrudTest extends BaseTestCase
 
         $client->request(
             'PATCH',
-            '/api/businesses/'.$business->getId().'/articles/'.$article->getId(),
+            '/api/businesses/' . $business->getId() . '/articles/' . $article->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -149,14 +165,18 @@ class ArticleCrudTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::addBusinessToUser($user);
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
-        $client->request('DELETE', '/api/businesses/'.$business->getId().'/articles/'.$article->getId());
+        $client->request('DELETE', '/api/businesses/' . $business->getId() . '/articles/' . $article->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/articles/'.$article->getId());
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/articles/' . $article->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY);
     }
 
@@ -166,9 +186,11 @@ class ArticleCrudTest extends BaseTestCase
 
         $user1 = UserFactory::createOne();
         $business = BusinessFactory::addBusinessToUser($user1);
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
-        $client->request('DELETE', '/api/businesses/'.$business->getId().'/articles/'.$article->getId());
+        $client->request('DELETE', '/api/businesses/' . $business->getId() . '/articles/' . $article->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 }

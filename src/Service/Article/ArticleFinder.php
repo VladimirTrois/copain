@@ -18,7 +18,7 @@ class ArticleFinder
     public function find(int $id): Article
     {
         $article = $this->articleRepository->find($id);
-        if (!$article) {
+        if (! $article) {
             throw new ArticleNotFoundException();
         }
 
@@ -28,7 +28,7 @@ class ArticleFinder
     public function findBy(array $criteria): array
     {
         $articles = $this->articleRepository->findBy($criteria);
-        if (!$articles) {
+        if (! $articles) {
             throw new ArticleNotFoundException();
         }
 
@@ -39,7 +39,7 @@ class ArticleFinder
     {
         $article = $this->articleRepository->findOneBy($criteria);
 
-        if (!$article) {
+        if (! $article) {
             throw new ArticleNotFoundException();
         }
 

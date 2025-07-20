@@ -29,7 +29,10 @@ class OrderService
 
     public function findOrderForCustomer(int $orderId, Customer $customer): Order
     {
-        $order = $this->orderFinder->findOneBy(['id' => $orderId, 'customer' => $customer->getId()]);
+        $order = $this->orderFinder->findOneBy([
+            'id' => $orderId,
+            'customer' => $customer->getId(),
+        ]);
 
         return $order;
     }

@@ -23,7 +23,9 @@ class UserInvitationService
     {
         $resetToken = $this->resetPasswordHelper->generateResetToken($user);
 
-        $passwordSetupUrl = rtrim($this->frontendBaseUrl, '/').'/password/setup?token='.urlencode($resetToken->getToken());
+        $passwordSetupUrl = rtrim($this->frontendBaseUrl, '/') . '/password/setup?token=' . urlencode(
+            $resetToken->getToken()
+        );
 
         $emailMessage = (new TemplatedEmail())
             ->from(new Address('vladimir.trois@gmail.com', 'Copain'))

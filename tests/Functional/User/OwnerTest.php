@@ -15,15 +15,25 @@ final class OwnerTest extends BaseTestCase
         $client = $this->createClientAsUser();
         $numberOfEmployees = 5;
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => [Responsibility::OWNER],
+        ]);
         $otherUsers = UserFactory::createMany($numberOfEmployees);
         foreach ($otherUsers as $otherUser) {
-            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => [Responsibility::SELLER]]);
+            BusinessUserFactory::createOne([
+                'user' => $otherUser,
+                'business' => $business,
+                'responsibilities' => [Responsibility::SELLER],
+            ]);
         }
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/users');
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/users');
 
         $this->assertResponseIsSuccessful();
 
@@ -42,13 +52,21 @@ final class OwnerTest extends BaseTestCase
 
         $user = UserFactory::createOne();
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => [Responsibility::OWNER],
+        ]);
         $otherUsers = UserFactory::createMany($numberOfEmployees);
         foreach ($otherUsers as $otherUser) {
-            BusinessUserFactory::createOne(['user' => $otherUser, 'business' => $business, 'responsibilities' => [Responsibility::SELLER]]);
+            BusinessUserFactory::createOne([
+                'user' => $otherUser,
+                'business' => $business,
+                'responsibilities' => [Responsibility::SELLER],
+            ]);
         }
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/users');
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/users');
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -57,9 +75,15 @@ final class OwnerTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => [Responsibility::OWNER],
+        ]);
 
         $newUser = UserFactory::createOne();
 
@@ -68,9 +92,14 @@ final class OwnerTest extends BaseTestCase
             'responsibilities' => [Responsibility::SELLER->value],
         ];
 
-        $client->request('POST', '/api/businesses/'.$business->getId().'/users', [],
+        $client->request(
+            'POST',
+            '/api/businesses/' . $business->getId() . '/users',
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 

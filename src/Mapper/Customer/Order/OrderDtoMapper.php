@@ -23,8 +23,10 @@ final class OrderDtoMapper
     {
         return new OrderListDto(
             id: $order->getId(),
-            createdAt: $order->getCreatedAt()->format('Y-m-d H:i:s'),
-            pickUpDate: $order->getPickUpDate()->format('Y-m-d H:i:s'),
+            createdAt: $order->getCreatedAt()
+                ->format('Y-m-d H:i:s'),
+            pickUpDate: $order->getPickUpDate()
+                ->format('Y-m-d H:i:s'),
             isPickedUp: $order->isPickedUp(),
             isValidatedByBusiness: $order->isValidatedByBusiness(),
             business: $this->businessDtoMapper->toListDto($order->getBusiness()),
@@ -37,22 +39,25 @@ final class OrderDtoMapper
             fn ($item) => new OrderItemDto(
                 quantity: $item->getQuantity(),
                 article: new OrderItemArticleDto(
-                    name: $item->getArticle()->getName(),
-                    price: $item->getArticle()->getPrice(),
+                    name: $item->getArticle()
+                        ->getName(),
+                    price: $item->getArticle()
+                        ->getPrice(),
                 )
             ),
-            $order->getOrderItems()->toArray()
+            $order->getOrderItems()
+                ->toArray()
         );
 
         return new OrderShowDto(
             id: $order->getId(),
-            createdAt: $order->getCreatedAt()->format(DATE_ATOM),
-            pickUpDate: $order->getPickUpDate()->format(DATE_ATOM),
+            createdAt: $order->getCreatedAt()
+                ->format(DATE_ATOM),
+            pickUpDate: $order->getPickUpDate()
+                ->format(DATE_ATOM),
             isPickedUp: $order->isPickedUp(),
             isValidatedByBusiness: $order->isValidatedByBusiness(),
-            business: new BusinessDto(
-                name: $order->getBusiness()->getName(),
-            ),
+            business: new BusinessDto(name: $order->getBusiness() ->getName()),
             orderItems: $orderItems,
         );
     }

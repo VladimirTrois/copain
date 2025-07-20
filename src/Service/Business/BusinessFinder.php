@@ -11,8 +11,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class BusinessFinder
 {
-    public function __construct(private BusinessRepository $repo)
-    {
+    public function __construct(
+        private BusinessRepository $repo
+    ) {
     }
 
     public function listAll(): array
@@ -23,7 +24,7 @@ class BusinessFinder
     public function findOwned(int $id, User $user): Business
     {
         $business = $this->find($id);
-        if (!$business->isOwnedBy($user)) {
+        if (! $business->isOwnedBy($user)) {
             throw new AccessDeniedException();
         }
 
@@ -33,7 +34,7 @@ class BusinessFinder
     public function find(int|string $id): Business
     {
         $business = $this->repo->find($id);
-        if (!$business) {
+        if (! $business) {
             throw new NotFoundHttpException('Business not found.');
         }
 
@@ -43,7 +44,7 @@ class BusinessFinder
     public function findOneBy(array $criteria): Business
     {
         $business = $this->repo->findOneBy($criteria);
-        if (!$business) {
+        if (! $business) {
             throw new BusinessNotFoundException();
         }
 
@@ -53,7 +54,7 @@ class BusinessFinder
     public function findBy(array $criteria): array
     {
         $businesses = $this->repo->findBy($criteria);
-        if (!$businesses) {
+        if (! $businesses) {
             throw new BusinessNotFoundException();
         }
 

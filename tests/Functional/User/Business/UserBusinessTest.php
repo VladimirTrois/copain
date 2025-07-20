@@ -13,10 +13,12 @@ class UserBusinessTest extends BaseTestCase
         $client = $this->createClientAsUser();
         $numberOfBusinesses = 5;
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         BusinessFactory::addBusinessesToUser($user, $numberOfBusinesses);
 
-        $client->request('GET', '/api/users/ '.$user->getId().'/businesses');
+        $client->request('GET', '/api/users/ ' . $user->getId() . '/businesses');
 
         $this->assertResponseIsSuccessful();
 
@@ -34,7 +36,9 @@ class UserBusinessTest extends BaseTestCase
         $client = $this->createClientAsUser();
         $numberOfBusinesses = 5;
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         BusinessFactory::addBusinessesToUser($user, $numberOfBusinesses);
 
         $client->request('GET', '/api/me/businesses');
@@ -58,7 +62,7 @@ class UserBusinessTest extends BaseTestCase
         $user1 = UserFactory::createOne();
         BusinessFactory::addBusinessesToUser($user1, $numberOfBusinesses);
 
-        $client->request('GET', '/api/users/'.$user1->getId().'/businesses');
+        $client->request('GET', '/api/users/' . $user1->getId() . '/businesses');
 
         $this->assertResponseStatusCodeSame(403);
     }

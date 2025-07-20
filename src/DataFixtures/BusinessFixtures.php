@@ -19,8 +19,12 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
     public function load(ObjectManager $manager): void
     {
         // Add one Business owned by admin
-        $admin = UserFactory::find(['email' => UserFixtures::ADMIN_EMAIL]);
-        $adminBusiness = BusinessFactory::createOne(['name' => 'Admin Corp']);
+        $admin = UserFactory::find([
+            'email' => UserFixtures::ADMIN_EMAIL,
+        ]);
+        $adminBusiness = BusinessFactory::createOne([
+            'name' => 'Admin Corp',
+        ]);
         BusinessUserFactory::createOne([
             'user' => $admin,
             'business' => $adminBusiness,
@@ -28,11 +32,15 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
         ]);
 
         // Add businesses owned by regular user
-        $user = UserFactory::find(['email' => UserFixtures::USER_EMAIL]);
+        $user = UserFactory::find([
+            'email' => UserFixtures::USER_EMAIL,
+        ]);
 
         $userBusinesses = [];
         for ($i = 1; $i <= 5; ++$i) {
-            $business = BusinessFactory::createOne(['name' => 'User Business '.$i]);
+            $business = BusinessFactory::createOne([
+                'name' => 'User Business ' . $i,
+            ]);
             BusinessUserFactory::createOne([
                 'user' => $user,
                 'business' => $business,
@@ -66,8 +74,6 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
 
     public function getDependencies(): array
     {
-        return [
-            UserFixtures::class,
-        ];
+        return [UserFixtures::class];
     }
 }

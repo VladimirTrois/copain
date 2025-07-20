@@ -13,14 +13,14 @@ class UniqueArticleIdsValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return;
         }
 
         $seen = [];
 
         foreach ($value as $item) {
-            if (!$item instanceof OrderItemInput) {
+            if (! $item instanceof OrderItemInput) {
                 continue;
             }
 

@@ -22,17 +22,26 @@ class PublicCatalogController extends AbstractController
     public function list(int $businessId): JsonResponse
     {
         $business = $this->businessService->find($businessId);
-        $articles = $this->articleService->findBy(['business' => $business]);
+        $articles = $this->articleService->findBy([
+            'business' => $business,
+        ]);
 
-        return $this->json($articles, Response::HTTP_OK, [], ['groups' => ['article:read']]);
+        return $this->json($articles, Response::HTTP_OK, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 
     #[Route('/{articleId}', name: 'show', methods: ['GET'])]
     public function show(int $businessId, int $articleId): JsonResponse
     {
         $business = $this->businessService->find($businessId);
-        $article = $this->articleService->findOneBy(['id' => $articleId, 'business' => $business]);
+        $article = $this->articleService->findOneBy([
+            'id' => $articleId,
+            'business' => $business,
+        ]);
 
-        return $this->json($article, Response::HTTP_OK, [], ['groups' => ['article:read']]);
+        return $this->json($article, Response::HTTP_OK, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 }

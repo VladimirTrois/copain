@@ -44,7 +44,7 @@ class UserService
     public function getUserShowDto(int $id): ?UserShowDto
     {
         $user = $this->userRepository->find($id);
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
@@ -53,8 +53,6 @@ class UserService
 
     /**
      * Create user from JSON string.
-     *
-     * @throws UnprocessableEntityHttpException if validation fails
      */
     public function createFromJson(string $json): User
     {
@@ -73,8 +71,6 @@ class UserService
 
     /**
      * Update existing user from JSON string.
-     *
-     * @throws UnprocessableEntityHttpException if validation fails
      */
     public function updateFromJson(User $user, string $json): User
     {
@@ -99,8 +95,6 @@ class UserService
 
     /**
      * Validate the user entity with optional validation groups.
-     *
-     * @throws UnprocessableEntityHttpException on validation errors
      */
     private function validate(User $user, array $groups = ['Default']): void
     {
@@ -131,7 +125,7 @@ class UserService
     {
         $plainPassword = $user->getPlainPassword();
 
-        if (!$plainPassword) {
+        if (! $plainPassword) {
             return;
         }
 

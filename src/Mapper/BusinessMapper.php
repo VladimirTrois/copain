@@ -9,9 +9,6 @@ final class BusinessMapper
 {
     public function toDto(Business $business): BusinessShowDto
     {
-        return new BusinessShowDto(
-            $business->getId(),
-            $business->getName()
-        );
+        return new BusinessShowDto($business->getId(), $business->getName());
     }
 }

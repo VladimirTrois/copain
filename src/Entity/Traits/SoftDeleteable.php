@@ -16,7 +16,7 @@ trait SoftDeleteable
 
     public function isDeleted(): bool
     {
-        return null !== $this->deleted_at;
+        return $this->deleted_at !== null;
     }
 
     public function getDeletedAt(): ?\DateTimeImmutable

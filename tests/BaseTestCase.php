@@ -16,10 +16,15 @@ abstract class BaseTestCase extends WebTestCase
 {
     use ResetDatabase;
     use Factories;
+
     public const EMAIL_USER = 'user@user.com';
+
     public const PASSWORD_USER = 'password';
+
     public const EMAIL_ADMIN = 'admin@admin.com';
+
     public const PASSWORD_ADMIN = 'admin';
+
     public const EMAIL_CUSTOMER = 'customer@customer.com';
 
     private ?string $token = null;
@@ -38,7 +43,7 @@ abstract class BaseTestCase extends WebTestCase
         $jwtManager = $container->get(JWTTokenManagerInterface::class);
         $token = $jwtManager->create($user);
 
-        $client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
 
         return $client;
     }
@@ -62,7 +67,7 @@ abstract class BaseTestCase extends WebTestCase
         $token = $jwtManager->create($user);
 
         // 4. Set auth header manually on existing client
-        $client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
 
         return $client;
     }
@@ -79,7 +84,7 @@ abstract class BaseTestCase extends WebTestCase
         $jwtManager = $container->get(JWTTokenManagerInterface::class);
         $token = $jwtManager->create($customer);
 
-        $client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
 
         return $client;
     }

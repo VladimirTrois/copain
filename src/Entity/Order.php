@@ -46,7 +46,10 @@ class Order
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order', orphanRemoval: true, cascade: [
+        'persist',
+        'remove',
+    ])]
     private Collection $orderItems;
 
     public function __construct()
@@ -141,10 +144,10 @@ class Order
 
     public function addOrderItem(OrderItem $orderItem): static
     {
-        if (!$this->business->isArticleFromBusiness($orderItem->getArticle())) {
+        if (! $this->business->isArticleFromBusiness($orderItem->getArticle())) {
             throw new BusinessLogicException('An article is not from the business.');
         }
-        if (!$this->orderItems->contains($orderItem)) {
+        if (! $this->orderItems->contains($orderItem)) {
             $this->orderItems->add($orderItem);
             $orderItem->setOrder($this);
         }

@@ -25,15 +25,19 @@ class BusinessController extends AbstractController
     {
         // Fetch the user by id
         $user = $this->userRepository->find($id);
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        if (! $user) {
+            return $this->json([
+                'error' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         // Authorization check: allow if admin or if fetching own businesses
         $isAdmin = in_array('ROLE_ADMIN', $currentUser->getRoles(), true);
         $isSelf = $currentUser->getUserIdentifier() === $user->getUserIdentifier();
-        if (!$isAdmin && !$isSelf) {
-            return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+        if (! $isAdmin && ! $isSelf) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $businesses = $this->businessService->getBusinessesForUser($user);

@@ -45,12 +45,12 @@ class OrderInputMapper
     public function mapToExistingEntity(Order $order, OrderUpdateInput $input): Order
     {
         // Update pick-up date if set
-        if (!empty($input->pickUpDate)) {
+        if (! empty($input->pickUpDate)) {
             $order->setPickUpDate(new \DateTime($input->pickUpDate));
         }
 
         // Update order items if set
-        if (!empty($input->items)) {
+        if (! empty($input->items)) {
             // Remove all existing order items
             foreach ($order->getOrderItems() as $existingItem) {
                 $order->removeOrderItem($existingItem);

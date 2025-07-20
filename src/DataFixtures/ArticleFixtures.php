@@ -16,7 +16,9 @@ class ArticleFixtures extends Fixture implements FixtureGroupInterface, Dependen
         // Find all businesses and add random numbers of articles
         $businesses = BusinessFactory::all();
         foreach ($businesses as $business) {
-            ArticleFactory::createMany(rand(5, 10), ['business' => $business]);
+            ArticleFactory::createMany(rand(5, 10), [
+                'business' => $business,
+            ]);
         }
 
         $manager->flush();
@@ -29,8 +31,6 @@ class ArticleFixtures extends Fixture implements FixtureGroupInterface, Dependen
 
     public function getDependencies(): array
     {
-        return [
-            BusinessFixtures::class,
-        ];
+        return [BusinessFixtures::class];
     }
 }

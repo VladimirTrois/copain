@@ -52,9 +52,13 @@ class UserTest extends BaseTestCase
 
         $user = UserFactory::createOne();
         $business = BusinessFactory::createOne();
-        $businessUser = BusinessUserFactory::createOne(['user' => $user, 'business' => $business, 'responsibilities' => [Responsibility::OWNER]]);
+        $businessUser = BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => [Responsibility::OWNER],
+        ]);
 
-        $client->request('GET', '/api/users/'.$user->getId());
+        $client->request('GET', '/api/users/' . $user->getId());
 
         $this->assertResponseIsSuccessful();
 
@@ -110,7 +114,9 @@ class UserTest extends BaseTestCase
             '/api/users',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -123,7 +129,9 @@ class UserTest extends BaseTestCase
     {
         $client = $this->createClientAsAdmin();
 
-        $user = UserFactory::createOne(['roles' => []]);
+        $user = UserFactory::createOne([
+            'roles' => [],
+        ]);
 
         $payload = [
             'email' => 'updated@example.com',
@@ -132,10 +140,12 @@ class UserTest extends BaseTestCase
 
         $client->request(
             'PATCH',
-            '/api/users/'.$user->getId(),
+            '/api/users/' . $user->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -151,7 +161,7 @@ class UserTest extends BaseTestCase
 
         $user = UserFactory::createOne();
 
-        $client->request('DELETE', '/api/users/'.$user->getId());
+        $client->request('DELETE', '/api/users/' . $user->getId());
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
     }

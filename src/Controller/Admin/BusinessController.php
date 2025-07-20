@@ -29,7 +29,9 @@ class BusinessController extends AbstractController
     {
         $businesses = $this->businessService->listAll();
 
-        return $this->json($businesses, Response::HTTP_OK, [], ['groups' => ['business:list']]);
+        return $this->json($businesses, Response::HTTP_OK, [], [
+            'groups' => ['business:list'],
+        ]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -37,7 +39,9 @@ class BusinessController extends AbstractController
     {
         $business = $this->businessService->find($id);
 
-        return $this->json($business, Response::HTTP_OK, [], ['groups' => ['business:read']]);
+        return $this->json($business, Response::HTTP_OK, [], [
+            'groups' => ['business:read'],
+        ]);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
@@ -49,7 +53,9 @@ class BusinessController extends AbstractController
 
         $business = $this->businessService->createBusiness($business);
 
-        return $this->json($business, Response::HTTP_CREATED, [], ['groups' => ['business:read']]);
+        return $this->json($business, Response::HTTP_CREATED, [], [
+            'groups' => ['business:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
@@ -70,7 +76,9 @@ class BusinessController extends AbstractController
 
         $updatedbusiness = $this->businessService->updateBusiness($business);
 
-        return $this->json($updatedbusiness, Response::HTTP_OK, [], ['groups' => ['business:read']]);
+        return $this->json($updatedbusiness, Response::HTTP_OK, [], [
+            'groups' => ['business:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

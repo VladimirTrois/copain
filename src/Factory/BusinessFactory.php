@@ -26,6 +26,35 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return Business::class;
     }
 
+    public static function addBusinessToUser(User $user, array $responsibilities = [Responsibility::OWNER]): object
+    {
+        $business = self::createOne();
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+            'responsibilities' => $responsibilities,
+        ]);
+
+        return $business;
+    }
+
+    public static function addBusinessesToUser(
+        User $user,
+        int $count,
+        array $responsibilities = [Responsibility::OWNER]
+    ): array {
+        $businesses = self::createMany($count);
+        foreach ($businesses as $business) {
+            BusinessUserFactory::createOne([
+                'user' => $user,
+                'business' => $business,
+                'responsibilities' => $responsibilities,
+            ]);
+        }
+
+        return $businesses;
+    }
+
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      *
@@ -46,31 +75,5 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return $this
             // ->afterInstantiate(function(Business $business): void {})
         ;
-    }
-
-    public static function addBusinessToUser(User $user, array $responsibilities = [Responsibility::OWNER]): object
-    {
-        $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne([
-            'user' => $user,
-            'business' => $business,
-            'responsibilities' => $responsibilities,
-        ]);
-
-        return $business;
-    }
-
-    public static function addBusinessesToUser(User $user, int $count, array $responsibilities = [Responsibility::OWNER]): array
-    {
-        $businesses = BusinessFactory::createMany($count);
-        foreach ($businesses as $business) {
-            BusinessUserFactory::createOne([
-                'user' => $user,
-                'business' => $business,
-                'responsibilities' => $responsibilities,
-            ]);
-        }
-
-        return $businesses;
     }
 }

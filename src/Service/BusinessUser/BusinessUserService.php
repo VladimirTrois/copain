@@ -19,9 +19,11 @@ class BusinessUserService
 
     public function addUserToBusiness(Business $business, string $email, array $responsibilities): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy([
+            'email' => $email,
+        ]);
 
-        if (!$user) {
+        if (! $user) {
             throw new NotFoundHttpException('User not found.');
         }
 
@@ -40,6 +42,7 @@ class BusinessUserService
 
     public function listUsers(Business $business): array
     {
-        return $business->getBusinessUsers()->toArray();
+        return $business->getBusinessUsers()
+            ->toArray();
     }
 }

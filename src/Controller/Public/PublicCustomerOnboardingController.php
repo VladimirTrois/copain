@@ -34,15 +34,22 @@ class PublicCustomerOnboardingController extends AbstractController
         $input = $this->serializer->deserialize($request->getContent(), CustomerCreateInput::class, 'json');
         $this->validator->validate($input);
 
-        $customer = $this->customerService->findOneBy(['email' => $input->email]);
+        $customer = $this->customerService->findOneBy([
+            'email' => $input->email,
+        ]);
         if ($customer) {
-            return $this->json(['message' => 'Please check your emails to confirm.'], Response::HTTP_ACCEPTED);
+            return $this->json([
+                'message' => 'Please check your emails to confirm.',
+            ], Response::HTTP_ACCEPTED);
         }
 
         $customer = $this->customerService->createCustomer($input);
         $url = $this->customerMagicLink->sendMagicLink($customer);
 
-        return $this->json(['message' => 'Please check your emails to confirm.', 'url' => $url], Response::HTTP_ACCEPTED);
+        return $this->json([
+            'message' => 'Please check your emails to confirm.',
+            'url' => $url,
+        ], Response::HTTP_ACCEPTED);
     }
 
     #[Route('/public/orders', name: 'create', methods: ['POST'])]
@@ -51,8 +58,10 @@ class PublicCustomerOnboardingController extends AbstractController
         $input = $this->serializer->deserialize($request->getContent(), PublicOrderCreateInput::class, 'json');
         $this->validator->validate($input);
 
-        $customer = $this->customerService->findOneBy(['email' => $input->customer->email]);
-        if (!$customer) {
+        $customer = $this->customerService->findOneBy([
+            'email' => $input->customer->email,
+        ]);
+        if (! $customer) {
             $customer = $this->customerService->createCustomer($input->customer);
         }
 
@@ -60,8 +69,12 @@ class PublicCustomerOnboardingController extends AbstractController
         $orderDto = $this->orderService->mapOrderToShowDto($order);
 
         // Send magic link using $input->email and the generated token (attach order ID for confirmation)
-        $url = $this->customerMagicLink->sendMagicLink($customer, ['order_token' => $orderDto->id]);
+        $url = $this->customerMagicLink->sendMagicLink($customer, [
+            'order_token' => $orderDto->id,
+        ]);
 
-        return $this->json(['message' => 'Order received. Please check your emails to confirm.'], Response::HTTP_ACCEPTED);
+        return $this->json([
+            'message' => 'Order received. Please check your emails to confirm.',
+        ], Response::HTTP_ACCEPTED);
     }
 }

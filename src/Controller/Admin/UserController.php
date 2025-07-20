@@ -41,8 +41,10 @@ class UserController extends AbstractController
     public function show(string $id): JsonResponse
     {
         $userDto = $this->userService->getUserShowDto($id);
-        if (!$userDto) {
-            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        if (! $userDto) {
+            return $this->json([
+                'error' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json($userDto, Response::HTTP_OK);
@@ -58,28 +60,36 @@ class UserController extends AbstractController
         $this->userInvitationService->sendPasswordSetUpInvitation($user);
 
         // 3. Return success
-        return $this->json($user, Response::HTTP_CREATED, [], ['groups' => ['user:read']]);
+        return $this->json($user, Response::HTTP_CREATED, [], [
+            'groups' => ['user:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(string $id, Request $request): JsonResponse
     {
         $user = $this->userRepository->find($id);
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        if (! $user) {
+            return $this->json([
+                'error' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $updatedUser = $this->userService->updateFromJson($user, $request->getContent());
 
-        return $this->json($updatedUser, 200, [], ['groups' => ['user:read']]);
+        return $this->json($updatedUser, 200, [], [
+            'groups' => ['user:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(string $id): JsonResponse
     {
         $user = $this->userRepository->find($id);
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        if (! $user) {
+            return $this->json([
+                'error' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $this->userService->delete($user);

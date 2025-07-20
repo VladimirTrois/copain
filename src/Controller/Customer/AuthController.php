@@ -26,7 +26,7 @@ class AuthController extends AbstractController
         private CustomerMagicLink $customerMagicLink,
         private CustomerService $customerService,
     ) {
-        $this->isDev = 'dev' === $kernel->getEnvironment();
+        $this->isDev = $kernel->getEnvironment() === 'dev';
     }
 
     #[Route('/api/customers/login', name: 'customer_send_magic_link', methods: ['POST'])]
@@ -35,21 +35,30 @@ class AuthController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $email = $data['email'] ?? null;
-        if (!$email) {
+        if (! $email) {
             throw new BadRequestHttpException('Email is required.');
         }
 
-        $customer = $this->customerService->findOneBy(['email' => $email]);
-        if (!$customer) {
-            return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.']);
+        $customer = $this->customerService->findOneBy([
+            'email' => $email,
+        ]);
+        if (! $customer) {
+            return new JsonResponse([
+                'message' => 'If this email is registered, a login link has been sent.',
+            ]);
         }
 
         $url = $this->customerMagicLink->sendMagicLink($customer, $data);
 
         if ($this->isDev) {
-            return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.', 'url' => $url]);
+            return new JsonResponse([
+                'message' => 'If this email is registered, a login link has been sent.',
+                'url' => $url,
+            ]);
         }
 
-        return new JsonResponse(['message' => 'If this email is registered, a login link has been sent.']);
+        return new JsonResponse([
+            'message' => 'If this email is registered, a login link has been sent.',
+        ]);
     }
 }

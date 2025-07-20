@@ -19,7 +19,9 @@ final class AdminAuthTest extends BaseTestCase
         ]));
 
         // Then login
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'email' => self::EMAIL_ADMIN,
             'password' => self::PASSWORD_ADMIN,
         ]));

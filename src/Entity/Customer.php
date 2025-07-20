@@ -180,7 +180,7 @@ class Customer implements UserInterface
 
     public function addOrder(Order $order): static
     {
-        if (!$this->orders->contains($order)) {
+        if (! $this->orders->contains($order)) {
             $this->orders->add($order);
             $order->setCustomer($this);
         }

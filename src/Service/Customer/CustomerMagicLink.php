@@ -21,9 +21,9 @@ class CustomerMagicLink
         $url = $loginLinkDetails->getUrl();
 
         // Append extra parameters
-        if (!empty($extraParams)) {
+        if (! empty($extraParams)) {
             $separator = str_contains($url, '?') ? '&' : '?';
-            $url .= $separator.http_build_query($extraParams);
+            $url .= $separator . http_build_query($extraParams);
         }
 
         $lifetimeInSeconds = 600;

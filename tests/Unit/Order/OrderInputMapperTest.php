@@ -26,13 +26,19 @@ class OrderInputMapperTest extends KernelTestCase
         // Arrange
         $customer = CustomerFactory::createOne();
         $business = BusinessFactory::createOne();
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $articleFinder = $this->createMock(ArticleFinder::class);
-        $articleFinder->method('find')->with($article->getId())->willReturn($article);
+        $articleFinder->method('find')
+            ->with($article->getId())
+            ->willReturn($article);
 
         $businessFinder = $this->createMock(BusinessFinder::class);
-        $businessFinder->method('find')->with($business->getId())->willReturn($business);
+        $businessFinder->method('find')
+            ->with($business->getId())
+            ->willReturn($business);
 
         $mapper = new OrderInputMapper($articleFinder, $businessFinder);
 
@@ -57,7 +63,9 @@ class OrderInputMapperTest extends KernelTestCase
     {
         $customer = CustomerFactory::createOne();
         $business = BusinessFactory::createOne();
-        $oldArticle = ArticleFactory::createOne(['business' => $business]);
+        $oldArticle = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $order = new Order();
         $order->setCustomer($customer);
@@ -68,7 +76,9 @@ class OrderInputMapperTest extends KernelTestCase
         $order->addOrderItem($orderItem);
 
         // Update input
-        $newArticle = ArticleFactory::createOne(['business' => $business]);
+        $newArticle = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
         $itemInput = $this->createOrderItemInput($newArticle, 3);
 
         $input = new OrderUpdateInput();
@@ -76,7 +86,9 @@ class OrderInputMapperTest extends KernelTestCase
         $input->items = [$itemInput];
 
         $articleFinder = $this->createMock(ArticleFinder::class);
-        $articleFinder->method('find')->with($newArticle->getId())->willReturn($newArticle);
+        $articleFinder->method('find')
+            ->with($newArticle->getId())
+            ->willReturn($newArticle);
 
         $businessFinder = $this->createMock(BusinessFinder::class);
 
@@ -99,18 +111,22 @@ class OrderInputMapperTest extends KernelTestCase
         $business1 = BusinessFactory::createOne();
         $business2 = BusinessFactory::createOne();
 
-        $article1 = ArticleFactory::createOne(['business' => $business1]);
-        $article2 = ArticleFactory::createOne(['business' => $business2]);
+        $article1 = ArticleFactory::createOne([
+            'business' => $business1,
+        ]);
+        $article2 = ArticleFactory::createOne([
+            'business' => $business2,
+        ]);
 
         $businessFinder = $this->createMock(BusinessFinder::class);
-        $businessFinder->method('find')->with($business1->getId())->willReturn($business1);
+        $businessFinder->method('find')
+            ->with($business1->getId())
+            ->willReturn($business1);
 
         $articleFinder = $this->createMock(ArticleFinder::class);
 
-        $articleFinder->method('find')->willReturnMap([
-            [$article1->getId(), $article1],
-            [$article2->getId(), $article2],
-        ]);
+        $articleFinder->method('find')
+            ->willReturnMap([[$article1->getId(), $article1], [$article2->getId(), $article2]]);
 
         $orderInputMapper = new OrderInputMapper($articleFinder, $businessFinder);
 

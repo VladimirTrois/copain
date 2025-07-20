@@ -17,12 +17,19 @@ class ArticleAccessTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
-        ArticleFactory::createMany(self::NUMBERSOFARTICLES, ['business' => $business]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+        ]);
+        ArticleFactory::createMany(self::NUMBERSOFARTICLES, [
+            'business' => $business,
+        ]);
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/articles');
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/articles');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
@@ -35,12 +42,19 @@ class ArticleAccessTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
-        $article = ArticleFactory::createOne(['business' => $business]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+        ]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/articles/'.$article->getId());
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/articles/' . $article->getId());
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
@@ -60,11 +74,16 @@ class ArticleAccessTest extends BaseTestCase
     {
         $client = $this->createClientAsUser();
 
-        $user = UserFactory::find(['email' => self::EMAIL_USER]);
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
         $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne(['user' => $user, 'business' => $business]);
+        BusinessUserFactory::createOne([
+            'user' => $user,
+            'business' => $business,
+        ]);
 
-        $client->request('GET', '/api/businesses/'.$business->getId().'/articles/00');
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/articles/00');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }

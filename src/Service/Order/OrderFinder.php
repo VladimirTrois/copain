@@ -8,8 +8,9 @@ use App\Repository\OrderRepository;
 
 class OrderFinder
 {
-    public function __construct(private OrderRepository $repo)
-    {
+    public function __construct(
+        private OrderRepository $repo
+    ) {
     }
 
     public function find(int|string $id): Order
@@ -26,7 +27,7 @@ class OrderFinder
             ->getQuery()
             ->getOneOrNullResult();
 
-        if (!$order) {
+        if (! $order) {
             throw new OrderNotFoundException();
         }
 
@@ -37,7 +38,7 @@ class OrderFinder
     {
         $order = $this->repo->findOneBy($criteria);
 
-        if (!$order) {
+        if (! $order) {
             throw new OrderNotFoundException();
         }
 
@@ -46,7 +47,9 @@ class OrderFinder
 
     public function listByCustomer(int $customerId): array
     {
-        return $this->repo->findBy(['customer' => $customerId]);
+        return $this->repo->findBy([
+            'customer' => $customerId,
+        ]);
     }
 
     public function listAll(): array

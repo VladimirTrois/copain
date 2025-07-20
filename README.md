@@ -39,8 +39,20 @@ make composer c='require --dev symfony/maker-bundle'
 make composer c="require --dev foundry orm-fixtures"
 make composer c="require --dev symfony/test-pack symfony/http-client"
 make composer c="require --dev dama/doctrine-test-bundle"
-make composer c="require --dev friendsofphp/php-cs-fixer"
 make composer c="require --dev symfony/web-profiler-bundle"
+
+# EasyCodingStandard core + Symfony standards
+make composer c="require --dev symplify/easy-coding-standard"
+make composer c="require --dev symplify/coding-standard"
+
+# PHPStan
+make composer c="require --dev phpstan/phpstan"
+make composer c="require --dev phpstan/phpstan-symfony"
+
+
+# Rector (choose the sets for your PHP/Symfony versions)
+make composer c="require --dev rector/rector"
+
 
 ```
 

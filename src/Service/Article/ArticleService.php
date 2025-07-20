@@ -42,7 +42,9 @@ class ArticleService
 
     public function ownerDeleteArticle(int $articleId): void
     {
-        $article = $this->articleFinder->findOneBy(['id' => $articleId]);
+        $article = $this->articleFinder->findOneBy([
+            'id' => $articleId,
+        ]);
         $this->articlePersister->deleteArticle($article);
     }
 }

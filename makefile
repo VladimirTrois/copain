@@ -11,7 +11,7 @@ SYMFONY  = $(PHP) bin/console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help build up start down logs sh bash test rebuild composer vendor sf cc dropDB createDB migrateDB loadDB reloadDB newMigration rebootDB xdebug-log php-cs
+.PHONY        : help build up start down logs sh bash test rebuild composer vendor sf cc dropDB createDB migrateDB loadDB reloadDB newMigration rebootDB xdebug-log ecs phpstan
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -84,5 +84,9 @@ xdebug-log: ## Show xdebug logs
 	@$(PHP_CONT) tail -f /tmp/xdebug.log
 
 ## —— Code Style  ——————————————————————————————————————————————————————————————
-php-cs: ## Run php-cs-fixer list or pass the parameter "c=" to run a given command, example: make php-cs c='fix --dry-run'
-	@$(PHP_CONT) vendor/bin/php-cs-fixer $(or $(c),list)
+ecs: ## Run EasyCodingStandard list or pass the parameter "c=" to run a given command, example: make ecs c='fix --dry-run'
+	@$(PHP_CONT) vendor/bin/ecs $(or $(c),list)
+
+phpstan: ## Run PHPStan list or pass the parameter "c=" to run a given command, example: make phpstan c='fix --dry-run'
+	@$(PHP_CONT) vendor/bin/phpstan $(or $(c),list)
+

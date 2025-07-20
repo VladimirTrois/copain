@@ -24,12 +24,12 @@ class BusinessVoter extends Voter
     protected function voteOnAttribute(string $attribute, $business, TokenInterface $token): bool
     {
         $user = $token->getUser();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return false;
         }
 
         $businessUser = $this->getBusinessUser($business, $user);
-        if (!$businessUser) {
+        if (! $businessUser) {
             return false;
         }
 

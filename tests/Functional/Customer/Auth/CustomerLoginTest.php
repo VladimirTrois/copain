@@ -38,7 +38,9 @@ class CustomerLoginTest extends BaseTestCase
         $customer = CustomerFactory::createOne();
         $orderToken = bin2hex(random_bytes(16));
 
-        $magicLinkUrl = $this->sendLoginRequestAndGetMagicLink($customer->getEmail(), ['order_token' => $orderToken]);
+        $magicLinkUrl = $this->sendLoginRequestAndGetMagicLink($customer->getEmail(), [
+            'order_token' => $orderToken,
+        ]);
         $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
 
         $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl);
@@ -69,14 +71,18 @@ class CustomerLoginTest extends BaseTestCase
 
     private function sendLoginRequestAndGetMagicLink(string $email, array $extraParams = []): string
     {
-        $payload = array_merge(['email' => $email], $extraParams);
+        $payload = array_merge([
+            'email' => $email,
+        ], $extraParams);
 
         $this->client->request(
             'POST',
             '/api/customers/login',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -97,15 +103,16 @@ class CustomerLoginTest extends BaseTestCase
     {
         $parsedUrl = parse_url($magicLinkUrl);
         $path = $parsedUrl['path'] ?? '';
-        $query = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $magicLinkPath = $path.$query;
+        $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+        $magicLinkPath = $path . $query;
 
         $this->client->followRedirects(false);
         $this->client->request('GET', $magicLinkPath);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
-        return $this->client->getResponse()->headers->get('Location');
+        return $this->client->getResponse()
+            ->headers->get('Location');
     }
 
     private function extractQueryParametersFromUrl(string $url): array

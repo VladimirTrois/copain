@@ -18,9 +18,13 @@ class OrderTest extends BaseTestCase
     {
         $client = $this->createClientAsCustomer();
 
-        $customer = CustomerFactory::find(['email' => self::EMAIL_CUSTOMER]);
+        $customer = CustomerFactory::find([
+            'email' => self::EMAIL_CUSTOMER,
+        ]);
 
-        OrderFactory::createMany(self::NUMBERSOFORDERS, ['customer' => $customer]);
+        OrderFactory::createMany(self::NUMBERSOFORDERS, [
+            'customer' => $customer,
+        ]);
 
         $client->request('GET', '/api/customers/orders');
 
@@ -35,11 +39,15 @@ class OrderTest extends BaseTestCase
     {
         $client = $this->createClientAsCustomer();
 
-        $customer = CustomerFactory::find(['email' => self::EMAIL_CUSTOMER]);
+        $customer = CustomerFactory::find([
+            'email' => self::EMAIL_CUSTOMER,
+        ]);
 
-        $order = OrderFactory::createOne(['customer' => $customer]);
+        $order = OrderFactory::createOne([
+            'customer' => $customer,
+        ]);
 
-        $client->request('GET', '/api/customers/orders/'.$order->getId());
+        $client->request('GET', '/api/customers/orders/' . $order->getId());
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
@@ -53,9 +61,11 @@ class OrderTest extends BaseTestCase
 
         $customer1 = CustomerFactory::createOne();
 
-        $order = OrderFactory::createOne(['customer' => $customer1]);
+        $order = OrderFactory::createOne([
+            'customer' => $customer1,
+        ]);
 
-        $client->request('GET', '/api/customers/orders/'.$order->getId());
+        $client->request('GET', '/api/customers/orders/' . $order->getId());
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
@@ -65,7 +75,9 @@ class OrderTest extends BaseTestCase
         $client = $this->createClientAsCustomer();
 
         $business = BusinessFactory::createOne();
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $payload = [
             'businessId' => $business->getId(),
@@ -83,7 +95,9 @@ class OrderTest extends BaseTestCase
             '/api/customers/orders',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -94,11 +108,14 @@ class OrderTest extends BaseTestCase
         $this->assertArrayHasKey('id', $responseData);
 
         // Assert the created order exists
-        $order = OrderFactory::find(['id' => $responseData['id']]);
+        $order = OrderFactory::find([
+            'id' => $responseData['id'],
+        ]);
         $this->assertNotNull($order);
         $this->assertEquals($responseData['id'], $order->getId());
         $this->assertEquals($payload['pickUpDate'], $order->getPickUpDate()->format('Y-m-d'));
-        $orderItem = $order->getOrderItems()->first();
+        $orderItem = $order->getOrderItems()
+            ->first();
         $this->assertNotNull($orderItem);
         $this->assertEquals($article->getId(), $orderItem->getArticle()->getId());
         $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
@@ -113,8 +130,14 @@ class OrderTest extends BaseTestCase
             '/api/customers/orders',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['businessId' => '', 'pickUpDate' => '', 'items' => []])
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            json_encode([
+                'businessId' => '',
+                'pickUpDate' => '',
+                'items' => [],
+            ])
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -129,8 +152,13 @@ class OrderTest extends BaseTestCase
             '/api/customers/orders',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['businessId' => 'invalid-id', 'items' => []])
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            json_encode([
+                'businessId' => 'invalid-id',
+                'items' => [],
+            ])
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -141,18 +169,28 @@ class OrderTest extends BaseTestCase
         $client = static::createClientAsCustomer();
 
         $business = BusinessFactory::createOne();
-        $article = ArticleFactory::createOne(['business' => $business]);
+        $article = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
 
         $payload = [
             'businessId' => $business->getId(),
             'pickUpDate' => '2025-11-30',
             'items' => [
-                ['articleId' => $article->getId(), 'quantity' => 2],
-                ['articleId' => $article->getId(), 'quantity' => 3],
+                [
+                    'articleId' => $article->getId(),
+                    'quantity' => 2,
+                ],
+                [
+                    'articleId' => $article->getId(),
+                    'quantity' => 3,
+                ],
             ],
         ];
 
-        $client->request('POST', '/api/customers/orders', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $client->request('POST', '/api/customers/orders', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode($payload));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
@@ -168,19 +206,31 @@ class OrderTest extends BaseTestCase
         $business1 = BusinessFactory::createOne();
         $business2 = BusinessFactory::createOne();
 
-        $article1 = ArticleFactory::createOne(['business' => $business1]);
-        $article2 = ArticleFactory::createOne(['business' => $business2]);
+        $article1 = ArticleFactory::createOne([
+            'business' => $business1,
+        ]);
+        $article2 = ArticleFactory::createOne([
+            'business' => $business2,
+        ]);
 
         $payload = [
             'businessId' => $business1->getId(),
             'pickUpDate' => '2025-11-30',
             'items' => [
-                ['articleId' => $article1->getId(), 'quantity' => 1],
-                ['articleId' => $article2->getId(), 'quantity' => 1],
+                [
+                    'articleId' => $article1->getId(),
+                    'quantity' => 1,
+                ],
+                [
+                    'articleId' => $article2->getId(),
+                    'quantity' => 1,
+                ],
             ],
         ];
 
-        $client->request('POST', '/api/customers/orders', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($payload));
+        $client->request('POST', '/api/customers/orders', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode($payload));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
@@ -192,13 +242,25 @@ class OrderTest extends BaseTestCase
     {
         $client = $this->createClientAsCustomer();
 
-        $customer = CustomerFactory::find(['email' => self::EMAIL_CUSTOMER]);
+        $customer = CustomerFactory::find([
+            'email' => self::EMAIL_CUSTOMER,
+        ]);
 
         $business = BusinessFactory::createOne();
-        $oldArticle = ArticleFactory::createOne(['business' => $business]);
-        $newArticle = ArticleFactory::createOne(['business' => $business]);
-        $order = OrderFactory::createOne(['customer' => $customer, 'business' => $business]);
-        OrderItemFactory::createOne(['order' => $order, 'article' => $oldArticle]);
+        $oldArticle = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
+        $newArticle = ArticleFactory::createOne([
+            'business' => $business,
+        ]);
+        $order = OrderFactory::createOne([
+            'customer' => $customer,
+            'business' => $business,
+        ]);
+        OrderItemFactory::createOne([
+            'order' => $order,
+            'article' => $oldArticle,
+        ]);
 
         $payload = [
             'pickUpDate' => '2025-11-30',
@@ -212,18 +274,23 @@ class OrderTest extends BaseTestCase
 
         $client->request(
             'PATCH',
-            '/api/customers/orders/'.$order->getId(),
+            '/api/customers/orders/' . $order->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $order = OrderFactory::find(['id' => $order->getId()]);
-        $orderItem = $order->getOrderItems()->first();
+        $order = OrderFactory::find([
+            'id' => $order->getId(),
+        ]);
+        $orderItem = $order->getOrderItems()
+            ->first();
         $this->assertNotNull($orderItem);
         $this->assertEquals($newArticle->getId(), $orderItem->getArticle()->getId());
         $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());

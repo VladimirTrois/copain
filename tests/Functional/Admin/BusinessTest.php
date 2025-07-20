@@ -33,7 +33,7 @@ class BusinessTest extends BaseTestCase
 
         $business = BusinessFactory::createOne();
 
-        $client->request('GET', '/api/businesses/'.$business->getId());
+        $client->request('GET', '/api/businesses/' . $business->getId());
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
@@ -53,7 +53,9 @@ class BusinessTest extends BaseTestCase
             '/api/businesses',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -74,10 +76,12 @@ class BusinessTest extends BaseTestCase
 
         $client->request(
             'PATCH',
-            '/api/businesses/'.$business->getId(),
+            '/api/businesses/' . $business->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode($payload)
         );
 
@@ -92,10 +96,10 @@ class BusinessTest extends BaseTestCase
 
         $business = BusinessFactory::createOne();
 
-        $client->request('DELETE', '/api/businesses/'.$business->getId());
+        $client->request('DELETE', '/api/businesses/' . $business->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
-        $client->request('GET', '/api/businesses/'.$business->getId());
+        $client->request('GET', '/api/businesses/' . $business->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY);
     }
 }

@@ -128,7 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function hasPassword(): bool
     {
-        return null !== $this->password;
+        return $this->password !== null;
     }
 
     /**
@@ -168,7 +168,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addBusiness(BusinessUser $business): static
     {
-        if (!$this->businesses->contains($business)) {
+        if (! $this->businesses->contains($business)) {
             $this->businesses->add($business);
             $business->setUser($this);
         }

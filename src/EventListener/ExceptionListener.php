@@ -21,11 +21,15 @@ class ExceptionListener
         $exception = $event->getThrowable();
 
         $statusCode = 500;
-        $responseData = ['error' => $exception->getMessage()];
+        $responseData = [
+            'error' => $exception->getMessage(),
+        ];
 
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
-            $responseData = ['error' => $exception->getMessage()];
+            $responseData = [
+                'error' => $exception->getMessage(),
+            ];
         }
 
         if ($exception instanceof UnprocessableEntityHttpException) {

@@ -7,8 +7,9 @@ use App\Entity\BusinessUser;
 
 final class BusinessUserMapper
 {
-    public function __construct(private BusinessMapper $businessMapper)
-    {
+    public function __construct(
+        private BusinessMapper $businessMapper
+    ) {
     }
 
     public function toDto(BusinessUser $businessUser): BusinessUserDto

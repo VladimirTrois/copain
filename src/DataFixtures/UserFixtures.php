@@ -10,8 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 class UserFixtures extends Fixture implements FixtureGroupInterface
 {
     public const USER_EMAIL = 'user@user.com';
+
     public const USER_PASSWORD = 'password';
+
     public const ADMIN_EMAIL = 'admin@admin.com';
+
     public const ADMIN_PASSWORD = 'admin';
 
     public const NUMBEROFUSERS = 10;

@@ -8,17 +8,14 @@ use App\Entity\User;
 
 final class UserMapper
 {
-    public function __construct(private BusinessUserMapper $businessUserMapper)
-    {
+    public function __construct(
+        private BusinessUserMapper $businessUserMapper
+    ) {
     }
 
     public function toListDto(User $user): UserListDto
     {
-        return new UserListDto(
-            $user->getId(),
-            $user->getEmail(),
-            $user->getRoles()
-        );
+        return new UserListDto($user->getId(), $user->getEmail(), $user->getRoles());
     }
 
     public function toShowDto(User $user): UserShowDto
@@ -28,11 +25,6 @@ final class UserMapper
             $businessDtos[] = $this->businessUserMapper->toDto($businessUser);
         }
 
-        return new UserShowDto(
-            $user->getId(),
-            $user->getEmail(),
-            $user->getRoles(),
-            $businessDtos
-        );
+        return new UserShowDto($user->getId(), $user->getEmail(), $user->getRoles(), $businessDtos);
     }
 }

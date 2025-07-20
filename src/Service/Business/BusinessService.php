@@ -40,7 +40,8 @@ class BusinessService
     {
         $business = $this->accessGuard->getBusinessIfOwnedByUser($businessId, $user);
 
-        return $business->getBusinessUsers()->toArray();
+        return $business->getBusinessUsers()
+            ->toArray();
     }
 
     public function createBusiness(Business $business): Business

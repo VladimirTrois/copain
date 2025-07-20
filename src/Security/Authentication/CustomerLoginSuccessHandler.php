@@ -24,7 +24,7 @@ class CustomerLoginSuccessHandler implements AuthenticationSuccessHandlerInterfa
         KernelInterface $kernel,
     ) {
         $this->frontendBaseUrl = rtrim($frontendBaseUrl, '/');
-        $this->isDev = 'dev' === $kernel->getEnvironment();
+        $this->isDev = $kernel->getEnvironment() === 'dev';
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
@@ -46,7 +46,7 @@ class CustomerLoginSuccessHandler implements AuthenticationSuccessHandlerInterfa
         // Redirect URL based on order flow or default dashboard
         $redirectPath = $orderToken ? '/order/confirm' : '/home';
 
-        if ($this->isDev && 'application/json' === $request->headers->get('Content-Type')) {
+        if ($this->isDev && $request->headers->get('Content-Type') === 'application/json') {
             // Return JSON for Insomnia/Postman testing in dev
             return new JsonResponse([
                 'token' => $jwt,
@@ -57,7 +57,7 @@ class CustomerLoginSuccessHandler implements AuthenticationSuccessHandlerInterfa
         }
 
         // Build redirect URL with tokens as query parameters
-        $redirectUrl = $this->frontendBaseUrl.$redirectPath.'?'.http_build_query([
+        $redirectUrl = $this->frontendBaseUrl . $redirectPath . '?' . http_build_query([
             'token' => $jwt,
             'refresh_token' => $refreshToken->getRefreshToken(),
             'order_token' => $orderToken,

@@ -84,7 +84,7 @@ class Business
 
     public function addBusinessUser(BusinessUser $businessUser): static
     {
-        if (!$this->businessUsers->contains($businessUser)) {
+        if (! $this->businessUsers->contains($businessUser)) {
             $this->businessUsers->add($businessUser);
             $businessUser->setBusiness($this);
         }
@@ -114,7 +114,7 @@ class Business
 
     public function addArticle(Article $article): static
     {
-        if (!$this->articles->contains($article)) {
+        if (! $this->articles->contains($article)) {
             $this->articles->add($article);
             $article->setBusiness($this);
         }
@@ -155,9 +155,8 @@ class Business
 
     public function hasUser(User $user): bool
     {
-        return $this->getBusinessUsers()->exists(
-            fn ($key, BusinessUser $bu) => $bu->getUser()->getId() === $user->getId()
-        );
+        return $this->getBusinessUsers()
+            ->exists(fn ($key, BusinessUser $bu) => $bu->getUser() ->getId() === $user->getId());
     }
 
     /**
@@ -184,7 +183,7 @@ class Business
 
     public function addOrder(Order $order): static
     {
-        if (!$this->orders->contains($order)) {
+        if (! $this->orders->contains($order)) {
             $this->orders->add($order);
             $order->setBusiness($this);
         }

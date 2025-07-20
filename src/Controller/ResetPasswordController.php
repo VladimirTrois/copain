@@ -38,14 +38,20 @@ class ResetPasswordController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
 
-        if (!$email) {
-            return $this->json(['error' => 'Email is required'], Response::HTTP_BAD_REQUEST);
+        if (! $email) {
+            return $this->json([
+                'error' => 'Email is required',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => $email,
+        ]);
 
-        if (!$user) {
-            return $this->json(['message' => 'If the email exists, a reset link will be sent.']);
+        if (! $user) {
+            return $this->json([
+                'message' => 'If the email exists, a reset link will be sent.',
+            ]);
         }
 
         $resetToken = $this->resetPasswordHelper->generateResetToken($user);
@@ -55,12 +61,16 @@ class ResetPasswordController extends AbstractController
             ->to($user->getEmail())
             ->subject('Password Reset Request')
             ->htmlTemplate('reset_password.html.twig')
-            ->context(['resetToken' => $resetToken]);
+            ->context([
+                'resetToken' => $resetToken,
+            ]);
 
         $this->mailer->send($emailMessage);
         $this->logger->info('Email sent successfully');
 
-        return $this->json(['message' => 'Reset email sent if address is valid.']);
+        return $this->json([
+            'message' => 'Reset email sent if address is valid.',
+        ]);
     }
 
     #[Route('/reset', name: 'api_reset_password_reset', methods: ['POST'])]
@@ -70,15 +80,19 @@ class ResetPasswordController extends AbstractController
         $token = $data['token'] ?? null;
         $newPassword = $data['password'] ?? null;
 
-        if (!$token || !$newPassword) {
-            return $this->json(['error' => 'Token and password are required'], Response::HTTP_BAD_REQUEST);
+        if (! $token || ! $newPassword) {
+            return $this->json([
+                'error' => 'Token and password are required',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         try {
             /** @var User $user */
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            return $this->json(['error' => $e->getReason()], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => $e->getReason(),
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
@@ -86,6 +100,8 @@ class ResetPasswordController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json(['message' => 'Password has been reset successfully.']);
+        return $this->json([
+            'message' => 'Password has been reset successfully.',
+        ]);
     }
 }

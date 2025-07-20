@@ -29,18 +29,27 @@ class ArticleController extends AbstractController
     public function list(int $businessId, UserInterface $user): JsonResponse
     {
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
-        $articles = $this->articleService->findBy(['business' => $business]);
+        $articles = $this->articleService->findBy([
+            'business' => $business,
+        ]);
 
-        return $this->json($articles, Response::HTTP_OK, [], ['groups' => ['article:read']]);
+        return $this->json($articles, Response::HTTP_OK, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'business_article_show', methods: ['GET'])]
     public function show(int $businessId, int $id, UserInterface $user): JsonResponse
     {
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
-        $article = $this->articleService->findOneBy(['id' => $id, 'business' => $business]);
+        $article = $this->articleService->findOneBy([
+            'id' => $id,
+            'business' => $business,
+        ]);
 
-        return $this->json($article, Response::HTTP_OK, [], ['groups' => ['article:read']]);
+        return $this->json($article, Response::HTTP_OK, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 
     #[Route('', name: 'article_create', methods: ['POST'])]
@@ -53,7 +62,9 @@ class ArticleController extends AbstractController
 
         $createdArticle = $this->articleService->ownerCreateArticleForBusiness($article, $business);
 
-        return $this->json($createdArticle, Response::HTTP_CREATED, [], ['groups' => ['article:read']]);
+        return $this->json($createdArticle, Response::HTTP_CREATED, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'article_update', methods: ['PATCH'])]
@@ -69,7 +80,9 @@ class ArticleController extends AbstractController
 
         $updatedArticle = $this->articleService->ownerUpdateArticle($article, $business, $request->getContent());
 
-        return $this->json($updatedArticle, Response::HTTP_OK, [], ['groups' => ['article:read']]);
+        return $this->json($updatedArticle, Response::HTTP_OK, [], [
+            'groups' => ['article:read'],
+        ]);
     }
 
     #[Route('/{id}', name: 'article_delete', methods: ['DELETE'])]

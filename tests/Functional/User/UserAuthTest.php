@@ -20,7 +20,9 @@ final class UserAuthTest extends BaseTestCase
         ]));
 
         // Then login
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'email' => self::EMAIL_USER,
             'password' => self::PASSWORD_USER,
         ]));
@@ -34,7 +36,9 @@ final class UserAuthTest extends BaseTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'email' => 'nonexistent@example.com',
             'password' => 'wrongpass',
         ]));
@@ -54,7 +58,9 @@ final class UserAuthTest extends BaseTestCase
         ]));
 
         // Then login
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'email' => self::EMAIL_USER,
             'password' => self::PASSWORD_USER,
         ]));
@@ -66,7 +72,9 @@ final class UserAuthTest extends BaseTestCase
         // otherwise $oldData['token'] === $newData['token']
         sleep(1);
 
-        $client->request('POST', '/api/token/refresh', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/token/refresh', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'refresh_token' => $oldData['refresh_token'],
         ]));
 
@@ -81,7 +89,9 @@ final class UserAuthTest extends BaseTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api/token/refresh', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/token/refresh', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'refresh_token' => 'invalid-token',
         ]));
 

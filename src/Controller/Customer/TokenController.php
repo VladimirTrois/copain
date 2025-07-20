@@ -21,12 +21,16 @@ class TokenController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user) {
-            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        if (! $user) {
+            return new JsonResponse([
+                'error' => 'Unauthorized',
+            ], 401);
         }
 
         $token = $this->jwtManager->create($user);
 
-        return new JsonResponse(['token' => $token]);
+        return new JsonResponse([
+            'token' => $token,
+        ]);
     }
 }

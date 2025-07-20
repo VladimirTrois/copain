@@ -8,8 +8,8 @@ use App\Repository\CustomerRepository;
 class CustomerFinder
 {
     public function __construct(
-        private CustomerRepository $customerRepository, )
-    {
+        private CustomerRepository $customerRepository,
+    ) {
     }
 
     public function findOneBy(array $criteria): ?Customer

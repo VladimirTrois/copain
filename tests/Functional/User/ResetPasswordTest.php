@@ -17,7 +17,9 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/request',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode([])
         );
 
@@ -33,8 +35,12 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/request',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['email' => 'unknown@example.com'])
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            json_encode([
+                'email' => 'unknown@example.com',
+            ])
         );
 
         $this->assertResponseIsSuccessful(); // returns 200 even for unknown emails (security reason)
@@ -51,8 +57,12 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/request',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['email' => $user->getEmail()])
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            json_encode([
+                'email' => $user->getEmail(),
+            ])
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -75,7 +85,9 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/reset',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode([]) // missing token and password
         );
 
@@ -91,7 +103,9 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/reset',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode([
                 'token' => 'invalid-token',
                 'password' => 'new-password',
@@ -116,7 +130,9 @@ class ResetPasswordTest extends BaseTestCase
             '/api/reset-password/reset',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             json_encode([
                 'token' => $resetToken->getToken(),
                 'password' => 'secure-new-password',
@@ -127,7 +143,9 @@ class ResetPasswordTest extends BaseTestCase
         $this->assertJson($client->getResponse()->getContent());
 
         // Verify password changed and login works
-        $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
             'email' => $user->getEmail(),
             'password' => 'secure-new-password',
         ]));

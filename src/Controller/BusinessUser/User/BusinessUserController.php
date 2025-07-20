@@ -41,12 +41,16 @@ class BusinessUserController extends AbstractController
         $email = $data['email'] ?? null;
         $responsibilities = $data['responsibilities'] ?? [];
 
-        if (!$email || !is_array($responsibilities)) {
-            return $this->json(['error' => 'Invalid payload'], Response::HTTP_BAD_REQUEST);
+        if (! $email || ! is_array($responsibilities)) {
+            return $this->json([
+                'error' => 'Invalid payload',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $user);
 
-        return $this->json(['message' => 'User added to business'], Response::HTTP_CREATED);
+        return $this->json([
+            'message' => 'User added to business',
+        ], Response::HTTP_CREATED);
     }
 }
