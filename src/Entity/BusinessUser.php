@@ -29,6 +29,9 @@ class BusinessUser
     #[Groups(['business:read'])]
     private User $user;
 
+    /**
+     * @var string[] List of responsibility values as strings
+     */
     #[ORM\Column(type: 'json')]
     #[Groups(['user:read', 'user:write', 'business:read'])]
     #[Assert\Choice(callback: [Responsibility::class, 'cases'], message: 'Invalid responsibility.')]
@@ -72,9 +75,12 @@ class BusinessUser
      */
     public function getResponsibilities(): array
     {
-        return array_map(fn (string $value) => Responsibility::from($value), $this->responsibilities);
+        return array_map(fn ($value): Responsibility => Responsibility::from((string) $value), $this->responsibilities);
     }
 
+    /**
+     * @param Responsibility[]|string[] $responsibilities
+     */
     public function setResponsibilities(array $responsibilities): self
     {
         $this->responsibilities = array_map(

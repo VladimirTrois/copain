@@ -41,7 +41,10 @@ class Business
     /**
      * @var Collection<int, Article>
      */
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'business', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'business', orphanRemoval: true, cascade: [
+        'persist',
+        'remove',
+    ])]
     private Collection $articles;
 
     /**
@@ -97,7 +100,6 @@ class Business
         if ($this->businessUsers->removeElement($businessUser)) {
             // set the owning side to null (unless already changed)
             if ($businessUser->getBusiness() === $this) {
-                $businessUser->setBusiness(null);
             }
         }
 
@@ -127,7 +129,6 @@ class Business
         if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
             if ($article->getBusiness() === $this) {
-                $article->setBusiness(null);
             }
         }
 
@@ -165,7 +166,7 @@ class Business
     public function getResponsibilitiesFor(User $user): array
     {
         foreach ($this->getBusinessUsers() as $bu) {
-            if ($bu->getUser()?->getId() === $user->getId()) {
+            if ($bu->getUser()->getId() === $user->getId()) {
                 return $bu->getResponsibilities();
             }
         }

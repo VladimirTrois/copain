@@ -59,7 +59,7 @@ class Article
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['article:read'])]
-    private ?Business $business = null;
+    private Business $business;
 
     public function getId(): ?int
     {
@@ -150,12 +150,12 @@ class Article
         return $this;
     }
 
-    public function getBusiness(): ?Business
+    public function getBusiness(): Business
     {
         return $this->business;
     }
 
-    public function setBusiness(?Business $business): static
+    public function setBusiness(Business $business): static
     {
         $this->business = $business;
 
