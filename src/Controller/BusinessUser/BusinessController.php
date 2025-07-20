@@ -5,6 +5,7 @@ namespace App\Controller\BusinessUser;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Business\BusinessService;
+use App\Service\User\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ class BusinessController extends AbstractController
     public function __construct(
         private UserRepository $userRepository,
         private BusinessService $businessService,
+        private UserService $userService,
     ) {
     }
 
@@ -24,12 +26,7 @@ class BusinessController extends AbstractController
     public function listUserBusinesses(int $id, UserInterface $currentUser): JsonResponse
     {
         // Fetch the user by id
-        $user = $this->userRepository->find($id);
-        if (! $user) {
-            return $this->json([
-                'error' => 'User not found',
-            ], Response::HTTP_NOT_FOUND);
-        }
+        $user = $this->userService->findUser($id);
 
         // Authorization check: allow if admin or if fetching own businesses
         $isAdmin = in_array('ROLE_ADMIN', $currentUser->getRoles(), true);

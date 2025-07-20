@@ -36,12 +36,8 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        $userDto = $this->userService->getUserShowDto($id);
-        if (! $userDto) {
-            return $this->json([
-                'error' => 'User not found',
-            ], Response::HTTP_NOT_FOUND);
-        }
+        $user = $this->userService->findUser($id);
+        $userDto = $this->userService->mapUserToShowDto($user);
 
         return $this->json($userDto, Response::HTTP_OK);
     }

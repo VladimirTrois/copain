@@ -1,7 +1,5 @@
 <?php
 
-// src/Exception/BusinessNotFoundException.php
-
 namespace App\Exception;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;

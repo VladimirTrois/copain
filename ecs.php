@@ -14,4 +14,11 @@ return static function (ECSConfig $ecsConfig): void {
         SetList::COMMON,          // additional standard rules
         SetList::CLEAN_CODE,      // general clean-up rules
     ]);
+
+    $ecsConfig->skip([
+        'var/cache/*',
+        'var/log/*',
+        'vendor/*',
+        // any other folders you want to exclude
+    ]);
 };

@@ -4,10 +4,10 @@ namespace App\Exception;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class BusinessNotFoundException extends NotFoundHttpException
+class UserNotFoundException extends NotFoundHttpException
 {
     public function __construct()
     {
-        parent::__construct('Business not found.');
+        parent::__construct('User not found.');
     }
 }

@@ -26,6 +26,7 @@ class UserService
         private UserRepository $userRepository,
         private UserMapper $userMapper,
         private ResetPasswordHelperInterface $resetPasswordHelper,
+        private UserFinder $userFinder,
     ) {
     }
 
@@ -36,18 +37,18 @@ class UserService
      */
     public function getAllUsersListDto(): array
     {
-        $users = $this->userRepository->findAll();
+        $users = $this->userFinder->listAll();
 
         return array_map(fn ($user) => $this->userMapper->toListDto($user), $users);
     }
 
-    public function getUserShowDto(int $id): ?UserShowDto
+    public function findUser(int $id): ?User
     {
-        $user = $this->userRepository->find($id);
-        if (! $user) {
-            return null;
-        }
+        return $this->userFinder->find($id);
+    }
 
+    public function mapUserToShowDto(User $user): UserShowDto
+    {
         return $this->userMapper->toShowDto($user);
     }
 
