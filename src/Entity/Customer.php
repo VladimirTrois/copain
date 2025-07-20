@@ -15,10 +15,10 @@ class Customer implements UserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    #[ORM\Column(length: 180, nullable: false, unique: true)]
+    private string $email;
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phoneNumber = null;
@@ -52,12 +52,12 @@ class Customer implements UserInterface
         $this->orders = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -76,7 +76,11 @@ class Customer implements UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        if (empty($this->email)) {
+            throw new \LogicException('User identifier (email) cannot be empty.');
+        }
+
+        return $this->email;
     }
 
     /**
@@ -193,7 +197,6 @@ class Customer implements UserInterface
         if ($this->orders->removeElement($order)) {
             // set the owning side to null (unless already changed)
             if ($order->getCustomer() === $this) {
-                $order->setCustomer(null);
             }
         }
 

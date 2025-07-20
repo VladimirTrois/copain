@@ -15,42 +15,42 @@ class OrderItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\ManyToOne(inversedBy: 'orderItems')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Order $order = null;
+    private Order $order;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Article $article = null;
+    private Article $article;
 
-    #[ORM\Column]
-    private ?int $quantity = null;
+    #[ORM\Column(nullable: false)]
+    private int $quantity;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getOrder(): ?Order
+    public function getOrder(): Order
     {
         return $this->order;
     }
 
-    public function setOrder(?Order $order): static
+    public function setOrder(Order $order): static
     {
         $this->order = $order;
 
         return $this;
     }
 
-    public function getArticle(): ?Article
+    public function getArticle(): Article
     {
         return $this->article;
     }
 
-    public function setArticle(?Article $article): static
+    public function setArticle(Article $article): static
     {
         $this->article = $article;
 

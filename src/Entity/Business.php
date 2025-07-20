@@ -197,7 +197,6 @@ class Business
         if ($this->orders->removeElement($order)) {
             // set the owning side to null (unless already changed)
             if ($order->getBusiness() === $this) {
-                $order->setBusiness(null);
             }
         }
 

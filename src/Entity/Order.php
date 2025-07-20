@@ -21,15 +21,15 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Customer $customer = null;
+    private Customer $customer;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Business $business = null;
+    private Business $business;
 
     #[ORM\Column]
     private ?\DateTime $pickUpDate = null;
@@ -57,29 +57,29 @@ class Order
         $this->orderItems = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getCustomer(): ?Customer
+    public function getCustomer(): Customer
     {
         return $this->customer;
     }
 
-    public function setCustomer(?Customer $customer): static
+    public function setCustomer(Customer $customer): static
     {
         $this->customer = $customer;
 
         return $this;
     }
 
-    public function getBusiness(): ?Business
+    public function getBusiness(): Business
     {
         return $this->business;
     }
 
-    public function setBusiness(?Business $business): static
+    public function setBusiness(Business $business): static
     {
         $this->business = $business;
 
@@ -160,7 +160,6 @@ class Order
         if ($this->orderItems->removeElement($orderItem)) {
             // set the owning side to null (unless already changed)
             if ($orderItem->getOrder() === $this) {
-                $orderItem->setOrder(null);
             }
         }
 
