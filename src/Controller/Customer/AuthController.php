@@ -4,24 +4,19 @@ namespace App\Controller\Customer;
 
 use App\Service\Customer\CustomerMagicLink;
 use App\Service\Customer\CustomerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 
 class AuthController extends AbstractController
 {
     private bool $isDev;
 
     public function __construct(
-        private LoginLinkHandlerInterface $loginLinkHandler,
-        private MailerInterface $mailer,
-        private EntityManagerInterface $entityManager,
         KernelInterface $kernel,
         private CustomerMagicLink $customerMagicLink,
         private CustomerService $customerService,
@@ -33,6 +28,12 @@ class AuthController extends AbstractController
     public function customerRequestLogin(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+
+        if (! is_array($data)) {
+            return $this->json([
+                'error' => 'Invalid JSON payload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
         $email = $data['email'] ?? null;
         if (! $email) {
