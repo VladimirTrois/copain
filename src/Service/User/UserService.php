@@ -24,6 +24,8 @@ class UserService
         private UserPasswordHasherInterface $hasher,
         private UserMapper $userMapper,
         private UserFinder $userFinder,
+        private UserPersister $userPersister,
+        private UserInvitationService $userInvitationService
     ) {
     }
 
@@ -42,6 +44,14 @@ class UserService
     public function findUser(int $id): User
     {
         return $this->userFinder->find($id);
+    }
+
+    /**
+     * @param array<string, mixed> $criteria
+     */
+    public function findOneBy(array $criteria): User
+    {
+        return $this->userFinder->findOneBy($criteria);
     }
 
     public function mapUserToShowDto(User $user): UserShowDto
@@ -91,6 +101,19 @@ class UserService
         $this->em->flush();
     }
 
+    public function findOrCreateUser(string $email): User
+    {
+        $user = $this->findOneBy([
+            'email' => $email,
+        ]);
+
+        if (! $user) {
+            $user = $this->createUser($email);
+        }
+
+        return $user;
+    }
+
     /**
      * Validate the user entity with optional validation groups.
      * @param array<int, mixed> $groups
@@ -133,5 +156,19 @@ class UserService
 
         // Clear plain password after hashing for security
         $user->eraseCredentials();
+    }
+
+    private function createUser(string $email): User
+    {
+        $user = new User();
+        $user->setEmail($email);
+
+        $this->hashPasswordIfNeeded($user);
+
+        $this->userPersister->persist($user);
+
+        $this->userInvitationService->sendPasswordSetUpInvitation($user);
+
+        return $user;
     }
 }

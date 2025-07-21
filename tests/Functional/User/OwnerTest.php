@@ -74,10 +74,10 @@ final class OwnerTest extends BaseTestCase
     public function testOwnerCanAddUserToHisBusiness(): void
     {
         $client = $this->createClientAsUser();
-
         $user = UserFactory::find([
             'email' => self::EMAIL_USER,
         ]);
+
         $business = BusinessFactory::createOne();
         BusinessUserFactory::createOne([
             'user' => $user,
@@ -104,5 +104,12 @@ final class OwnerTest extends BaseTestCase
         );
 
         $this->assertResponseIsSuccessful();
+        $businessUser = BusinessUserFactory::find([
+            'user' => $newUser,
+            'business' => $business,
+        ]);
+        $this->assertNotNull($businessUser);
+        $this->assertNotNull($businessUser->getResponsibilities());
+        $this->assertEquals(Responsibility::SELLER, $businessUser->getResponsibilities()[0]);
     }
 }

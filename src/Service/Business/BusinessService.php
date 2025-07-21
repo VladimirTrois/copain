@@ -2,9 +2,11 @@
 
 namespace App\Service\Business;
 
+use App\Dto\User\Owner\User\UserBusinessInput;
 use App\Entity\Business;
 use App\Entity\User;
 use App\Service\BusinessUser\BusinessUserService;
+use App\Service\User\UserService;
 
 class BusinessService
 {
@@ -13,6 +15,7 @@ class BusinessService
         private BusinessAccess $accessGuard,
         private BusinessPersister $businessPersister,
         private BusinessFinder $businessFinder,
+        private UserService $userService
     ) {
     }
 
@@ -72,13 +75,13 @@ class BusinessService
         $this->businessPersister->delete($business);
     }
 
-    /**
-     * @param string[] $responsibilities
-     */
-    public function addUserToBusiness(int $businessId, string $email, array $responsibilities, User $owner): void
+    public function addUserToBusiness(int $businessId, UserBusinessInput $input, User $owner): void
     {
         $business = $this->accessGuard->getBusinessIfOwnedByUser($businessId, $owner);
-        $this->businessUserService->addUserToBusiness($business, $email, $responsibilities);
+
+        $user = $this->userService->findOrCreateUser($input->email);
+
+        $this->businessUserService->createBusinessUser($business, $user, $input->responsibilities);
     }
 
     /**

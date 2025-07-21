@@ -34,7 +34,12 @@ class BusinessUser
      */
     #[ORM\Column(type: 'json')]
     #[Groups(['user:read', 'user:write', 'business:read'])]
-    #[Assert\Choice(callback: [Responsibility::class, 'cases'], message: 'Invalid responsibility.')]
+    #[Assert\All([
+        new Assert\Choice(
+            callback: [Responsibility::class, 'values'],
+            message: 'Invalid responsibility "{{ value }}".'
+        ),
+    ])]
     private array $responsibilities = [];
 
     public function __construct()
@@ -83,11 +88,23 @@ class BusinessUser
      */
     public function setResponsibilities(array $responsibilities): self
     {
-        $this->responsibilities = array_map(
-            fn ($r) => $r instanceof Responsibility ? $r->value : Responsibility::from($r)->value,
-            $responsibilities
-        );
+        $values = [];
 
+        foreach ($responsibilities as $r) {
+            if ($r instanceof Responsibility) {
+                $values[] = $r->value;
+                continue;
+            }
+
+            $enum = Responsibility::tryFrom($r);
+            if ($enum === null) {
+                throw new \InvalidArgumentException(sprintf('Invalid responsibility "%s".', $r));
+            }
+
+            $values[] = $enum->value;
+        }
+
+        $this->responsibilities = $values;
         return $this;
     }
 }

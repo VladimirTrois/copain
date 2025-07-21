@@ -2,14 +2,18 @@
 
 namespace App\Controller\User\User;
 
+use App\Dto\User\Owner\User\UserBusinessInput;
+use App\Entity\User;
 use App\Mapper\UserMapper;
 use App\Service\Business\BusinessService;
+use App\Service\EntityValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/businesses/{businessId}/users', name: 'business_users_')]
 #[IsGranted('ROLE_USER')]
@@ -18,6 +22,8 @@ class BusinessUserController extends AbstractController
     public function __construct(
         private BusinessService $businessService,
         private UserMapper $userMapper,
+        private EntityValidator $validator,
+        private SerializerInterface $serializer
     ) {
     }
 
@@ -38,27 +44,14 @@ class BusinessUserController extends AbstractController
     #[Route('', name: 'add', methods: ['POST'])]
     public function addUserToBusiness(int $businessId, Request $request): JsonResponse
     {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
+        /** @var User $owner */
+        $owner = $this->getUser();
 
-        $data = json_decode($request->getContent(), true);
+        /** @var UserBusinessInput $input */
+        $input = $this->serializer->deserialize($request->getContent(), UserBusinessInput::class, 'json');
+        $this->validator->validate($input);
 
-        if (! is_array($data)) {
-            return $this->json([
-                'error' => 'Invalid JSON payload',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $email = $data['email'] ?? null;
-        $responsibilities = $data['responsibilities'] ?? [];
-
-        if (! is_string($email) || ! is_array($responsibilities)) {
-            return $this->json([
-                'error' => 'Invalid payload',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $this->businessService->addUserToBusiness($businessId, $email, $responsibilities, $user);
+        $this->businessService->addUserToBusiness($businessId, $input, $owner);
 
         return $this->json([
             'message' => 'User added to business',
