@@ -41,22 +41,18 @@ abstract class BaseTestCase extends WebTestCase
         ], $userData));
 
         $jwtManager = $container->get(JWTTokenManagerInterface::class);
-        $token = $jwtManager->create($user);
+        $this->token = $jwtManager->create($user);
 
-        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $this->token);
 
         return $client;
     }
 
     protected function createClientAsAdmin(array $userData = []): KernelBrowser
     {
-        // 1. Create client (boot kernel)
         $client = static::createClient();
-
-        // 2. Use container from that client, not self::getContainer()
         $container = $client->getContainer();
 
-        // 3. Create user and JWT
         $user = UserFactory::createOne(array_merge([
             'email' => self::EMAIL_ADMIN,
             'password' => self::PASSWORD_ADMIN,
@@ -64,10 +60,9 @@ abstract class BaseTestCase extends WebTestCase
         ], $userData));
 
         $jwtManager = $container->get(JWTTokenManagerInterface::class);
-        $token = $jwtManager->create($user);
+        $this->token = $jwtManager->create($user);
 
-        // 4. Set auth header manually on existing client
-        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $this->token);
 
         return $client;
     }
@@ -82,10 +77,15 @@ abstract class BaseTestCase extends WebTestCase
         ], $userData));
 
         $jwtManager = $container->get(JWTTokenManagerInterface::class);
-        $token = $jwtManager->create($customer);
+        $this->token = $jwtManager->create($customer);
 
-        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $client->setServerParameter('HTTP_Authorization', 'Bearer ' . $this->token);
 
         return $client;
+    }
+
+    protected function getToken(): string
+    {
+        return $this->token;
     }
 }
