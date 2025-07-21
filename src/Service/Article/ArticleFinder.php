@@ -23,9 +23,14 @@ class ArticleFinder
         return $article;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return Article[]
+     */
     public function findBy(array $criteria): array
     {
         $articles = $this->articleRepository->findBy($criteria);
+
         if (! $articles) {
             throw new ArticleNotFoundException();
         }
@@ -33,6 +38,9 @@ class ArticleFinder
         return $articles;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): ?Article
     {
         $article = $this->articleRepository->findOneBy($criteria);

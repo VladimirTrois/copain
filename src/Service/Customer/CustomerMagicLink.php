@@ -15,6 +15,9 @@ class CustomerMagicLink
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $extraParams
+     */
     public function sendMagicLink(Customer $customer, array $extraParams = []): ?string
     {
         $loginLinkDetails = $this->loginLinkHandler->createLoginLink($customer);

@@ -18,11 +18,18 @@ class ArticleService
         return $this->articleFinder->find($id);
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return Article[]
+     */
     public function findBy(array $criteria): array
     {
         return $this->articleFinder->findBy($criteria);
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): ?Article
     {
         return $this->articleFinder->findOneBy($criteria);

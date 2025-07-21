@@ -34,6 +34,9 @@ class OrderFinder
         return $order;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): Order
     {
         $order = $this->repo->findOneBy($criteria);
@@ -45,6 +48,9 @@ class OrderFinder
         return $order;
     }
 
+    /**
+     * @return Order[]
+     */
     public function listByCustomer(int $customerId): array
     {
         return $this->repo->findBy([
@@ -52,6 +58,9 @@ class OrderFinder
         ]);
     }
 
+    /**
+     * @return Order[]
+     */
     public function listAll(): array
     {
         return $this->repo->findAll();

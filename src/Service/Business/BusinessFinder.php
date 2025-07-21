@@ -16,6 +16,9 @@ class BusinessFinder
     ) {
     }
 
+    /**
+     * @return Business[]
+     */
     public function listAll(): array
     {
         return $this->repo->findAll();
@@ -41,6 +44,9 @@ class BusinessFinder
         return $business;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): Business
     {
         $business = $this->repo->findOneBy($criteria);
@@ -51,6 +57,10 @@ class BusinessFinder
         return $business;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return Business[]
+     */
     public function findBy(array $criteria): array
     {
         $businesses = $this->repo->findBy($criteria);

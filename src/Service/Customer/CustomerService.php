@@ -37,6 +37,9 @@ class CustomerService
         return $customer;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): ?Customer
     {
         return $this->customerFinder->findOneBy($criteria);

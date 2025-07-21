@@ -12,6 +12,9 @@ class CustomerFinder
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): ?Customer
     {
         return $this->customerRepository->findOneBy($criteria);

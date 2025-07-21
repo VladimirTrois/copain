@@ -20,6 +20,9 @@ class OrderService
     ) {
     }
 
+    /**
+     * @return OrderShowDto[]
+     */
     public function listOrdersByCustomer(Customer $customer): array
     {
         $orders = $this->orderFinder->listByCustomer($customer->getId());

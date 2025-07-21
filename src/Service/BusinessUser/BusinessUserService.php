@@ -17,6 +17,9 @@ class BusinessUserService
     ) {
     }
 
+    /**
+     * @param string[] $responsibilities
+     */
     public function addUserToBusiness(Business $business, string $email, array $responsibilities): void
     {
         $user = $this->userRepository->findOneBy([
@@ -40,6 +43,9 @@ class BusinessUserService
         $this->em->flush();
     }
 
+    /**
+     * @return BusinessUser[]
+     */
     public function listUsers(Business $business): array
     {
         return $business->getBusinessUsers()

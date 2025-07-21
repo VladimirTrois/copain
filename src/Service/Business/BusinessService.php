@@ -4,6 +4,7 @@ namespace App\Service\Business;
 
 use App\Entity\Business;
 use App\Entity\User;
+use App\Enum\Responsibility;
 use App\Service\BusinessUser\BusinessUserService;
 
 class BusinessService
@@ -16,16 +17,26 @@ class BusinessService
     ) {
     }
 
+    /**
+     * @return Business[]
+     */
     public function listAll(): array
     {
         return $this->businessFinder->listAll();
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function findOneBy(array $criteria): Business
     {
         return $this->businessFinder->findOneBy($criteria);
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return Business[]
+     */
     public function findBy(array $criteria): array
     {
         return $this->businessFinder->findBy($criteria);
@@ -62,12 +73,22 @@ class BusinessService
         $this->businessPersister->delete($business);
     }
 
-    public function addUserToBusiness(int $businessId, string $email, array $roles, User $owner): void
+    /**
+     * @param string[] $responsibilities
+     */
+    public function addUserToBusiness(int $businessId, string $email, array $responsibilities, User $owner): void
     {
         $business = $this->accessGuard->getBusinessIfOwnedByUser($businessId, $owner);
-        $this->businessUserService->addUserToBusiness($business, $email, $roles);
+        $this->businessUserService->addUserToBusiness($business, $email, $responsibilities);
     }
 
+    /**
+     * @return list<array{
+     *     id: int,
+     *     name: string|null,
+     *     responsibilities: Responsibility[]
+     * }>
+     */
     public function getBusinessesForUser(User $user): array
     {
         $businessUsers = $user->getBusinesses();
