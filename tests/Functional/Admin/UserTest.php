@@ -24,9 +24,8 @@ class UserTest extends BaseTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
 
-        $this->assertIsArray($data);
         $this->assertGreaterThanOrEqual(self::NUMBERSOFUSERS, count($data));
         foreach ($data as $user) {
             // Assert required keys exist
@@ -62,7 +61,7 @@ class UserTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
 
         // Top-level keys
         $this->assertArrayHasKey('id', $data);
@@ -109,19 +108,17 @@ class UserTest extends BaseTestCase
             'roles' => ['ROLE_USER'],
         ];
 
-        $client->request(
-            'POST',
-            '/api/users',
-            [],
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($payload)
-        );
+        $jsonPayload = json_encode($payload);
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
+        $client->request('POST', '/api/users', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $jsonPayload);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $data = $this->decodeResponse($client);
+
         $this->assertSame($payload['email'], $data['email']);
     }
 
@@ -138,6 +135,9 @@ class UserTest extends BaseTestCase
             'roles' => ['ROLE_ADMIN'],
         ];
 
+        $jsonPayload = json_encode($payload);
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
         $client->request(
             'PATCH',
             '/api/users/' . $user->getId(),
@@ -146,11 +146,13 @@ class UserTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $jsonPayload
         );
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $data = $this->decodeResponse($client);
+
         $this->assertSame($payload['email'], $data['email']);
         $this->assertContains('ROLE_ADMIN', $data['roles']);
     }

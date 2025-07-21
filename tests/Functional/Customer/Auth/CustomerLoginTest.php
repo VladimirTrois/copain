@@ -79,6 +79,9 @@ class CustomerLoginTest extends BaseTestCase
             'email' => $email,
         ], $extraParams);
 
+        $jsonPayload = json_encode($payload);
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
         $this->client->request(
             'POST',
             '/api/customers/login',
@@ -87,7 +90,7 @@ class CustomerLoginTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $jsonPayload
         );
 
         $this->assertResponseIsSuccessful();
@@ -97,10 +100,12 @@ class CustomerLoginTest extends BaseTestCase
         $email = $this->getMailerMessage();
         $htmlBody = $email->getHtmlBody();
 
+        $this->assertIsString($htmlBody, 'Email HTML body must be a string');
+
         preg_match('/https?:\/\/[^\s"]+/', $htmlBody, $matches);
         $this->assertNotEmpty($matches, 'No URL found in email body');
 
-        return $matches[0];
+        return $matches[0] ?? throw new \RuntimeException('No URL found in email body');
     }
 
     private function simulateMagicLinkClickAndGetRedirect(string $magicLinkUrl): string
@@ -120,7 +125,7 @@ class CustomerLoginTest extends BaseTestCase
     }
 
     /**
-     * @return string[]
+     * @return array<mixed>
      */
     private function extractQueryParametersFromUrl(string $url): array
     {

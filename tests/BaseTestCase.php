@@ -97,4 +97,21 @@ abstract class BaseTestCase extends WebTestCase
     {
         return $this->token;
     }
+
+    /**
+     * Decode JSON response content.
+     *
+     * @return array<string, mixed>
+     */
+    protected function decodeResponse(KernelBrowser $client): array
+    {
+        $content = $client->getResponse()
+            ->getContent();
+
+        $this->assertIsString($content, 'Response content should be a string');
+
+        $data = json_decode($content, true);
+
+        return $data;
+    }
 }

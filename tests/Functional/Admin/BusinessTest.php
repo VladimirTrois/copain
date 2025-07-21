@@ -31,7 +31,7 @@ class BusinessTest extends BaseTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $data = $this->decodeResponse();
+        $data = $this->decodeResponse($this->client);
         $this->assertGreaterThanOrEqual(self::NUMBERS_OF_USERS, count($data));
     }
 
@@ -43,7 +43,7 @@ class BusinessTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = $this->decodeResponse();
+        $data = $this->decodeResponse($this->client);
         $this->assertSame($business->getName(), $data['name']);
     }
 
@@ -57,7 +57,7 @@ class BusinessTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
 
-        $data = $this->decodeResponse();
+        $data = $this->decodeResponse($this->client);
         $this->assertSame($payload['name'], $data['name']);
     }
 
@@ -73,7 +73,7 @@ class BusinessTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = $this->decodeResponse();
+        $data = $this->decodeResponse($this->client);
         $this->assertSame($payload['name'], $data['name']);
     }
 
@@ -86,21 +86,6 @@ class BusinessTest extends BaseTestCase
 
         $this->client->request('GET', '/api/businesses/' . $business->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY);
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function decodeResponse(): array
-    {
-        $content = $this->client->getResponse()
-            ->getContent();
-        $this->assertIsString($content, 'Response content should be a string');
-
-        $data = json_decode($content, true);
-        $this->assertIsArray($data, 'Response content should decode to an array');
-
-        return $data;
     }
 
     /**
