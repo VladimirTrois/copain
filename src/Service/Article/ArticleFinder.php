@@ -5,12 +5,10 @@ namespace App\Service\Article;
 use App\Entity\Article;
 use App\Exception\ArticleNotFoundException;
 use App\Repository\ArticleRepository;
-use App\Repository\BusinessRepository;
 
 class ArticleFinder
 {
     public function __construct(
-        private BusinessRepository $businessRepository,
         private ArticleRepository $articleRepository,
     ) {
     }

@@ -5,13 +5,11 @@ namespace App\Service\Article;
 use App\Entity\Article;
 use App\Service\EntityValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ArticlePersister
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private SerializerInterface $serializer,
         private EntityValidator $validator,
     ) {
     }

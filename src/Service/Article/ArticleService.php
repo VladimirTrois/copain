@@ -4,14 +4,12 @@ namespace App\Service\Article;
 
 use App\Entity\Article;
 use App\Entity\Business;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ArticleService
 {
     public function __construct(
         private ArticlePersister $articlePersister,
         private ArticleFinder $articleFinder,
-        private SerializerInterface $serializer,
     ) {
     }
 
