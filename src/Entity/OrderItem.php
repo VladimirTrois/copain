@@ -15,7 +15,7 @@ class OrderItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderItems')]
     #[ORM\JoinColumn(nullable: false)]
@@ -28,7 +28,7 @@ class OrderItem
     #[ORM\Column(nullable: false)]
     private int $quantity;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

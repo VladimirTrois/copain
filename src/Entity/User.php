@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:collection', 'user:read'])]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true, nullable: false)]
     #[Assert\NotBlank(groups: ['create', 'update'])]
@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->businesses = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

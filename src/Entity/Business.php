@@ -24,7 +24,7 @@ class Business
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['business:list', 'business:read', 'user:read'])]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['business:list', 'business:read', 'business:write', 'user:read'])]

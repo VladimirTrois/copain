@@ -15,7 +15,7 @@ class Customer implements UserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 180, nullable: false, unique: true)]
     private string $email;
@@ -52,7 +52,7 @@ class Customer implements UserInterface
         $this->orders = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -17,7 +17,7 @@ class BusinessUser
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:read'])]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'businessUsers')]
     #[ORM\JoinColumn(nullable: false)]
