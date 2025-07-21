@@ -5,22 +5,10 @@ namespace App\Tests\Functional\Customer\Auth;
 use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;
 use App\Factory\CustomerFactory;
-use App\Tests\BaseTestCase;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
-class CustomerRegisterTest extends BaseTestCase
+class CustomerRegisterTest extends CustomerBaseTestCase
 {
-    public const FRONTEND_BASE_URL = 'https://test.com';
-
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->client->enableProfiler();
-    }
-
     public function testRegisterRedirectsWithTokens(): void
     {
         $payload = [
@@ -38,20 +26,15 @@ class CustomerRegisterTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful();
         $this->assertEmailCount(1);
 
-        /** @var \Symfony\Bridge\Twig\Mime\TemplatedEmail $email */
+        /** @var TemplatedEmail $email */
         $email = $this->getMailerMessage();
-        $htmlBody = $email->getHtmlBody();
-
-        preg_match('/https?:\/\/[^\s"]+/', $htmlBody, $matches);
-        $this->assertNotEmpty($matches, 'No URL found in email body');
-
-        $magicLinkUrl = $matches[0];
+        $magicLinkUrl = $this->assertContainsMagicLink($email);
         $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
 
         $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl);
@@ -81,7 +64,7 @@ class CustomerRegisterTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful();
@@ -122,20 +105,15 @@ class CustomerRegisterTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful();
         $this->assertEmailCount(1);
 
-        /** @var \Symfony\Bridge\Twig\Mime\TemplatedEmail $email */
+        /** @var TemplatedEmail $email */
         $email = $this->getMailerMessage();
-        $htmlBody = $email->getHtmlBody();
-
-        preg_match('/https?:\/\/[^\s"]+/', $htmlBody, $matches);
-        $this->assertNotEmpty($matches, 'No URL found in email body');
-
-        $magicLinkUrl = $matches[0];
+        $magicLinkUrl = $this->assertContainsMagicLink($email);
         $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
 
         $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl);
@@ -145,32 +123,5 @@ class CustomerRegisterTest extends BaseTestCase
         $this->assertArrayHasKey('token', $queryParams);
         $this->assertArrayHasKey('refresh_token', $queryParams);
         $this->assertArrayHasKey('order_token', $queryParams);
-    }
-
-    private function simulateMagicLinkClickAndGetRedirect(string $magicLinkUrl): string
-    {
-        $parsedUrl = parse_url($magicLinkUrl);
-        $path = $parsedUrl['path'] ?? '';
-        $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
-        $magicLinkPath = $path . $query;
-
-        $this->client->followRedirects(false);
-        $this->client->request('GET', $magicLinkPath);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-
-        return $this->client->getResponse()
-            ->headers->get('Location');
-    }
-
-    /**
-     * @return string[]
-     */
-    private function extractQueryParametersFromUrl(string $url): array
-    {
-        $parsed = parse_url($url);
-        parse_str($parsed['query'] ?? '', $queryParams);
-
-        return $queryParams;
     }
 }

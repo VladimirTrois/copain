@@ -3,22 +3,9 @@
 namespace App\Tests\Functional\Customer\Auth;
 
 use App\Factory\CustomerFactory;
-use App\Tests\BaseTestCase;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpFoundation\Response;
 
-class CustomerLoginTest extends BaseTestCase
+class CustomerLoginTest extends CustomerBaseTestCase
 {
-    public const FRONTEND_BASE_URL = 'https://test.com';
-
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->client->enableProfiler();
-    }
-
     public function testLoginRedirectsWithTokens(): void
     {
         $customer = CustomerFactory::createOne();
@@ -98,40 +85,7 @@ class CustomerLoginTest extends BaseTestCase
 
         /** @var \Symfony\Bridge\Twig\Mime\TemplatedEmail $email */
         $email = $this->getMailerMessage();
-        $htmlBody = $email->getHtmlBody();
 
-        $this->assertIsString($htmlBody, 'Email HTML body must be a string');
-
-        preg_match('/https?:\/\/[^\s"]+/', $htmlBody, $matches);
-        $this->assertNotEmpty($matches, 'No URL found in email body');
-
-        return $matches[0] ?? throw new \RuntimeException('No URL found in email body');
-    }
-
-    private function simulateMagicLinkClickAndGetRedirect(string $magicLinkUrl): string
-    {
-        $parsedUrl = parse_url($magicLinkUrl);
-        $path = $parsedUrl['path'] ?? '';
-        $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
-        $magicLinkPath = $path . $query;
-
-        $this->client->followRedirects(false);
-        $this->client->request('GET', $magicLinkPath);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-
-        return $this->client->getResponse()
-            ->headers->get('Location');
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function extractQueryParametersFromUrl(string $url): array
-    {
-        $parsed = parse_url($url);
-        parse_str($parsed['query'] ?? '', $queryParams);
-
-        return $queryParams;
+        return $this->assertContainsMagicLink($email);
     }
 }

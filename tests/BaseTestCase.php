@@ -114,4 +114,15 @@ abstract class BaseTestCase extends WebTestCase
 
         return $data;
     }
+
+    /**
+     * @param array<mixed> $payload
+     */
+    protected function encodeJson(array $payload): string
+    {
+        $json = json_encode($payload);
+        $this->assertNotFalse($json, 'JSON encoding failed');
+
+        return $json;
+    }
 }

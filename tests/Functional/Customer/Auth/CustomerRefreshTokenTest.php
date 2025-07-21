@@ -4,22 +4,12 @@ namespace App\Tests\Functional\Customer\Auth;
 
 use App\Entity\RefreshToken;
 use App\Factory\CustomerFactory;
-use App\Tests\BaseTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
-class CustomerRefreshTokenTest extends BaseTestCase
+class CustomerRefreshTokenTest extends CustomerBaseTestCase
 {
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->client->enableProfiler();
-    }
-
     /**
      * Test that a valid refresh token allows JWT refreshing.
      */
@@ -49,11 +39,14 @@ class CustomerRefreshTokenTest extends BaseTestCase
      */
     public function testInvalidRefreshTokenIsRejected(): void
     {
+        $jsonPayload = json_encode([
+            'refresh_token' => 'invalid-token',
+        ]);
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
         $this->client->request('POST', '/api/customers/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'refresh_token' => 'invalid-token',
-        ]));
+        ], $jsonPayload);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
@@ -63,15 +56,18 @@ class CustomerRefreshTokenTest extends BaseTestCase
      */
     private function verifyRefreshTokenCanRefreshJwt(string $refreshToken): void
     {
+        $jsonPayload = json_encode([
+            'refresh_token' => $refreshToken,
+        ]);
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
         $this->client->request('POST', '/api/customers/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'refresh_token' => $refreshToken,
-        ]));
+        ], $jsonPayload);
 
         $this->assertResponseIsSuccessful();
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $responseData = $this->decodeResponse($this->client);
 
         $this->assertArrayHasKey('token', $responseData);
         $this->assertArrayHasKey('refresh_token', $responseData);
