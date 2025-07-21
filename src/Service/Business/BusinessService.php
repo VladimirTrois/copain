@@ -4,7 +4,6 @@ namespace App\Service\Business;
 
 use App\Entity\Business;
 use App\Entity\User;
-use App\Enum\Responsibility;
 use App\Service\BusinessUser\BusinessUserService;
 
 class BusinessService
@@ -83,11 +82,7 @@ class BusinessService
     }
 
     /**
-     * @return list<array{
-     *     id: int,
-     *     name: string|null,
-     *     responsibilities: Responsibility[]
-     * }>
+     * @return list<array<mixed>>
      */
     public function getBusinessesForUser(User $user): array
     {

@@ -45,6 +45,7 @@ class OrderInputMapperTest extends KernelTestCase
 
         $itemInput = $this->createOrderItemInput($article, 2);
 
+        $this->assertNotNull($business->getId());
         $input = new OrderCreateInput();
         $input->businessId = $business->getId();
         $input->pickUpDate = (new \DateTime())->format('Y-m-d');
@@ -56,6 +57,7 @@ class OrderInputMapperTest extends KernelTestCase
         // Assert
         $this->assertSame($customer->getId(), $order->getCustomer()->getId());
         $this->assertSame($business->getId(), $order->getBusiness()->getId());
+        $this->assertNotNull($order->getOrderItems()[0]);
         $this->assertEquals($itemInput->quantity, $order->getOrderItems()[0]->getQuantity());
         $this->assertEquals($article->getId(), $order->getOrderItems()[0]->getArticle()->getId());
     }
@@ -101,6 +103,7 @@ class OrderInputMapperTest extends KernelTestCase
         // Assert
         $this->assertEquals(new \DateTime('2025-08-15'), $updatedOrder->getPickUpDate());
         $this->assertCount(1, $updatedOrder->getOrderItems());
+        $this->assertNotNull($updatedOrder->getOrderItems()->get(1));
         $this->assertSame($newArticle->getId(), $updatedOrder->getOrderItems()->get(1)->getArticle()->getId());
         $this->assertEquals(3, $updatedOrder->getOrderItems()->get(1)->getQuantity());
     }
@@ -131,6 +134,7 @@ class OrderInputMapperTest extends KernelTestCase
 
         $orderInputMapper = new OrderInputMapper($articleFinder, $businessFinder);
 
+        $this->assertNotNull($business1->getId());
         $orderInput = new OrderCreateInput();
         $orderInput->businessId = $business1->getId();
         $orderInput->pickUpDate = (new \DateTime())->format('Y-m-d');
@@ -152,6 +156,7 @@ class OrderInputMapperTest extends KernelTestCase
      */
     private function createOrderItemInput($article, int $quantity): OrderItemInput
     {
+        $this->assertNotNull($article->getId());
         $item = new OrderItemInput();
         $item->articleId = $article->getId();
         $item->quantity = $quantity;

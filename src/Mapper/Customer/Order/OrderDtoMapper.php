@@ -21,7 +21,7 @@ final class OrderDtoMapper
     {
         return new OrderListDto(
             id: $order->getId(),
-            createdAt: $order->getCreatedAt()
+            createdAt: $order->getCreatedAt() === null ? null : $order->getCreatedAt()
                 ->format('Y-m-d H:i:s'),
             pickUpDate: $order->getPickUpDate()
                 ->format('Y-m-d H:i:s'),
@@ -49,7 +49,7 @@ final class OrderDtoMapper
 
         return new OrderShowDto(
             id: $order->getId(),
-            createdAt: $order->getCreatedAt()
+            createdAt: $order->getCreatedAt() === null ? null : $order->getCreatedAt()
                 ->format(DATE_ATOM),
             pickUpDate: $order->getPickUpDate()
                 ->format(DATE_ATOM),

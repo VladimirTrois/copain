@@ -93,7 +93,7 @@ abstract class BaseTestCase extends WebTestCase
         return $client;
     }
 
-    protected function getToken(): string
+    protected function getToken(): ?string
     {
         return $this->token;
     }

@@ -51,11 +51,13 @@ class OrderFinder
     /**
      * @return Order[]
      */
-    public function listByCustomer(int $customerId): array
+    public function listByCustomer(?int $customerId): array
     {
-        return $this->repo->findBy([
+        $customers = $this->repo->findBy([
             'customer' => $customerId,
         ]);
+
+        return $customers;
     }
 
     /**

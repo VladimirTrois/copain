@@ -47,6 +47,9 @@ final class UserFactory extends PersistentProxyObjectFactory
     {
         return $this
             ->afterInstantiate(function (User $user): void {
+                if ($user->getPassword() === null) {
+                    return;
+                }
                 $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
             })
         ;

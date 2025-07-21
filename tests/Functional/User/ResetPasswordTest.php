@@ -79,6 +79,7 @@ class ResetPasswordTest extends BaseTestCase
         $this->assertJson($client->getResponse()->getContent());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
+        $this->assertNotNull($email);
         $this->assertEmailTextBodyContains($email, 'Password Reset');
         $this->assertEmailHtmlBodyContains($email, 'button');
     }

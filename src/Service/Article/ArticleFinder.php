@@ -41,7 +41,7 @@ class ArticleFinder
     /**
      * @param array<string, mixed> $criteria
      */
-    public function findOneBy(array $criteria): ?Article
+    public function findOneBy(array $criteria): Article
     {
         $article = $this->articleRepository->findOneBy($criteria);
 

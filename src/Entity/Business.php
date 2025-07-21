@@ -26,10 +26,10 @@ class Business
     #[Groups(['business:list', 'business:read', 'user:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, unique: true, nullable: false)]
     #[Groups(['business:list', 'business:read', 'business:write', 'user:read'])]
     #[Assert\NotNull()]
-    private ?string $name = null;
+    private string $name;
 
     /**
      * @var Collection<int, BusinessUser>
@@ -65,7 +65,7 @@ class Business
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

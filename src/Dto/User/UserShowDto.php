@@ -11,7 +11,7 @@ final class UserShowDto
      * @param BusinessUserDto[] $businesses
      */
     public function __construct(
-        public int $id,
+        public ?int $id,
         public string $email,
         public array $roles,
         public array $businesses,

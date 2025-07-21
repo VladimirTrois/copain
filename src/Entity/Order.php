@@ -31,8 +31,8 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private Business $business;
 
-    #[ORM\Column]
-    private ?\DateTime $pickUpDate = null;
+    #[ORM\Column(nullable: false)]
+    private \DateTime $pickUpDate;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isValidatedByCustomer = null;
@@ -86,7 +86,7 @@ class Order
         return $this;
     }
 
-    public function getPickUpDate(): ?\DateTime
+    public function getPickUpDate(): \DateTime
     {
         return $this->pickUpDate;
     }

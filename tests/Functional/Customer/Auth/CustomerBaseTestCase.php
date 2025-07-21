@@ -32,8 +32,12 @@ abstract class CustomerBaseTestCase extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
-        return $this->client->getResponse()
+        $url = $this->client->getResponse()
             ->headers->get('Location');
+
+        $this->assertIsString($url);
+
+        return $url;
     }
 
     /**

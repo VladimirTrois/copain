@@ -3,6 +3,7 @@
 namespace App\Security\Authentication;
 
 use App\Entity\RefreshToken;
+use App\Entity\User;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +30,7 @@ class CustomerLoginSuccessHandler implements AuthenticationSuccessHandlerInterfa
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
+        /** @var User $user */
         $user = $token->getUser();
         $jwt = $this->jwtManager->create($user);
 
