@@ -4,6 +4,7 @@
 
 namespace App\Service\User;
 
+use App\Dto\User\UserListDto;
 use App\Dto\User\UserShowDto;
 use App\Entity\User;
 use App\Mapper\UserMapper;
@@ -33,7 +34,7 @@ class UserService
     /**
      * Get all users as a list of ListDto.
      *
-     * @return ListDto[]
+     * @return UserListDto[]
      */
     public function getAllUsersListDto(): array
     {

@@ -10,6 +10,7 @@ class UniqueArticleIdsValidator extends ConstraintValidator
 {
     /**
      * @param OrderItemInput[] $value
+     * @param UniqueArticleIds $constraint
      */
     public function validate($value, Constraint $constraint): void
     {
