@@ -32,8 +32,8 @@ class CustomerService
 
     public function createCustomerWithOrder(PublicOrderCreateInput $input): Customer
     {
-        $customer = $this->createCustomer($input['customer']);
-        $order = $this->orderInputMapper->mapToEntity($input['order'], $customer);
+        $customer = $this->createCustomer($input->customer);
+        $order = $this->orderInputMapper->mapToEntity($input->order, $customer);
         $order = $this->orderPersister->createOrder($order);
 
         return $customer;
