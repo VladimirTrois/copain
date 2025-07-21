@@ -30,7 +30,7 @@ abstract class BaseTestCase extends WebTestCase
     private ?string $token = null;
 
     /**
-     * @param string[] $userData
+     * @param array<string, mixed> $userData
      */
     protected function createClientAsUser(array $userData = []): KernelBrowser
     {
@@ -52,7 +52,7 @@ abstract class BaseTestCase extends WebTestCase
     }
 
     /**
-     * @param string[] $userData
+     * @param array<string, mixed> $userData
      */
     protected function createClientAsAdmin(array $userData = []): KernelBrowser
     {
@@ -74,7 +74,7 @@ abstract class BaseTestCase extends WebTestCase
     }
 
     /**
-     * @param string[] $userData
+     * @param array<string, mixed> $userData
      */
     protected function createClientAsCustomer(array $userData = []): KernelBrowser
     {
@@ -101,7 +101,7 @@ abstract class BaseTestCase extends WebTestCase
     /**
      * Decode JSON response content.
      *
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
     protected function decodeResponse(KernelBrowser $client): array
     {
