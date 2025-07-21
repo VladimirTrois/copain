@@ -8,14 +8,12 @@ use App\Dto\User\UserListDto;
 use App\Dto\User\UserShowDto;
 use App\Entity\User;
 use App\Mapper\UserMapper;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class UserService
 {
@@ -24,9 +22,7 @@ class UserService
         private SerializerInterface $serializer,
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $hasher,
-        private UserRepository $userRepository,
         private UserMapper $userMapper,
-        private ResetPasswordHelperInterface $resetPasswordHelper,
         private UserFinder $userFinder,
     ) {
     }

@@ -4,7 +4,6 @@ namespace App\Service\Business;
 
 use App\Entity\Business;
 use App\Entity\User;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,9 +17,6 @@ class BusinessAccess
     public function getBusinessIfOwnedByUser(int $businessId, User $user): Business
     {
         $business = $this->businessFinder->find($businessId);
-        if (! $business) {
-            throw new NotFoundHttpException('Business not found.');
-        }
 
         if (! $business->isOwnedBy($user)) {
             throw new AccessDeniedException('You do not own this business.');
@@ -32,9 +28,6 @@ class BusinessAccess
     public function getBusinessIfUserBelongs(int $businessId, UserInterface $user): Business
     {
         $business = $this->businessFinder->find($businessId);
-        if (! $business) {
-            throw new NotFoundHttpException('Business not found.');
-        }
 
         if (! $business->hasUser($user)) {
             throw new AccessDeniedException('You do not belong to this business.');

@@ -5,7 +5,6 @@ namespace App\Service\Customer;
 use App\Dto\Customer\Register\CustomerCreateInput;
 use App\Dto\Public\PublicOrderCreateInput;
 use App\Entity\Customer;
-use App\Mapper\Customer\Order\OrderDtoMapper;
 use App\Mapper\Customer\Order\OrderInputMapper;
 use App\Mapper\Customer\Register\CustomerInputMapper;
 use App\Service\Order\OrderPersister;
@@ -17,7 +16,6 @@ class CustomerService
         private CustomerPersister $customerPersister,
         private OrderInputMapper $orderInputMapper,
         private OrderPersister $orderPersister,
-        private OrderDtoMapper $orderDtoMapper,
         private CustomerFinder $customerFinder,
     ) {
     }
