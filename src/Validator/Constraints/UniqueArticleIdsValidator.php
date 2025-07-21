@@ -14,17 +14,9 @@ class UniqueArticleIdsValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (! is_array($value)) {
-            return;
-        }
-
         $seen = [];
 
         foreach ($value as $item) {
-            if (! $item instanceof OrderItemInput) {
-                continue;
-            }
-
             $articleId = $item->articleId;
             if (in_array($articleId, $seen, true)) {
                 $this->context->buildViolation($constraint->message)
@@ -33,7 +25,6 @@ class UniqueArticleIdsValidator extends ConstraintValidator
 
                 return;
             }
-
             $seen[] = $articleId;
         }
     }
