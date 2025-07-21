@@ -29,7 +29,7 @@ final class CustomerFactory extends PersistentProxyObjectFactory
      *
      * @todo add your default values here
      */
-    protected function defaults(): array|callable
+    protected function defaults(): array
     {
         return [
             'email' => self::faker()->email(),

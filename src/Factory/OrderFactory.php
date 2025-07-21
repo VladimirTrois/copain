@@ -29,7 +29,7 @@ final class OrderFactory extends PersistentProxyObjectFactory
      *
      * @todo add your default values here
      */
-    protected function defaults(): array|callable
+    protected function defaults(): array
     {
         $pickUpDate = self::faker()->dateTimeBetween('-6 months', '+6 months');
         $isValidatedByCustomer = self::faker()->boolean(80);

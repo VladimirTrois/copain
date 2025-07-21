@@ -9,13 +9,11 @@ use App\Dto\Customer\Order\Show\OrderItemDto;
 use App\Dto\Customer\Order\Show\OrderShowDto;
 use App\Entity\Order;
 use App\Mapper\Customer\Business\BusinessDtoMapper;
-use App\Mapper\Customer\OrderItems\OrderItemDtoMapper;
 
 final class OrderDtoMapper
 {
     public function __construct(
         private BusinessDtoMapper $businessDtoMapper,
-        private OrderItemDtoMapper $orderItemDtoMapper,
     ) {
     }
 
