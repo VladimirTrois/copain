@@ -11,6 +11,8 @@ class ResetPasswordTest extends BaseTestCase
 {
     public function testRequestFailsWhenEmailIsMissing(): void
     {
+        $payload = [];
+
         $client = $this->createClient();
         $client->request(
             'POST',
@@ -20,16 +22,22 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent());
     }
 
     public function testRequestSuccessWhenEmailIsUnknownForSecurity(): void
     {
         $client = static::createClient();
+
+        $payload = [
+            'email' => 'unknown@example.com',
+        ];
+
         $client->request(
             'POST',
             '/api/reset-password/request',
@@ -38,12 +46,11 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'email' => 'unknown@example.com',
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful(); // returns 200 even for unknown emails (security reason)
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent(), '{message: Reset email sent if address is valid.}');
     }
 
@@ -52,6 +59,10 @@ class ResetPasswordTest extends BaseTestCase
         $client = $this->createClient();
         $user = UserFactory::createOne();
 
+        $payload = [
+            'email' => $user->getEmail(),
+        ];
+
         $client->request(
             'POST',
             '/api/reset-password/request',
@@ -60,12 +71,11 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'email' => $user->getEmail(),
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
@@ -80,6 +90,9 @@ class ResetPasswordTest extends BaseTestCase
     public function testResetFailsWhenTokenAndPasswordAreMissing(): void
     {
         $client = static::createClient();
+
+        $payload = [];
+
         $client->request(
             'POST',
             '/api/reset-password/reset',
@@ -88,16 +101,23 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([]) // missing token and password
+            $this->encodeJson($payload) // missing token and password
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent());
     }
 
     public function testResetFailsWithInvalidToken(): void
     {
         $client = static::createClient();
+
+        $payload = [
+            'token' => 'invalid-token',
+            'password' => 'new-password',
+        ];
+
         $client->request(
             'POST',
             '/api/reset-password/reset',
@@ -106,13 +126,11 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'token' => 'invalid-token',
-                'password' => 'new-password',
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent());
     }
 
@@ -125,6 +143,11 @@ class ResetPasswordTest extends BaseTestCase
         $resetPasswordHelper = self::getContainer()->get(ResetPasswordHelperInterface::class);
         $resetToken = $resetPasswordHelper->generateResetToken($user->_real());
 
+        $payload = [
+            'token' => $resetToken->getToken(),
+            'password' => 'secure-new-password',
+        ];
+
         $client->request(
             'POST',
             '/api/reset-password/reset',
@@ -133,25 +156,25 @@ class ResetPasswordTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'token' => $resetToken->getToken(),
-                'password' => 'secure-new-password',
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertNotFalse($client->getResponse()->getContent());
         $this->assertJson($client->getResponse()->getContent());
+
+        $newPayload = [
+            'email' => $user->getEmail(),
+            'password' => 'secure-new-password',
+        ];
 
         // Verify password changed and login works
         $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'email' => $user->getEmail(),
-            'password' => 'secure-new-password',
-        ]));
+        ], $this->encodeJson($newPayload));
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertArrayHasKey('token', $data);
     }
 }

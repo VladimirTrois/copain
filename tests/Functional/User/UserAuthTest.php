@@ -19,16 +19,18 @@ final class UserAuthTest extends BaseTestCase
             'roles' => ['ROLE_USER'],
         ]));
 
+        $payload = [
+            'email' => self::EMAIL_USER,
+            'password' => self::PASSWORD_USER,
+        ];
+
         // Then login
         $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'email' => self::EMAIL_USER,
-            'password' => self::PASSWORD_USER,
-        ]));
+        ], $this->encodeJson($payload));
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertArrayHasKey('token', $data);
     }
 
@@ -36,12 +38,14 @@ final class UserAuthTest extends BaseTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/api/login', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
+        $payload = [
             'email' => 'nonexistent@example.com',
             'password' => 'wrongpass',
-        ]));
+        ];
+
+        $client->request('POST', '/api/login', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $this->encodeJson($payload));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
@@ -57,29 +61,33 @@ final class UserAuthTest extends BaseTestCase
             'roles' => ['ROLE_USER'],
         ]));
 
+        $payload = [
+            'email' => self::EMAIL_USER,
+            'password' => self::PASSWORD_USER,
+        ];
+
         // Then login
         $client->request('POST', '/api/login', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'email' => self::EMAIL_USER,
-            'password' => self::PASSWORD_USER,
-        ]));
+        ], $this->encodeJson($payload));
 
-        $oldData = json_decode($client->getResponse()->getContent(), true);
+        $oldData = $this->decodeResponse($client);
         $this->assertArrayHasKey('refresh_token', $oldData);
 
         // Need to sleep to advance test environment
         // otherwise $oldData['token'] === $newData['token']
         sleep(1);
 
+        $newPayload = [
+            'refresh_token' => $oldData['refresh_token'],
+        ];
+
         $client->request('POST', '/api/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'refresh_token' => $oldData['refresh_token'],
-        ]));
+        ], $this->encodeJson($newPayload));
 
         $this->assertResponseIsSuccessful();
-        $newData = json_decode($client->getResponse()->getContent(), true);
+        $newData = $this->decodeResponse($client);
 
         $this->assertArrayHasKey('token', $newData);
         $this->assertNotEquals($oldData['token'], $newData['token']);
@@ -89,11 +97,13 @@ final class UserAuthTest extends BaseTestCase
     {
         $client = static::createClient();
 
+        $payload = [
+            'refresh_token' => 'invalid-token',
+        ];
+
         $client->request('POST', '/api/token/refresh', [], [], [
             'CONTENT_TYPE' => 'application/json',
-        ], json_encode([
-            'refresh_token' => 'invalid-token',
-        ]));
+        ], $this->encodeJson($payload));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }

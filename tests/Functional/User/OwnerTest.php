@@ -37,7 +37,7 @@ final class OwnerTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertCount($numberOfEmployees + 1, $data);
         foreach ($data as $user_data) {
             $this->assertArrayHasKey('id', $user_data);
@@ -100,7 +100,7 @@ final class OwnerTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful();

@@ -40,11 +40,11 @@ class ArticleCrudTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertSame($payload['name'], $data['name']);
         $this->assertSame($payload['price'], $data['price']);
         $this->assertSame($payload['weight'], $data['weight']);
@@ -74,7 +74,7 @@ class ArticleCrudTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
@@ -111,11 +111,11 @@ class ArticleCrudTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertSame($payload['name'], $data['name']);
         $this->assertSame($payload['price'], $data['price']);
         $this->assertSame($payload['weight'], $data['weight']);
@@ -155,7 +155,7 @@ class ArticleCrudTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);

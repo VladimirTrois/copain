@@ -33,8 +33,7 @@ class ArticleAccessTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
+        $data = $this->decodeResponse($client);
         $this->assertGreaterThanOrEqual(self::NUMBERSOFARTICLES, count($data));
     }
 
@@ -57,7 +56,7 @@ class ArticleAccessTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/articles/' . $article->getId());
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertSame($article->getName(), $data['name']);
     }
 

@@ -22,7 +22,7 @@ class UserBusinessTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertCount($numberOfBusinesses, $data);
         foreach ($data as $business_data) {
             $this->assertArrayHasKey('id', $business_data);
@@ -45,7 +45,7 @@ class UserBusinessTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->decodeResponse($client);
         $this->assertCount($numberOfBusinesses, $data);
         foreach ($data as $business_data) {
             $this->assertArrayHasKey('id', $business_data);

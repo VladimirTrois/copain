@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Customer\Order;
 
+use App\Entity\OrderItem;
 use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;
 use App\Factory\CustomerFactory;
@@ -30,8 +31,7 @@ class OrderTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
+        $data = $this->decodeResponse($client);
         $this->assertCount(self::NUMBERSOFORDERS, $data);
     }
 
@@ -51,8 +51,14 @@ class OrderTest extends BaseTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
+        $data = $this->decodeResponse($client);
+
+        $this->assertEquals($order->getId(), $data['id']);
+        $this->assertEquals(
+            $order->getPickUpDate()
+                ->format('Y-m-d'),
+            (new \DateTime($data['pickUpDate']))->format('Y-m-d')
+        );
     }
 
     public function testNotFoundOnGetAnotherCustomerOrder(): void
@@ -98,13 +104,13 @@ class OrderTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
-        $responseData = json_decode($client->getResponse()->getContent(), true);
+        $responseData = $this->decodeResponse($client);
         $this->assertArrayHasKey('id', $responseData);
 
         // Assert the created order exists
@@ -116,13 +122,26 @@ class OrderTest extends BaseTestCase
         $this->assertEquals($payload['pickUpDate'], $order->getPickUpDate()->format('Y-m-d'));
         $orderItem = $order->getOrderItems()
             ->first();
-        $this->assertEquals($article->getId(), $orderItem->getArticle()->getId());
-        $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
+        $this->assertInstanceOf(OrderItem::class, $orderItem, 'OrderItem not found');
+
+        $articleId = $orderItem->getArticle()
+            ->getId();
+        $this->assertNotNull($articleId, 'Article not attached to OrderItem');
+        $this->assertSame($article->getId(), $articleId);
+
+        $this->assertSame($payload['items'][0]['quantity'], $orderItem->getQuantity());
+
     }
 
     public function testCreateOrderFailsWithMissingFields(): void
     {
         $client = $this->createClientAsCustomer();
+
+        $payload = [
+            'businessId' => '',
+            'pickUpDate' => '',
+            'items' => [],
+        ];
 
         $client->request(
             'POST',
@@ -132,11 +151,7 @@ class OrderTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'businessId' => '',
-                'pickUpDate' => '',
-                'items' => [],
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -146,6 +161,11 @@ class OrderTest extends BaseTestCase
     {
         $client = $this->createClientAsCustomer();
 
+        $payload = [
+            'businessId' => 'invalid-id',
+            'items' => [],
+        ];
+
         $client->request(
             'POST',
             '/api/customers/orders',
@@ -154,10 +174,7 @@ class OrderTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
-                'businessId' => 'invalid-id',
-                'items' => [],
-            ])
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -187,15 +204,24 @@ class OrderTest extends BaseTestCase
             ],
         ];
 
-        $client->request('POST', '/api/customers/orders', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], json_encode($payload));
+        $client->request(
+            'POST',
+            '/api/customers/orders',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            $this->encodeJson($payload)
+        );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = $client->getResponse()
+            ->getContent();
+        $this->assertNotFalse($response);
 
-        $this->assertStringContainsString('Duplicate articleId', json_encode($response));
+        $this->assertStringContainsString('Duplicate articleId', $response);
     }
 
     public function testCreateOrderFailsWithArticleFromAnotherBusiness(): void
@@ -227,14 +253,24 @@ class OrderTest extends BaseTestCase
             ],
         ];
 
-        $client->request('POST', '/api/customers/orders', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], json_encode($payload));
+        $client->request(
+            'POST',
+            '/api/customers/orders',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            $this->encodeJson($payload)
+        );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('An article is not from the business.', json_encode($response));
+        $response = $client->getResponse()
+            ->getContent();
+        $this->assertNotFalse($response);
+
+        $this->assertStringContainsString('An article is not from the business.', $response);
     }
 
     public function testUpdateOrder(): void
@@ -279,7 +315,7 @@ class OrderTest extends BaseTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode($payload)
+            $this->encodeJson($payload)
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
@@ -288,9 +324,16 @@ class OrderTest extends BaseTestCase
         $order = OrderFactory::find([
             'id' => $order->getId(),
         ]);
+
         $orderItem = $order->getOrderItems()
             ->first();
-        $this->assertEquals($newArticle->getId(), $orderItem->getArticle()->getId());
-        $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
+        $this->assertInstanceOf(OrderItem::class, $orderItem, 'OrderItem not found');
+
+        $articleId = $orderItem->getArticle()
+            ->getId();
+        $this->assertNotNull($articleId, 'Article not attached to OrderItem');
+        $this->assertSame($newArticle->getId(), $articleId);
+
+        $this->assertSame($payload['items'][0]['quantity'], $orderItem->getQuantity());
     }
 }
