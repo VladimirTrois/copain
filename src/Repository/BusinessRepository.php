@@ -16,6 +16,9 @@ class BusinessRepository extends ServiceEntityRepository
         parent::__construct($registry, Business::class);
     }
 
+    /**
+     * @return Business[]
+     */
     public function findAllActive(): array
     {
         return $this->createQueryBuilder('b')

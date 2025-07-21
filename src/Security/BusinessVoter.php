@@ -3,11 +3,15 @@
 namespace App\Security;
 
 use App\Entity\Business;
+use App\Entity\BusinessUser;
 use App\Entity\User;
 use App\Enum\Responsibility;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Business>
+ */
 class BusinessVoter extends Voter
 {
     // Supported actions
@@ -36,12 +40,12 @@ class BusinessVoter extends Voter
         $roles = $businessUser->getResponsibilities();
 
         // OWNER can do anything
-        if (in_array(Responsibility::OWNER->value, $roles, true)) {
+        if (in_array(Responsibility::OWNER, $roles, true)) {
             return true;
         }
 
         // MANAGER can view and edit business info, but not manage users
-        if (in_array(Responsibility::MANAGER->value, $roles, true)) {
+        if (in_array(Responsibility::MANAGER, $roles, true)) {
             return in_array($attribute, ['VIEW', 'EDIT'], true);
         }
 
@@ -49,7 +53,7 @@ class BusinessVoter extends Voter
         return false;
     }
 
-    private function getBusinessUser(Business $business, User $user)
+    private function getBusinessUser(Business $business, User $user): ?BusinessUser
     {
         foreach ($business->getBusinessUsers() as $businessUser) {
             if ($businessUser->getUser() === $user) {
