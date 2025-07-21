@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -26,8 +25,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('', name: 'business_article_list', methods: ['GET'])]
-    public function list(int $businessId, UserInterface $user): JsonResponse
+    public function list(int $businessId): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
         $articles = $this->articleService->findBy([
             'business' => $business,
@@ -39,8 +41,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'business_article_show', methods: ['GET'])]
-    public function show(int $businessId, int $id, UserInterface $user): JsonResponse
+    public function show(int $businessId, int $id): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
         $article = $this->articleService->findOneBy([
             'id' => $id,
@@ -53,8 +58,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('', name: 'article_create', methods: ['POST'])]
-    public function create(int $businessId, Request $request, UserInterface $user): JsonResponse
+    public function create(int $businessId, Request $request): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
 
         $article = $this->serializer->deserialize($request->getContent(), Article::class, 'json', [
@@ -69,8 +77,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'article_update', methods: ['PATCH'])]
-    public function update(int $businessId, int $id, Request $request, UserInterface $user): JsonResponse
+    public function update(int $businessId, int $id, Request $request): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
         $article = $this->articleService->find($id);
         $json = $request->getContent();
@@ -88,8 +99,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'article_delete', methods: ['DELETE'])]
-    public function delete(int $businessId, int $id, UserInterface $user): JsonResponse
+    public function delete(int $businessId, int $id): JsonResponse
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
         $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
         $this->articleService->ownerDeleteArticle($id);
 

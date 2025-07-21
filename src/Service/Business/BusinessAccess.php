@@ -5,7 +5,6 @@ namespace App\Service\Business;
 use App\Entity\Business;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class BusinessAccess
 {
@@ -25,7 +24,7 @@ class BusinessAccess
         return $business;
     }
 
-    public function getBusinessIfUserBelongs(int $businessId, UserInterface $user): Business
+    public function getBusinessIfUserBelongs(int $businessId, User $user): Business
     {
         $business = $this->businessFinder->find($businessId);
 
