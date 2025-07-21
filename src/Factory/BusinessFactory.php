@@ -26,6 +26,10 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return Business::class;
     }
 
+    /**
+     * @param Responsibility[] $responsibilities
+     * @return Business
+     */
     public static function addBusinessToUser(User $user, array $responsibilities = [Responsibility::OWNER]): object
     {
         $business = self::createOne();
@@ -38,6 +42,10 @@ final class BusinessFactory extends PersistentProxyObjectFactory
         return $business;
     }
 
+    /**
+     * @param Responsibility[] $responsibilities
+     * @return Business[]
+     */
     public static function addBusinessesToUser(
         User $user,
         int $count,
@@ -57,8 +65,7 @@ final class BusinessFactory extends PersistentProxyObjectFactory
 
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
+     * @return array<string, mixed>
      */
     protected function defaults(): array
     {
