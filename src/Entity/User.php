@@ -21,13 +21,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:collection', 'user:read'])]
-    private ?int $id;
+    private int $id;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true, nullable: false)]
     #[Assert\NotBlank(groups: ['create', 'update'])]
     #[Assert\Email(groups: ['create', 'update'])]
     #[Groups(['user:collection', 'user:read', 'user:write'])]
-    private ?string $email;
+    private string $email;
 
     /**
      * @var list<string> The user roles
@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->businesses = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -89,7 +89,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        if (empty($this->email)) {
+            throw new \LogicException('User identifier (email) cannot be empty.');
+        }
+
+        return $this->email;
     }
 
     /**
