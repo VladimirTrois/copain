@@ -13,7 +13,7 @@ class ArticleService
     ) {
     }
 
-    public function find(int|string $id): Article
+    public function find(int $id): Article
     {
         return $this->articleFinder->find($id);
     }

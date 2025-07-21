@@ -117,7 +117,7 @@ class UserService
             ];
         }
 
-        return json_encode($errorDetails);
+        return json_encode($errorDetails, JSON_THROW_ON_ERROR);
     }
 
     private function hashPasswordIfNeeded(User $user): void

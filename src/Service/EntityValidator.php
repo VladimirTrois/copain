@@ -21,10 +21,14 @@ class EntityValidator
         $errors = $this->validator->validate($entity, null, $groups);
 
         if (count($errors) > 0) {
-            throw new UnprocessableEntityHttpException(json_encode(array_map(fn ($e) => [
+            $data = array_map(fn ($e) => [
                 'property' => $e->getPropertyPath(),
                 'message' => $e->getMessage(),
-            ], iterator_to_array($errors))));
+            ], iterator_to_array($errors));
+
+            $json = json_encode($data, JSON_THROW_ON_ERROR);
+
+            throw new UnprocessableEntityHttpException($json);
         }
     }
 }

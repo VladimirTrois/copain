@@ -6,100 +6,114 @@ namespace App\Tests\Functional\Admin;
 
 use App\Factory\BusinessFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 class BusinessTest extends BaseTestCase
 {
-    public const NUMBERSOFUSERS = 30;
+    private const NUMBERS_OF_USERS = 30;
+
+    private KernelBrowser $client;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Create client first to avoid kernel boot issues later
+        $this->client = $this->createClientAsAdmin();
+    }
 
     public function testListAsAdmin(): void
     {
-        $client = $this->createClientAsAdmin();
+        BusinessFactory::createMany(self::NUMBERS_OF_USERS);
 
-        BusinessFactory::createMany(self::NUMBERSOFUSERS);
-
-        $client->request('GET', '/api/businesses');
+        $this->client->request('GET', '/api/businesses');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
-        $this->assertGreaterThanOrEqual(self::NUMBERSOFUSERS, count($data));
+
+        $data = $this->decodeResponse();
+        $this->assertGreaterThanOrEqual(self::NUMBERS_OF_USERS, count($data));
     }
 
     public function testShowAsAdmin(): void
     {
-        $client = $this->createClientAsAdmin();
-
         $business = BusinessFactory::createOne();
 
-        $client->request('GET', '/api/businesses/' . $business->getId());
+        $this->client->request('GET', '/api/businesses/' . $business->getId());
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $data = $this->decodeResponse();
         $this->assertSame($business->getName(), $data['name']);
     }
 
     public function testCreateAsAdmin(): void
     {
-        $client = $this->createClientAsAdmin();
-
         $payload = [
             'name' => 'newbusiness',
         ];
 
-        $client->request(
-            'POST',
-            '/api/businesses',
-            [],
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($payload)
-        );
+        $this->requestJson('POST', '/api/businesses', $payload);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $data = $this->decodeResponse();
         $this->assertSame($payload['name'], $data['name']);
     }
 
     public function testUpdateAsAdmin(): void
     {
-        $client = $this->createClientAsAdmin();
-
         $business = BusinessFactory::createOne();
 
         $payload = [
-            'name' => 'business',
+            'name' => 'updatedbusiness',
         ];
 
-        $client->request(
-            'PATCH',
-            '/api/businesses/' . $business->getId(),
-            [],
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($payload)
-        );
+        $this->requestJson('PATCH', '/api/businesses/' . $business->getId(), $payload);
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $data = $this->decodeResponse();
         $this->assertSame($payload['name'], $data['name']);
     }
 
     public function testDeleteAsAdmin(): void
     {
-        $client = $this->createClientAsAdmin();
-
         $business = BusinessFactory::createOne();
 
-        $client->request('DELETE', '/api/businesses/' . $business->getId());
+        $this->client->request('DELETE', '/api/businesses/' . $business->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
-        $client->request('GET', '/api/businesses/' . $business->getId());
+        $this->client->request('GET', '/api/businesses/' . $business->getId());
         $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function decodeResponse(): array
+    {
+        $content = $this->client->getResponse()
+            ->getContent();
+        $this->assertIsString($content, 'Response content should be a string');
+
+        $data = json_decode($content, true);
+        $this->assertIsArray($data, 'Response content should decode to an array');
+
+        return $data;
+    }
+
+    /**
+     * @param array<string, mixed>|null $payload
+     */
+    private function requestJson(string $method, string $uri, ?array $payload = null): void
+    {
+        $jsonPayload = $payload !== null ? json_encode($payload) : null;
+
+        $this->assertNotFalse($jsonPayload, 'JSON encoding failed');
+
+        $this->client->request($method, $uri, [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], $jsonPayload);
     }
 }
