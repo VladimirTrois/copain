@@ -37,7 +37,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findOneWithBusinesses(int $userId): ?User
     {
-        return $this->createQueryBuilder('u')
+        /** @var User $user */
+        $user = $this->createQueryBuilder('u')
             ->leftJoin('u.businesses', 'bu')
             ->addSelect('bu')
             ->leftJoin('bu.business', 'b')
@@ -46,6 +47,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('id', $userId)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $user;
     }
 
     //    /**

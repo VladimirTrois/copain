@@ -112,6 +112,8 @@ abstract class BaseTestCase extends WebTestCase
 
         $data = json_decode($content, true);
 
+        $this->assertIsArray($data, 'Response content should be an array');
+
         return $data;
     }
 

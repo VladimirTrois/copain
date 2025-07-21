@@ -40,6 +40,7 @@ final class OwnerTest extends BaseTestCase
         $data = $this->decodeResponse($client);
         $this->assertCount($numberOfEmployees + 1, $data);
         foreach ($data as $user_data) {
+            $this->assertIsArray($user_data);
             $this->assertArrayHasKey('id', $user_data);
             $this->assertArrayHasKey('email', $user_data);
         }
@@ -104,12 +105,11 @@ final class OwnerTest extends BaseTestCase
         );
 
         $this->assertResponseIsSuccessful();
+
         $businessUser = BusinessUserFactory::find([
             'user' => $newUser,
             'business' => $business,
         ]);
-        $this->assertNotNull($businessUser);
-        $this->assertNotNull($businessUser->getResponsibilities());
         $this->assertEquals(Responsibility::SELLER, $businessUser->getResponsibilities()[0]);
     }
 }

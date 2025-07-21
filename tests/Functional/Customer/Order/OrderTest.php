@@ -54,6 +54,7 @@ class OrderTest extends BaseTestCase
         $data = $this->decodeResponse($client);
 
         $this->assertEquals($order->getId(), $data['id']);
+        $this->assertIsString($data['pickUpDate']);
         $this->assertEquals(
             $order->getPickUpDate()
                 ->format('Y-m-d'),

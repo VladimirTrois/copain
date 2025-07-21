@@ -49,7 +49,7 @@ class UserService
     /**
      * @param array<string, mixed> $criteria
      */
-    public function findOneBy(array $criteria): User
+    public function findOneBy(array $criteria): ?User
     {
         return $this->userFinder->findOneBy($criteria);
     }
@@ -116,7 +116,7 @@ class UserService
 
     /**
      * Validate the user entity with optional validation groups.
-     * @param array<int, mixed> $groups
+     * @param array<string> $groups
      */
     private function validate(User $user, array $groups = ['Default']): void
     {

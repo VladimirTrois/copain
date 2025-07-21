@@ -15,6 +15,7 @@ class OrderFinder
 
     public function find(int|string $id): Order
     {
+        /** @var Order|null $order */
         $order = $this->repo->createQueryBuilder('o')
             ->leftJoin('o.orderItems', 'oi')
             ->addSelect('oi')

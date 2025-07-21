@@ -21,11 +21,14 @@ class BusinessRepository extends ServiceEntityRepository
      */
     public function findAllActive(): array
     {
-        return $this->createQueryBuilder('b')
+        /** @var Business[] $results */
+        $results = $this->createQueryBuilder('b')
             ->andWhere('b.deletedAt IS NULL')
             ->orderBy('b.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
+
+        return $results;
     }
 
     //    /**

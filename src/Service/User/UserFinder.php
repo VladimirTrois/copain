@@ -42,13 +42,9 @@ class UserFinder
     /**
      * @param array<string, mixed> $criteria
      */
-    public function findOneBy(array $criteria): User
+    public function findOneBy(array $criteria): ?User
     {
         $user = $this->userRepository->findOneBy($criteria);
-
-        if (! $user) {
-            throw new UserNotFoundException();
-        }
 
         return $user;
     }

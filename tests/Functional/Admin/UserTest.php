@@ -28,6 +28,7 @@ class UserTest extends BaseTestCase
 
         $this->assertGreaterThanOrEqual(self::NUMBERSOFUSERS, count($data));
         foreach ($data as $user) {
+            $this->assertIsArray($user);
             // Assert required keys exist
             $this->assertArrayHasKey('id', $user);
             $this->assertArrayHasKey('email', $user);
@@ -74,12 +75,15 @@ class UserTest extends BaseTestCase
         $this->assertSame($user->getId(), $data['id']);
         $this->assertSame($user->getEmail(), $data['email']);
         $this->assertIsArray($data['roles']);
+        $this->assertIsIterable($data['roles']);
         $this->assertContains('ROLE_USER', $data['roles']); // or assertEquals if you want exact roles
 
         // Validate businesses is an array with one item
         $this->assertIsArray($data['businesses']);
         $this->assertCount(1, $data['businesses']);
+        $this->assertIsArray($data['businesses'][0]);
 
+        /** @var array<mixed> $businessData */
         $businessData = $data['businesses'][0];
 
         // Check businesses array item keys
@@ -95,6 +99,7 @@ class UserTest extends BaseTestCase
 
         // Check responsibilities array
         $this->assertIsArray($businessData['responsibilities']);
+        $this->assertIsIterable($businessData['responsibilities']);
         $this->assertContains(Responsibility::OWNER->value, $businessData['responsibilities']);
     }
 
@@ -154,6 +159,7 @@ class UserTest extends BaseTestCase
         $data = $this->decodeResponse($client);
 
         $this->assertSame($payload['email'], $data['email']);
+        $this->assertIsIterable($data['roles']);
         $this->assertContains('ROLE_ADMIN', $data['roles']);
     }
 

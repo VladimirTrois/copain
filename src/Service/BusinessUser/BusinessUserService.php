@@ -5,7 +5,6 @@ namespace App\Service\BusinessUser;
 use App\Entity\Business;
 use App\Entity\BusinessUser;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Service\EntityValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -14,7 +13,6 @@ class BusinessUserService
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private UserRepository $userRepository,
         private EntityValidator $validator
     ) {
     }

@@ -14,7 +14,7 @@ class EntityValidator
 
     /**
      * Validate the entity with optional validation groups.
-     * @param array<int, mixed> $groups
+     * @param array<string> $groups
      */
     public function validate(object $entity, array $groups = ['Default']): void
     {

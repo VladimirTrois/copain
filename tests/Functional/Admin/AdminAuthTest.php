@@ -35,7 +35,7 @@ final class AdminAuthTest extends BaseTestCase
             ->getContent();
         $this->assertIsString($content);
 
-        $data = json_decode($content, true);
+        $data = $this->decodeResponse($client);
         $this->assertArrayHasKey('token', $data);
     }
 }
