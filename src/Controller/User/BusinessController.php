@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\BusinessUser;
+namespace App\Controller\User;
 
 use App\Entity\User;
 use App\Service\Business\BusinessService;

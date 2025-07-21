@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\BusinessUser\User;
+namespace App\Controller\User\User;
 
 use App\Mapper\UserMapper;
 use App\Service\Business\BusinessService;
