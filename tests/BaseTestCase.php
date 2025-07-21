@@ -29,6 +29,9 @@ abstract class BaseTestCase extends WebTestCase
 
     private ?string $token = null;
 
+    /**
+     * @param string[] $userData
+     */
     protected function createClientAsUser(array $userData = []): KernelBrowser
     {
         $client = static::createClient();
@@ -48,6 +51,9 @@ abstract class BaseTestCase extends WebTestCase
         return $client;
     }
 
+    /**
+     * @param string[] $userData
+     */
     protected function createClientAsAdmin(array $userData = []): KernelBrowser
     {
         $client = static::createClient();
@@ -67,6 +73,9 @@ abstract class BaseTestCase extends WebTestCase
         return $client;
     }
 
+    /**
+     * @param string[] $userData
+     */
     protected function createClientAsCustomer(array $userData = []): KernelBrowser
     {
         $client = static::createClient();

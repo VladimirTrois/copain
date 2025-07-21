@@ -4,13 +4,14 @@ namespace App\Tests\Functional\Customer\Auth;
 
 use App\Factory\CustomerFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerLoginTest extends BaseTestCase
 {
     public const FRONTEND_BASE_URL = 'https://test.com';
 
-    private $client;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -69,6 +70,9 @@ class CustomerLoginTest extends BaseTestCase
     //     $this->assertArrayHasKey('refresh_token', $queryParams);
     // }
 
+    /**
+     * @param string[] $extraParams
+     */
     private function sendLoginRequestAndGetMagicLink(string $email, array $extraParams = []): string
     {
         $payload = array_merge([
@@ -115,6 +119,9 @@ class CustomerLoginTest extends BaseTestCase
             ->headers->get('Location');
     }
 
+    /**
+     * @return string[]
+     */
     private function extractQueryParametersFromUrl(string $url): array
     {
         $parsed = parse_url($url);

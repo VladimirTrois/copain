@@ -3,6 +3,7 @@
 namespace App\Service\Order;
 
 use App\Dto\Customer\Order\Create\OrderCreateInput;
+use App\Dto\Customer\Order\List\OrderListDto;
 use App\Dto\Customer\Order\Show\OrderShowDto;
 use App\Dto\Customer\Order\Update\OrderUpdateInput;
 use App\Entity\Customer;
@@ -21,7 +22,7 @@ class OrderService
     }
 
     /**
-     * @return OrderShowDto[]
+     * @return OrderListDto[]
      */
     public function listOrdersByCustomer(Customer $customer): array
     {

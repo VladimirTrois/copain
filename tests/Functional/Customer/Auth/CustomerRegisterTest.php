@@ -6,13 +6,14 @@ use App\Factory\ArticleFactory;
 use App\Factory\BusinessFactory;
 use App\Factory\CustomerFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerRegisterTest extends BaseTestCase
 {
     public const FRONTEND_BASE_URL = 'https://test.com';
 
-    private $client;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -162,6 +163,9 @@ class CustomerRegisterTest extends BaseTestCase
             ->headers->get('Location');
     }
 
+    /**
+     * @return string[]
+     */
     private function extractQueryParametersFromUrl(string $url): array
     {
         $parsed = parse_url($url);

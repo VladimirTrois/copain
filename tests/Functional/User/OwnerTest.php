@@ -10,7 +10,7 @@ use App\Tests\BaseTestCase;
 
 final class OwnerTest extends BaseTestCase
 {
-    public function testOwnerCanListAllUsersInHisBusiness()
+    public function testOwnerCanListAllUsersInHisBusiness(): void
     {
         $client = $this->createClientAsUser();
         $numberOfEmployees = 5;
@@ -45,7 +45,7 @@ final class OwnerTest extends BaseTestCase
         }
     }
 
-    public function testNonOwnerCannotListUsersInBusiness()
+    public function testNonOwnerCannotListUsersInBusiness(): void
     {
         $client = $this->createClientAsUser();
         $numberOfEmployees = 5;

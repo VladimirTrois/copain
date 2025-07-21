@@ -93,6 +93,7 @@ class UserService
 
     /**
      * Validate the user entity with optional validation groups.
+     * @param array<int, mixed> $groups
      */
     private function validate(User $user, array $groups = ['Default']): void
     {

@@ -12,6 +12,10 @@ class EntityValidator
     ) {
     }
 
+    /**
+     * Validate the entity with optional validation groups.
+     * @param array<int, mixed> $groups
+     */
     public function validate(object $entity, array $groups = ['Default']): void
     {
         $errors = $this->validator->validate($entity, null, $groups);

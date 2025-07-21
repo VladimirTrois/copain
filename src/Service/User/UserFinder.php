@@ -24,6 +24,10 @@ class UserFinder
         return $user;
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return User[]
+     */
     public function findBy(array $criteria): array
     {
         $users = $this->userRepository->findBy($criteria);
@@ -35,6 +39,9 @@ class UserFinder
         return $users;
     }
 
+    /**
+     * @return User[]
+     */
     public function listAll(): array
     {
         $users = $this->userRepository->findAll();

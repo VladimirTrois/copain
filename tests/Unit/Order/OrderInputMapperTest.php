@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Order;
 use App\Dto\Customer\Order\Create\OrderCreateInput;
 use App\Dto\Customer\Order\Create\OrderItemInput;
 use App\Dto\Customer\Order\Update\OrderUpdateInput;
+use App\Entity\Article;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Exception\BusinessLogicException;
@@ -146,6 +147,9 @@ class OrderInputMapperTest extends KernelTestCase
         $orderInputMapper->mapToEntity($orderInput, $customer);
     }
 
+    /**
+     * @param Article $article
+     */
     private function createOrderItemInput($article, int $quantity): OrderItemInput
     {
         $item = new OrderItemInput();

@@ -46,7 +46,7 @@ final class UserAuthTest extends BaseTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testRefreshSucceedsWithValidToken()
+    public function testRefreshSucceedsWithValidToken(): void
     {
         $client = static::createClient();
 

@@ -8,7 +8,7 @@ use App\Tests\BaseTestCase;
 
 class UserBusinessTest extends BaseTestCase
 {
-    public function testUserCanListHisBusinessesById()
+    public function testUserCanListHisBusinessesById(): void
     {
         $client = $this->createClientAsUser();
         $numberOfBusinesses = 5;
@@ -31,7 +31,7 @@ class UserBusinessTest extends BaseTestCase
         }
     }
 
-    public function testUserCanListHisBusinessesViaMeEndpoint()
+    public function testUserCanListHisBusinessesViaMeEndpoint(): void
     {
         $client = $this->createClientAsUser();
         $numberOfBusinesses = 5;
@@ -54,7 +54,7 @@ class UserBusinessTest extends BaseTestCase
         }
     }
 
-    public function testUserCannotListAnotherUsersBusinesses()
+    public function testUserCannotListAnotherUsersBusinesses(): void
     {
         $client = $this->createClientAsUser();
         $numberOfBusinesses = 5;
