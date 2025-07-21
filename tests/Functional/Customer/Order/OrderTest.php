@@ -111,12 +111,11 @@ class OrderTest extends BaseTestCase
         $order = OrderFactory::find([
             'id' => $responseData['id'],
         ]);
-        $this->assertNotNull($order);
+
         $this->assertEquals($responseData['id'], $order->getId());
         $this->assertEquals($payload['pickUpDate'], $order->getPickUpDate()->format('Y-m-d'));
         $orderItem = $order->getOrderItems()
             ->first();
-        $this->assertNotNull($orderItem);
         $this->assertEquals($article->getId(), $orderItem->getArticle()->getId());
         $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
     }
@@ -291,7 +290,6 @@ class OrderTest extends BaseTestCase
         ]);
         $orderItem = $order->getOrderItems()
             ->first();
-        $this->assertNotNull($orderItem);
         $this->assertEquals($newArticle->getId(), $orderItem->getArticle()->getId());
         $this->assertEquals($payload['items'][0]['quantity'], $orderItem->getQuantity());
     }

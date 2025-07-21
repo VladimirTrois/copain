@@ -146,36 +146,6 @@ class CustomerRegisterTest extends BaseTestCase
         $this->assertArrayHasKey('order_token', $queryParams);
     }
 
-    private function sendLoginRequestAndGetMagicLink(string $email, array $extraParams = []): string
-    {
-        $payload = array_merge([
-            'email' => $email,
-        ], $extraParams);
-
-        $this->client->request(
-            'POST',
-            '/api/customers/login',
-            [],
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($payload)
-        );
-
-        $this->assertResponseIsSuccessful();
-        $this->assertEmailCount(1);
-
-        /** @var \Symfony\Bridge\Twig\Mime\TemplatedEmail $email */
-        $email = $this->getMailerMessage();
-        $htmlBody = $email->getHtmlBody();
-
-        preg_match('/https?:\/\/[^\s"]+/', $htmlBody, $matches);
-        $this->assertNotEmpty($matches, 'No URL found in email body');
-
-        return $matches[0];
-    }
-
     private function simulateMagicLinkClickAndGetRedirect(string $magicLinkUrl): string
     {
         $parsedUrl = parse_url($magicLinkUrl);
