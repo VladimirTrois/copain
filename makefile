@@ -90,3 +90,5 @@ ecs: ## Run EasyCodingStandard list or pass the parameter "c=" to run a given co
 phpstan: ## Run PHPStan list or pass the parameter "c=" to run a given command, example: make phpstan c='fix --dry-run'
 	@$(PHP_CONT) vendor/bin/phpstan $(or $(c),list)
 
+rector: ## Run Rector list or pass the parameter "c=" to run a given command, example: make rector c='fix --dry-run'
+	@$(PHP_CONT) vendor/bin/rector $(or $(c),list)

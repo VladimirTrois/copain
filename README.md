@@ -53,7 +53,6 @@ make composer c="require --dev phpstan/phpstan-symfony"
 # Rector (choose the sets for your PHP/Symfony versions)
 make composer c="require --dev rector/rector"
 
-
 ```
 
 ### On first time run
