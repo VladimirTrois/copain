@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 #[ORM\UniqueConstraint(name: 'CUSTOMER_UNIQUE_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -18,15 +19,20 @@ class Customer implements UserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, nullable: false, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private string $email;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(min: 10, max: 20)]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]

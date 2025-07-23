@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Customer\Auth;
 
 use App\Factory\CustomerFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerLoginTest extends CustomerBaseTestCase
 {
@@ -21,41 +22,55 @@ class CustomerLoginTest extends CustomerBaseTestCase
         $this->assertArrayHasKey('refresh_token', $queryParams);
     }
 
-    public function testLoginWithOrderTokenRedirectsWithOrderToken(): void
+    public function testLoginWithNoEmailFails(): void
     {
-        $customer = CustomerFactory::createOne();
-        $orderToken = bin2hex(random_bytes(16));
+        $payload = [];
 
-        $magicLinkUrl = $this->sendLoginRequestAndGetMagicLink($customer->getEmail(), [
-            'order_token' => $orderToken,
-        ]);
-        $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
+        $this->client->request(
+            'POST',
+            '/api/customers/login',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            $this->encodeJson($payload)
+        );
 
-        $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl);
-
-        $queryParams = $this->extractQueryParametersFromUrl($redirectUrl);
-
-        $this->assertArrayHasKey('token', $queryParams);
-        $this->assertArrayHasKey('refresh_token', $queryParams);
-        $this->assertArrayHasKey('order_token', $queryParams);
-        $this->assertSame($orderToken, $queryParams['order_token']);
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertStringContainsString(
+            'Please enter your email address.',
+            $this->client->getResponse()
+                ->getContent()
+        );
     }
 
-    // public function testSecondLoginWithSameLing(): void
-    // {
-    //     $customer = CustomerFactory::createOne();
+    public function testLoginWithInvalidEmailFails(): void
+    {
+        $payload = [
+            'email' => 'invalid-email',
+        ];
 
-    //     $magicLinkUrl = $this->sendLoginRequestAndGetMagicLink($customer->getEmail());
-    //     $redirectUrl = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
-    //     $redirectUrl2 = $this->simulateMagicLinkClickAndGetRedirect($magicLinkUrl);
+        $this->client->request(
+            'POST',
+            '/api/customers/login',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            $this->encodeJson($payload)
+        );
 
-    //     $this->assertStringStartsWith(self::FRONTEND_BASE_URL, $redirectUrl2);
-
-    //     $queryParams = $this->extractQueryParametersFromUrl($redirectUrl);
-
-    //     $this->assertArrayHasKey('token', $queryParams);
-    //     $this->assertArrayHasKey('refresh_token', $queryParams);
-    // }
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertNotFalse($this->client->getResponse()->getContent());
+        $this->assertStringContainsString(
+            'Please enter a valid email address.',
+            $this->client->getResponse()
+                ->getContent()
+        );
+    }
 
     /**
      * @param string[] $extraParams

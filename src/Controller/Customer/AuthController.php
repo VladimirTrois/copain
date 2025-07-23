@@ -2,15 +2,16 @@
 
 namespace App\Controller\Customer;
 
+use App\Dto\Customer\Login\LoginInput;
 use App\Service\Customer\CustomerMagicLink;
 use App\Service\Customer\CustomerService;
+use App\Service\EntityValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class AuthController extends AbstractController
 {
@@ -20,6 +21,8 @@ class AuthController extends AbstractController
         KernelInterface $kernel,
         private CustomerMagicLink $customerMagicLink,
         private CustomerService $customerService,
+        private SerializerInterface $serializer,
+        private EntityValidator $validator
     ) {
         $this->isDev = $kernel->getEnvironment() === 'dev';
     }
@@ -27,21 +30,11 @@ class AuthController extends AbstractController
     #[Route('/api/customers/login', name: 'customer_send_magic_link', methods: ['POST'])]
     public function customerRequestLogin(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        if (! is_array($data)) {
-            return $this->json([
-                'error' => 'Invalid JSON payload',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $email = $data['email'] ?? null;
-        if (! $email) {
-            throw new BadRequestHttpException('Email is required.');
-        }
+        $loginInput = $this->serializer->deserialize($request->getContent(), LoginInput::class, 'json');
+        $this->validator->validate($loginInput);
 
         $customer = $this->customerService->findOneBy([
-            'email' => $email,
+            'email' => $loginInput->email,
         ]);
         if (! $customer) {
             return new JsonResponse([
@@ -49,7 +42,7 @@ class AuthController extends AbstractController
             ]);
         }
 
-        $url = $this->customerMagicLink->sendMagicLink($customer, $data);
+        $url = $this->customerMagicLink->sendMagicLink($customer);
 
         if ($this->isDev) {
             return new JsonResponse([
