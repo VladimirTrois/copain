@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BusinessTest extends BaseTestCase
 {
-    private const NUMBERS_OF_USERS = 30;
+    private const int NUMBERS_OF_USERS = 30;
 
     private KernelBrowser $client;
 
