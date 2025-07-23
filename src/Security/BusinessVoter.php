@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class BusinessVoter extends Voter
 {
     // Supported actions
-    private const ATTRIBUTES = ['VIEW', 'EDIT', 'MANAGE_USERS'];
+    private const array ATTRIBUTES = ['VIEW', 'EDIT', 'MANAGE_USERS'];
 
     protected function supports(string $attribute, $subject): bool
     {
