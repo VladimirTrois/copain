@@ -1,0 +1,18 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src/
+        - tests/
+        - bin/
+        - config/
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+    ignoreErrors:
+        - '#^Property .*::\$id .* is never assigned int .*\.$#'
+    # Ignore errors or specific rules can go here
+    # ignoreErrors:
+    #   - '#Some error regex#'
+
