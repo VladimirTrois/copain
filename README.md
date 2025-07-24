@@ -1,14 +1,9 @@
 # Copain Back-End
 
-[BASE PROJECT](https://github.com/dunglas/symfony-docker)
-
 ## Informations
 
-Partie back de Brorder une application de gestion de commande. 
-Cette application est réalisé pour un camping afin que les clients puissent commander du pain la veille pour le lendemain.
-Le camping doit ensuite pouvoir gérer ses produits et les commandes.
-
-L'application tourne avec docker et API platform sur symfony.
+Partie back de Copain une application de gestion de commande. 
+L'API REST tourne PHP/Symfony sous Docker.
 
 ## Getting Started
 
@@ -178,3 +173,6 @@ curl -X 'DELETE' \
   -H 'accept: */*' \
   -H 'Authorization: Bearer token'
 ```
+
+
+[BASE PROJECT](https://github.com/dunglas/symfony-docker)
