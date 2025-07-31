@@ -3,7 +3,7 @@
 ## Informations
 
 Partie back de Copain une application de gestion de commande. 
-L'API REST tourne PHP/Symfony sous Docker.
+L'API REST tourne avec PHP/Symfony sous Docker.
 
 ## Getting Started
 
@@ -44,8 +44,7 @@ make composer c="require --dev symplify/coding-standard"
 make composer c="require --dev phpstan/phpstan"
 make composer c="require --dev phpstan/phpstan-symfony"
 
-
-# Rector (choose the sets for your PHP/Symfony versions)
+# Rector
 make composer c="require --dev rector/rector"
 
 ```
@@ -79,16 +78,6 @@ APP_SECRET=ChangeMe \
 CADDY_MERCURE_JWT_SECRET=ChangeThisMercureHubJWTSecretKey \
 docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
 ```
-
-### All must have composer packages
-```
-make composer c='req symfony/orm-pack'
-make composer c='require api'
-make composer c='require lexik/jwt-authentication-bundle'
-make composer c='require symfony/serializer-pack'
-make composer c='require gesdinet/jwt-refresh-token-bundle'
-```
-
 
 ## Checklist
 ```
