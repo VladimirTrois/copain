@@ -2,7 +2,7 @@
 
 ## Informations
 
-Partie back de Copain une application de gestion de commande. 
+Partie back de Copain une application de gestion de commande.
 L'API REST tourne avec PHP/Symfony sous Docker.
 
 ## Getting Started
@@ -16,8 +16,10 @@ L'API REST tourne avec PHP/Symfony sous Docker.
 ## What was used :
 
 ### All the different packages
+
 ```
 make composer c='require symfony/orm-pack'
+make composer c='require nelmio/cors-bundle'
 make composer c='require lexik/jwt-authentication-bundle'
 make composer c="require gesdinet/jwt-refresh-token-bundle"
 make composer c="require symfonycasts/reset-password-bundle"
@@ -25,7 +27,7 @@ make composer c="require symfony/serializer-pack"
 make composer c="require symfony/validator"
 make composer c="require symfony/serializer"
 make composer c="require doctrine/doctrine-migrations-bundle"
-make composer c="require symfony/uid" 
+make composer c="require symfony/uid"
 make composer c="require symfony/mailer"
 make composer c="require symfony/twig-bundle"
 make composer c="require symfony/messenger"
@@ -50,11 +52,13 @@ make composer c="require --dev rector/rector"
 ```
 
 ### On first time run
+
 ```
 make sf c='lexik:jwt:generate-keypair'
 ```
 
 For ssl certificates on dev with FEDORA
+
 ```
 sudo dnf install ca-certificates
 sudo update-ca-trust
@@ -64,6 +68,7 @@ docker cp $(docker compose ps -q php):/data/caddy/pki/authorities/local/root.crt
 ## For Production
 
 ### To build
+
 ```
 APP_ENV=prod \
 APP_SECRET=ChangeMe \
@@ -72,6 +77,7 @@ docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
 ```
 
 ### To run
+
 ```
 APP_ENV=prod \
 APP_SECRET=ChangeMe \
@@ -80,6 +86,7 @@ docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
 ```
 
 ## Checklist
+
 ```
 ##Step 1: Check Running Containers
 docker ps
@@ -105,11 +112,15 @@ docker compose logs php | grep caddy
 ## To debug
 
 ### Php container
+
 #### Connect to php container
+
 ```
-make bash 
+make bash
 ```
-#### On the php container 
+
+#### On the php container
+
 ```
 ##Verify env variables
 env
@@ -119,10 +130,13 @@ curl -X GET 'SERVER_NAME:PORT/api/products' -H 'accept: application/ld+json'
 ```
 
 ### Database
-#### Connect to DB 
+
+#### Connect to DB
+
 ```
 docker compose exec -it database bash
 ```
+
 ```
 psql -U app -d copain
 
@@ -130,11 +144,12 @@ SELECT * FROM product LIMIT 10;
 SELECT * FROM user LIMIT 10;
 
 ## List users
-\du 
+\du
 
 ```
 
 ### From the server
+
 ```
 curl -X 'GET' 'SERVER_NAME:PORT/api/products' \
   -H 'accept: application/ld+json'
@@ -143,6 +158,7 @@ curl -X GET 'SERVER_NAME:PORT/api/products' -H 'accept: application/ld+json'
 ```
 
 ### Users
+
 ```
 curl -X 'POST' \
   'SERVER_NAME:PORT/api/users' \
@@ -162,6 +178,5 @@ curl -X 'DELETE' \
   -H 'accept: */*' \
   -H 'Authorization: Bearer token'
 ```
-
 
 [BASE PROJECT](https://github.com/dunglas/symfony-docker)

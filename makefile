@@ -43,6 +43,12 @@ bash: ## Connect to the FrankenPHP container via bash so up and down arrows go t
 test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(or $(c),)
 
+watch-api:
+	docker compose logs -f php \
+	| grep --line-buffered 'handled request' \
+	| grep --line-buffered '/api/' \
+	| sed -nE 's/^[^|]+\| ([0-9]{4})\/([0-9]{2})\/([0-9]{2}) ([0-9]{2}:[0-9]{2}:[0-9]{2}).*"method": "([^"]+)",.*"uri": "([^"]+)",.*"status": ([0-9]{3}).*/[\1-\2-\3 \4] \5 \6 (\7)/p'
+
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'

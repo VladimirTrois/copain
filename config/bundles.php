@@ -43,4 +43,7 @@ return [
         'dev' => true,
         'test' => true,
     ],
+    Nelmio\CorsBundle\NelmioCorsBundle::class => [
+        'all' => true,
+    ],
 ];
