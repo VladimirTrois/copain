@@ -38,9 +38,7 @@ class BusinessFixtures extends Fixture implements FixtureGroupInterface, Depende
 
         $userBusinesses = [];
         for ($i = 1; $i <= 5; ++$i) {
-            $business = BusinessFactory::createOne([
-                'name' => 'User Business ' . $i,
-            ]);
+            $business = BusinessFactory::createOne();
             BusinessUserFactory::createOne([
                 'user' => $user,
                 'business' => $business,
