@@ -11,7 +11,7 @@ SYMFONY  = $(PHP) bin/console
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help build up start down logs sh bash test rebuild composer vendor sf cc dropDB createDB migrateDB loadDB reloadDB newMigration rebootDB xdebug-log ecs phpstan
+.PHONY        : help build up start down logs sh bash test watch-api rebuild composer vendor sf cc dropDB createDB migrateDB loadDB reloadDB newMigration rebootDB xdebug-log ecs phpstan rector
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
