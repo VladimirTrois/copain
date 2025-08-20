@@ -2,6 +2,8 @@
 
 namespace App\Dto\Customer\Order\Show;
 
+use App\Dto\Share\Order\OrderItemDto;
+
 final class OrderShowDto
 {
     public function __construct(

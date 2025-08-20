@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\Customer\Order\Show;
+namespace App\Dto\Shared\Order;
 
 final class OrderItemDto
 {
