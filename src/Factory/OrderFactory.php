@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Business;
 use App\Entity\Order;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -22,6 +23,36 @@ final class OrderFactory extends PersistentProxyObjectFactory
     public static function class(): string
     {
         return Order::class;
+    }
+
+    /**
+     * @return Order[]
+     */
+    public static function createOrdersForBusiness(
+        Business $business,
+        int $numbersOfOrders,
+        int $rangeOfArticlesPerOrder
+    ): array {
+
+        $orders = self::createMany($numbersOfOrders, [
+            'customer' => CustomerFactory::randomOrCreate(),
+            'business' => $business,
+        ]);
+
+        foreach ($orders as $order) {
+            $articles = ArticleFactory::randomRangeOrCreate(1, $rangeOfArticlesPerOrder, [
+                'business' => $business,
+            ]);
+
+            foreach ($articles as $article) {
+                OrderItemFactory::createOne([
+                    'order' => $order,
+                    'article' => $article,
+                ]);
+            }
+        }
+
+        return $orders;
     }
 
     /**
