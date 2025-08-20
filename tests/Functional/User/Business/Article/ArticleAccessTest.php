@@ -20,11 +20,7 @@ class ArticleAccessTest extends BaseTestCase
         $user = UserFactory::find([
             'email' => self::EMAIL_USER,
         ]);
-        $business = BusinessFactory::createOne();
-        BusinessUserFactory::createOne([
-            'user' => $user,
-            'business' => $business,
-        ]);
+        $business = BusinessFactory::addBusinessToUser($user);
         ArticleFactory::createMany(self::NUMBERSOFARTICLES, [
             'business' => $business,
         ]);
