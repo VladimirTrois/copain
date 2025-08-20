@@ -4,9 +4,9 @@ namespace App\Mapper\Customer\Order;
 
 use App\Dto\Customer\Order\List\OrderListDto;
 use App\Dto\Customer\Order\Show\BusinessDto;
-use App\Dto\Customer\Order\Show\OrderItemArticleDto;
-use App\Dto\Customer\Order\Show\OrderItemDto;
 use App\Dto\Customer\Order\Show\OrderShowDto;
+use App\Dto\Shared\Order\OrderItemArticleDto;
+use App\Dto\Shared\Order\OrderItemDto;
 use App\Entity\Order;
 use App\Mapper\Customer\Business\BusinessDtoMapper;
 
