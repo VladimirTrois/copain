@@ -2,8 +2,8 @@
 
 namespace App\Mapper;
 
-use App\Dto\User\UserListDto;
-use App\Dto\User\UserShowDto;
+use App\Dto\Admin\UserListDto;
+use App\Dto\Admin\UserShowDto;
 use App\Entity\User;
 
 final class UserMapper
