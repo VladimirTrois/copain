@@ -53,9 +53,9 @@ class OrderTest extends BaseTestCase
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $data = $this->decodeResponse($client);
 
-        $this->assertEquals($order->getId(), $data['id']);
+        $this->assertSame($order->getId(), $data['id']);
         $this->assertIsString($data['pickUpDate']);
-        $this->assertEquals(
+        $this->assertSame(
             $order->getPickUpDate()
                 ->format('Y-m-d'),
             (new \DateTime($data['pickUpDate']))->format('Y-m-d')
@@ -119,8 +119,8 @@ class OrderTest extends BaseTestCase
             'id' => $responseData['id'],
         ]);
 
-        $this->assertEquals($responseData['id'], $order->getId());
-        $this->assertEquals($payload['pickUpDate'], $order->getPickUpDate()->format('Y-m-d'));
+        $this->assertSame($responseData['id'], $order->getId());
+        $this->assertSame($payload['pickUpDate'], $order->getPickUpDate()->format('Y-m-d'));
         $orderItem = $order->getOrderItems()
             ->first();
         $this->assertInstanceOf(OrderItem::class, $orderItem, 'OrderItem not found');

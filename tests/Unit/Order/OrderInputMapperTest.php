@@ -58,8 +58,8 @@ class OrderInputMapperTest extends KernelTestCase
         $this->assertSame($customer->getId(), $order->getCustomer()->getId());
         $this->assertSame($business->getId(), $order->getBusiness()->getId());
         $this->assertNotNull($order->getOrderItems()[0]);
-        $this->assertEquals($itemInput->quantity, $order->getOrderItems()[0]->getQuantity());
-        $this->assertEquals($article->getId(), $order->getOrderItems()[0]->getArticle()->getId());
+        $this->assertSame($itemInput->quantity, $order->getOrderItems()[0]->getQuantity());
+        $this->assertSame($article->getId(), $order->getOrderItems()[0]->getArticle()->getId());
     }
 
     public function testUpdatesExistingOrderWithNewItems(): void
@@ -101,11 +101,15 @@ class OrderInputMapperTest extends KernelTestCase
         $updatedOrder = $mapper->mapToExistingEntity($order, $input);
 
         // Assert
-        $this->assertEquals(new \DateTime('2025-08-15'), $updatedOrder->getPickUpDate());
+        $this->assertSame(
+            (new \DateTime('2025-08-15'))->format('Y-m-d'),
+            $updatedOrder->getPickUpDate()
+                ->format('Y-m-d')
+        );
         $this->assertCount(1, $updatedOrder->getOrderItems());
         $this->assertNotNull($updatedOrder->getOrderItems()->get(1));
         $this->assertSame($newArticle->getId(), $updatedOrder->getOrderItems()->get(1)->getArticle()->getId());
-        $this->assertEquals(3, $updatedOrder->getOrderItems()->get(1)->getQuantity());
+        $this->assertSame(3, $updatedOrder->getOrderItems()->get(1)->getQuantity());
     }
 
     public function testThrowsExceptionWhenOrderContainsArticlesFromMultipleBusinesses(): void

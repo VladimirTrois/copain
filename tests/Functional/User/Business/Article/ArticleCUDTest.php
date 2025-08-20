@@ -8,7 +8,7 @@ use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ArticleCrudTest extends BaseTestCase
+class ArticleCUDTest extends BaseTestCase
 {
     public const NUMBERSOFARTICLES = 10;
 

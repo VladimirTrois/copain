@@ -110,6 +110,6 @@ final class OwnerTest extends BaseTestCase
             'user' => $newUser,
             'business' => $business,
         ]);
-        $this->assertEquals(Responsibility::SELLER, $businessUser->getResponsibilities()[0]);
+        $this->assertSame(Responsibility::SELLER, $businessUser->getResponsibilities()[0]);
     }
 }

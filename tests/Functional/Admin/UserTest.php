@@ -76,7 +76,7 @@ class UserTest extends BaseTestCase
         $this->assertSame($user->getEmail(), $data['email']);
         $this->assertIsArray($data['roles']);
         $this->assertIsIterable($data['roles']);
-        $this->assertContains('ROLE_USER', $data['roles']); // or assertEquals if you want exact roles
+        $this->assertContains('ROLE_USER', $data['roles']); // or assertSame if you want exact roles
 
         // Validate businesses is an array with one item
         $this->assertIsArray($data['businesses']);
