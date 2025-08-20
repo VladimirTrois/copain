@@ -25,6 +25,22 @@ final class ArticleFactory extends PersistentProxyObjectFactory
     }
 
     /**
+     * @param array<string, mixed> $attributes
+     *
+     * @return Article[]
+     */
+    public static function randomRangeOrCreate(int $min, int $max, array $attributes = []): array
+    {
+        $articles = [];
+
+        for ($i = $min; $i <= $max; ++$i) {
+            $articles[] = self::randomOrCreate($attributes);
+        }
+
+        return $articles;
+    }
+
+    /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      * @return array<string, mixed>
      */
