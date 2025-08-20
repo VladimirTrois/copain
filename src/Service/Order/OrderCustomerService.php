@@ -11,7 +11,7 @@ use App\Entity\Order;
 use App\Mapper\Customer\Order\OrderDtoMapper;
 use App\Mapper\Customer\Order\OrderInputMapper;
 
-class OrderService
+class OrderCustomerService
 {
     public function __construct(
         private OrderFinder $orderFinder,

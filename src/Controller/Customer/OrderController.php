@@ -5,7 +5,7 @@ namespace App\Controller\Customer;
 use App\Dto\Customer\Order\Create\OrderCreateInput;
 use App\Dto\Customer\Order\Update\OrderUpdateInput;
 use App\Service\EntityValidator;
-use App\Service\Order\OrderService;
+use App\Service\Order\OrderCustomerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class OrderController extends AbstractController
 {
     public function __construct(
-        private OrderService $orderService,
+        private OrderCustomerService $orderService,
         private SerializerInterface $serializer,
         private EntityValidator $validator,
     ) {

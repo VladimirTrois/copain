@@ -7,7 +7,7 @@ use App\Dto\Public\PublicOrderCreateInput;
 use App\Service\Customer\CustomerMagicLink;
 use App\Service\Customer\CustomerService;
 use App\Service\EntityValidator;
-use App\Service\Order\OrderService;
+use App\Service\Order\OrderCustomerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class PublicCustomerOnboardingController extends AbstractController
 {
     public function __construct(
-        private OrderService $orderService,
+        private OrderCustomerService $orderService,
         private SerializerInterface $serializer,
         private EntityValidator $validator,
         private CustomerService $customerService,
