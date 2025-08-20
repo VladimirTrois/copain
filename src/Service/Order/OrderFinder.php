@@ -64,6 +64,16 @@ class OrderFinder
     /**
      * @return Order[]
      */
+    public function listByBusiness(?int $businessId): array
+    {
+        return $this->repo->findBy([
+            'business' => $businessId,
+        ]);
+    }
+
+    /**
+     * @return Order[]
+     */
     public function listAll(): array
     {
         return $this->repo->findAll();
