@@ -90,7 +90,7 @@ final class UserAuthTest extends BaseTestCase
         $newData = $this->decodeResponse($client);
 
         $this->assertArrayHasKey('token', $newData);
-        $this->assertNotEquals($oldData['token'], $newData['token']);
+        $this->assertNotSame($oldData['token'], $newData['token']);
     }
 
     public function testRefreshFailsWithInvalidToken(): void
