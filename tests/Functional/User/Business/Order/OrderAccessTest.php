@@ -6,6 +6,7 @@ use App\Factory\BusinessFactory;
 use App\Factory\OrderFactory;
 use App\Factory\UserFactory;
 use App\Tests\BaseTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderAccessTest extends BaseTestCase
 {
@@ -32,5 +33,20 @@ class OrderAccessTest extends BaseTestCase
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $data = $this->decodeResponse($client);
         $this->assertGreaterThanOrEqual(self::NUMBERSOFORDERS, count($data));
+    }
+
+    public function testUserCantListOrdersForOtherBusiness(): void
+    {
+        $client = $this->createClientAsUser();
+
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
+
+        $business = BusinessFactory::createOne();
+
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/orders');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 }

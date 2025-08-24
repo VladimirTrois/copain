@@ -2,6 +2,7 @@
 
 namespace App\Service\Order;
 
+use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Dto\User\Business\Order\List\OrderListDto;
 use App\Entity\Business;
 use App\Entity\Customer;
@@ -20,9 +21,9 @@ class OrderBusinessService
     /**
      * @return OrderListDto[]
      */
-    public function listOrdersForBusiness(Business $business): array
+    public function listOrdersForBusiness(Business $business, ?OrderCriteriaInput $criteria = null): array
     {
-        $orders = $this->orderFinder->listByBusiness($business->getId());
+        $orders = $this->orderFinder->listByBusiness($business->getId(), $criteria);
 
         return array_map([$this->orderDtoMapper, 'toListDto'], $orders);
     }

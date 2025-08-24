@@ -2,6 +2,7 @@
 
 namespace App\Service\Order;
 
+use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Entity\Order;
 use App\Exception\OrderNotFoundException;
 use App\Repository\OrderRepository;
@@ -9,7 +10,8 @@ use App\Repository\OrderRepository;
 class OrderFinder
 {
     public function __construct(
-        private OrderRepository $repo
+        private OrderRepository $repo,
+        private OrderQueryBuilder $orderQueryBuilder
     ) {
     }
 
@@ -64,11 +66,12 @@ class OrderFinder
     /**
      * @return Order[]
      */
-    public function listByBusiness(?int $businessId): array
+    public function listByBusiness(?int $businessId, ?OrderCriteriaInput $criteria): array
     {
-        return $this->repo->findBy([
-            'business' => $businessId,
-        ]);
+        $qb = $this->orderQueryBuilder->createQueryListOrderByBusiness($businessId, $criteria);
+
+        return $qb->getQuery()
+            ->getResult();
     }
 
     /**
