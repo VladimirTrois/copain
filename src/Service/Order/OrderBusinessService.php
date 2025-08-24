@@ -14,14 +14,13 @@ class OrderBusinessService
     public function __construct(
         private OrderFinder $orderFinder,
         private OrderDtoMapper $orderDtoMapper,
-        private OrderPersister $orderPersister,
     ) {
     }
 
     /**
      * @return OrderListDto[]
      */
-    public function listOrdersForBusiness(Business $business, ?OrderCriteriaInput $criteria = null): array
+    public function listOrdersForBusiness(Business $business, OrderCriteriaInput $criteria): array
     {
         $orders = $this->orderFinder->listByBusiness($business->getId(), $criteria);
 

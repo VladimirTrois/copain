@@ -66,12 +66,15 @@ class OrderFinder
     /**
      * @return Order[]
      */
-    public function listByBusiness(?int $businessId, ?OrderCriteriaInput $criteria): array
+    public function listByBusiness(?int $businessId, OrderCriteriaInput $criteria): array
     {
         $qb = $this->orderQueryBuilder->createQueryListOrderByBusiness($businessId, $criteria);
 
-        return $qb->getQuery()
+        /** @var Order[] $orders */
+        $orders = $qb->getQuery()
             ->getResult();
+
+        return $orders;
     }
 
     /**
