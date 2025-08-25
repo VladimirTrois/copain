@@ -28,10 +28,11 @@ class OrderBusinessService
         return array_map([$this->orderDtoMapper, 'toListDto'], $orders);
     }
 
-    public function findOrderForBusiness(int $orderId): OrderShowDto
+    public function findOrderForBusiness(int $orderId, Business $business): OrderShowDto
     {
         $order = $this->orderFinder->findOneBy([
             'id' => $orderId,
+            'business' => $business,
         ]);
 
         return $this->orderDtoMapper->toShowDto($order);

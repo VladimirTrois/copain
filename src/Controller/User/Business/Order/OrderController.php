@@ -50,8 +50,17 @@ class OrderController extends AbstractController
         $user = $this->getUser();
 
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
-        $orderDto = $this->orderBusinessService->findOrderForBusiness($orderId);
+        $orderDto = $this->orderBusinessService->findOrderForBusiness($orderId, $business);
 
         return $this->json($orderDto, Response::HTTP_OK);
+    }
+
+    #[Route('', name: 'business_order_create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        return $this->json([], Response::HTTP_OK);
     }
 }
