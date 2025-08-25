@@ -42,4 +42,16 @@ class OrderController extends AbstractController
 
         return $this->json($orders, Response::HTTP_OK);
     }
+
+    #[Route('/{orderId}', name: 'business_order_show', methods: ['GET'])]
+    public function show(int $businessId, int $orderId): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
+        $orderDto = $this->orderBusinessService->findOrderForBusiness($orderId);
+
+        return $this->json($orderDto, Response::HTTP_OK);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Service\Order;
 
 use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Dto\User\Business\Order\List\OrderListDto;
+use App\Dto\User\Business\Order\Show\OrderShowDto;
 use App\Entity\Business;
 use App\Entity\Customer;
 use App\Entity\Order;
@@ -27,15 +28,14 @@ class OrderBusinessService
         return array_map([$this->orderDtoMapper, 'toListDto'], $orders);
     }
 
-    // public function findOrderForBusiness(int $orderId, Customer $customer): Order
-    // {
-    //     $order = $this->orderFinder->findOneBy([
-    //         'id' => $orderId,
-    //         'customer' => $customer->getId(),
-    //     ]);
+    public function findOrderForBusiness(int $orderId): OrderShowDto
+    {
+        $order = $this->orderFinder->findOneBy([
+            'id' => $orderId,
+        ]);
 
-    //     return $order;
-    // }
+        return $this->orderDtoMapper->toShowDto($order);
+    }
 
     // public function createOrderForCustomer(OrderCreateInput $orderInput, Customer $customer): Order
     // {

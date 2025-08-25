@@ -49,4 +49,27 @@ class OrderAccessTest extends BaseTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
+
+    public function testUserCanShowOrderForTheirBusiness(): void
+    {
+        $client = $this->createClientAsUser();
+
+        $user = UserFactory::find([
+            'email' => self::EMAIL_USER,
+        ]);
+
+        $business = BusinessFactory::addBusinessToUser($user);
+
+        $order = OrderFactory::createOne([
+            'business' => $business,
+        ]);
+
+        $client->request('GET', '/api/businesses/' . $business->getId() . '/orders/' . $order->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+        $data = $this->decodeResponse($client);
+        $this->assertArrayHasKey('id', $data);
+        $this->assertSame($order->getId(), $data['id']);
+        $this->assertSame($order->getPickUpDate()->format(DATE_ATOM), $data['pickUpDate']);
+    }
 }
