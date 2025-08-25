@@ -13,19 +13,19 @@ class OrderCriteriaInput
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
     ])]
-    #[Assert\DateTime()]
+    #[Assert\Type(DateTimeImmutable::class)]
     public ?DateTimeImmutable $pickUpDate = null;
 
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d-H:i:s',
     ])]
-    #[Assert\DateTime()]
+    #[Assert\Type(DateTimeImmutable::class)]
     public ?DateTimeImmutable $pickUpFrom = null;
 
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d-H:i:s',
     ])]
-    #[Assert\DateTime()]
+    #[Assert\Type(DateTimeImmutable::class)]
     public ?DateTimeImmutable $pickUpTo = null;
 
     #[Context([

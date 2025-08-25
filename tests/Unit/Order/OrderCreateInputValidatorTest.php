@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Order;
 
 use App\Dto\Customer\Order\Create\OrderCreateInput;
-use App\Dto\Customer\Order\Create\OrderItemInput;
+use App\Dto\Shared\Order\OrderItemInput;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

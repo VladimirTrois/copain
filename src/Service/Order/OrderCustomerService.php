@@ -5,7 +5,7 @@ namespace App\Service\Order;
 use App\Dto\Customer\Order\Create\OrderCreateInput;
 use App\Dto\Customer\Order\List\OrderListDto;
 use App\Dto\Customer\Order\Show\OrderShowDto;
-use App\Dto\Customer\Order\Update\OrderUpdateInput;
+use App\Dto\Shared\Order\OrderUpdateInput;
 use App\Entity\Customer;
 use App\Entity\Order;
 use App\Mapper\Customer\Order\OrderDtoMapper;

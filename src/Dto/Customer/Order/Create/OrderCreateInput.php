@@ -2,6 +2,7 @@
 
 namespace App\Dto\Customer\Order\Create;
 
+use App\Dto\Shared\Order\OrderItemInput;
 use App\Validator\Constraints as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 

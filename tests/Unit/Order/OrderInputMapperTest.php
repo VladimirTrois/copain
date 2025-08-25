@@ -3,8 +3,8 @@
 namespace App\Tests\Unit\Order;
 
 use App\Dto\Customer\Order\Create\OrderCreateInput;
-use App\Dto\Customer\Order\Create\OrderItemInput;
-use App\Dto\Customer\Order\Update\OrderUpdateInput;
+use App\Dto\Shared\Order\OrderItemInput;
+use App\Dto\Shared\Order\OrderUpdateInput;
 use App\Entity\Article;
 use App\Entity\Order;
 use App\Entity\OrderItem;

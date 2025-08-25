@@ -2,8 +2,10 @@
 
 namespace App\Controller\User\Business\Order;
 
+use App\Dto\Shared\Order\OrderUpdateInput;
 use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Service\Business\BusinessAccess;
+use App\Service\EntityValidator;
 use App\Service\Order\OrderBusinessService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/businesses/{businessId}/orders')]
 #[IsGranted('ROLE_USER')]
@@ -22,7 +24,8 @@ class OrderController extends AbstractController
         private BusinessAccess $businessAccess,
         private OrderBusinessService $orderBusinessService,
         private DenormalizerInterface $denormalizer,
-        private ValidatorInterface $validator,
+        private SerializerInterface $serializer,
+        private EntityValidator $validator,
     ) {
     }
 
@@ -50,17 +53,28 @@ class OrderController extends AbstractController
         $user = $this->getUser();
 
         $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
-        $orderDto = $this->orderBusinessService->findOrderForBusiness($orderId, $business);
+        $order = $this->orderBusinessService->findOrderForBusiness($orderId, $business);
+        $orderDto = $this->orderBusinessService->mapOrderToShowDto($order);
 
         return $this->json($orderDto, Response::HTTP_OK);
     }
 
-    #[Route('', name: 'business_order_create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
+    #[Route('/{orderId}', name: 'business_order_update', methods: ['PATCH'])]
+    public function update(int $businessId, int $orderId, Request $request): JsonResponse
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        return $this->json([], Response::HTTP_OK);
+        $business = $this->businessAccess->getBusinessIfUserBelongs($businessId, $user);
+        $order = $this->orderBusinessService->findOrderForBusiness($orderId, $business);
+
+        $json = $request->getContent();
+
+        $orderInput = $this->serializer->deserialize($json, OrderUpdateInput::class, 'json');
+        $this->validator->validate($orderInput);
+
+        $orderDto = $this->orderBusinessService->updateOrderForBusiness($order, $orderInput, $business);
+
+        return $this->json($orderDto, Response::HTTP_CREATED, []);
     }
 }

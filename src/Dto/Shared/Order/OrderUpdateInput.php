@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Dto\Customer\Order\Update;
+namespace App\Dto\Shared\Order;
 
-use App\Dto\Customer\Order\Create\OrderItemInput;
 use App\Validator\Constraints as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 

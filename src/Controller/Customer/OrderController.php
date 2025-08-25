@@ -3,7 +3,7 @@
 namespace App\Controller\Customer;
 
 use App\Dto\Customer\Order\Create\OrderCreateInput;
-use App\Dto\Customer\Order\Update\OrderUpdateInput;
+use App\Dto\Shared\Order\OrderUpdateInput;
 use App\Service\EntityValidator;
 use App\Service\Order\OrderCustomerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
