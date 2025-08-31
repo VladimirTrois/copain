@@ -6,6 +6,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Business;
 use App\Service\Business\BusinessService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +27,13 @@ class BusinessController extends AbstractController
     }
 
     #[Route('', name: 'list', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'List of businesses',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: Business::class, groups: [
+            'business:list',
+        ]))),
+    )]
     public function list(): JsonResponse
     {
         $businesses = $this->businessService->listAll();
@@ -35,6 +44,11 @@ class BusinessController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Business',
+        content: new OA\JsonContent(ref: new Model(type: Business::class, groups: ['business:read'])),
+    )]
     public function show(string $id): JsonResponse
     {
         $business = $this->businessService->find($id);
@@ -45,6 +59,11 @@ class BusinessController extends AbstractController
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
+    #[OA\Response(
+        response: 201,
+        description: 'Created business',
+        content: new OA\JsonContent(ref: new Model(type: Business::class, groups: ['business:read'])),
+    )]
     public function create(Request $request): JsonResponse
     {
         $business = $this->serializer->deserialize($request->getContent(), Business::class, 'json', [
@@ -59,6 +78,11 @@ class BusinessController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Updated business',
+        content: new OA\JsonContent(ref: new Model(type: Business::class, groups: ['business:read'])),
+    )]
     public function update(string $id, Request $request): JsonResponse
     {
         $business = $this->businessService->find($id);
@@ -82,6 +106,7 @@ class BusinessController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[OA\Response(response: 204, description: 'Deleted business')]
     public function delete(string $id): JsonResponse
     {
         $business = $this->businessService->find($id);

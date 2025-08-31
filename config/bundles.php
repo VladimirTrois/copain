@@ -46,4 +46,7 @@ return [
     Nelmio\CorsBundle\NelmioCorsBundle::class => [
         'all' => true,
     ],
+    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => [
+        'all' => true,
+    ],
 ];

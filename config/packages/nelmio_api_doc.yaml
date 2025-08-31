@@ -1,0 +1,10 @@
+nelmio_api_doc:
+    type_info: true
+    documentation:
+        info:
+            title: Copain API
+            description: API REST de gestion de commande avec PHP/Symfony.
+            version: 1.0.0
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

@@ -31,7 +31,9 @@ make composer c="require symfony/uid"
 make composer c="require symfony/mailer"
 make composer c="require symfony/twig-bundle"
 make composer c="require symfony/messenger"
+make composer c="require nelmio/api-doc-bundle"
 
+## Dev
 make composer c='require --dev symfony/maker-bundle'
 make composer c="require --dev foundry orm-fixtures"
 make composer c="require --dev symfony/test-pack symfony/http-client"
