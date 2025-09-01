@@ -4,7 +4,7 @@ namespace App\Service\Order;
 
 use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Repository\OrderRepository;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query;
 
 class OrderQueryBuilder
 {
@@ -13,7 +13,7 @@ class OrderQueryBuilder
     ) {
     }
 
-    public function createQueryListOrderByBusiness(?int $businessId, OrderCriteriaInput $criteria): QueryBuilder
+    public function createQueryListOrderByBusiness(?int $businessId, OrderCriteriaInput $criteria): Query
     {
         $qb = $this->orderRepository->createQueryBuilder('o')
             ->leftJoin('o.customer', 'c')
@@ -75,6 +75,6 @@ class OrderQueryBuilder
             $qb->orderBy($allowedOrderFields[$criteria->orderBy], $direction);
         }
 
-        return $qb;
+        return $qb->getQuery();
     }
 }

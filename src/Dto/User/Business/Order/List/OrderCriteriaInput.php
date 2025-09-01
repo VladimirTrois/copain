@@ -10,6 +10,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class OrderCriteriaInput
 {
+    #[Assert\Range(min: 1)]
+    public int $page = 1;
+
+    #[Assert\Range(min: 1, max: 100)]
+    public int $limit = 20;
+
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => 'Y-m-d',
     ])]

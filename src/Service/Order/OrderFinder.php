@@ -2,16 +2,19 @@
 
 namespace App\Service\Order;
 
+use App\Dto\Shared\PaginatedResultDto;
 use App\Dto\User\Business\Order\List\OrderCriteriaInput;
 use App\Entity\Order;
 use App\Exception\OrderNotFoundException;
 use App\Repository\OrderRepository;
+use App\Service\PaginationService;
 
 class OrderFinder
 {
     public function __construct(
         private OrderRepository $repo,
-        private OrderQueryBuilder $orderQueryBuilder
+        private OrderQueryBuilder $orderQueryBuilder,
+        private PaginationService $paginationService,
     ) {
     }
 
@@ -63,18 +66,11 @@ class OrderFinder
         return $customers;
     }
 
-    /**
-     * @return Order[]
-     */
-    public function listByBusiness(?int $businessId, OrderCriteriaInput $criteria): array
+    public function listByBusiness(?int $businessId, OrderCriteriaInput $criteria): PaginatedResultDto
     {
-        $qb = $this->orderQueryBuilder->createQueryListOrderByBusiness($businessId, $criteria);
+        $listByBusinessQuery = $this->orderQueryBuilder->createQueryListOrderByBusiness($businessId, $criteria);
 
-        /** @var Order[] $orders */
-        $orders = $qb->getQuery()
-            ->getResult();
-
-        return $orders;
+        return $this->paginationService->paginate($listByBusinessQuery, $criteria->page, $criteria->limit);
     }
 
     /**

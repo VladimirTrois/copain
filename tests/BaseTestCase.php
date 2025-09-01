@@ -127,4 +127,33 @@ abstract class BaseTestCase extends WebTestCase
 
         return $json;
     }
+
+    /**
+     * @param array<mixed> $data
+     */
+    protected function assertResponseIsPaginated(array $data): void
+    {
+        $this->assertArrayHasKey('items', $data);
+        $this->assertArrayHasKey('page', $data);
+        $this->assertArrayHasKey('limit', $data);
+        $this->assertArrayHasKey('totalItems', $data);
+        $this->assertArrayHasKey('totalPages', $data);
+        $this->assertArrayHasKey('hasPreviousPage', $data);
+        $this->assertArrayHasKey('hasNextPage', $data);
+
+        $this->assertIsArray($data['items']);
+        $this->assertIsInt($data['page']);
+        $this->assertIsInt($data['limit']);
+        $this->assertIsInt($data['totalItems']);
+        $this->assertIsInt($data['totalPages']);
+        $this->assertIsBool($data['hasPreviousPage']);
+        $this->assertIsBool($data['hasNextPage']);
+
+        $this->assertGreaterThanOrEqual(0, $data['page']);
+        $this->assertGreaterThanOrEqual(0, $data['limit']);
+        $this->assertGreaterThanOrEqual(0, $data['totalItems']);
+        $this->assertGreaterThanOrEqual(0, $data['totalPages']);
+
+        $this->assertLessThanOrEqual($data['limit'], count($data['items']));
+    }
 }

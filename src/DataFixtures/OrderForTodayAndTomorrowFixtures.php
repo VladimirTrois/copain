@@ -29,9 +29,10 @@ class OrderForTodayAndTomorrowFixtures extends Fixture implements FixtureGroupIn
 
             // For each order add a random number of items from the business
             foreach ($orders as $order) {
-                $articles = ArticleFactory::findOrCreate([
+
+                $articles = ArticleFactory::randomRangeOrCreate(1, rand(1, 5), ([
                     'business' => $business,
-                ]);
+                ]));
 
                 foreach ($articles as $article) {
                     OrderItemFactory::createOne([

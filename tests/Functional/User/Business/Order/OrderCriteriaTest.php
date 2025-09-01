@@ -13,8 +13,6 @@ class OrderCriteriaTest extends BaseTestCase
 {
     public const NUMBERSOFORDERS = 10;
 
-    public const NUMBERSOFARTICLES = 10;
-
     public const NUMBERSOFARTICLESMAXPERORDER = 3;
 
     public function testFilterByPickUpDate(): void
@@ -48,7 +46,8 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrders, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame($numbersOfOrders, $data['totalItems']);
 
         $client->request(
             'GET',
@@ -56,7 +55,8 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersTomorrow, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame($numbersOfOrdersTomorrow, $data['totalItems']);
     }
 
     public function testFilterByPickUpFrom(): void
@@ -98,7 +98,11 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersNow + $numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfOrdersNow + $numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour,
+            $data['totalItems']
+        );
 
         $client->request(
             'GET',
@@ -108,7 +112,8 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame($numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour, $data['totalItems']);
 
         $client->request(
             'GET',
@@ -118,7 +123,8 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersPlusTwoHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame($numbersOfOrdersPlusTwoHour, $data['totalItems']);
     }
 
     public function testFilterByPickUpTo(): void
@@ -160,7 +166,8 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersNow, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame($numbersOfOrdersNow, $data['totalItems'], 'Wrong number of orders for filter pickUpTo now');
 
         $client->request(
             'GET',
@@ -168,7 +175,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersNow + $numbersOfOrdersPlusOneHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfOrdersNow + $numbersOfOrdersPlusOneHour,
+            $data['totalItems'],
+            'Wrong number of orders for filter pickUpTo plus one hour'
+        );
 
         $client->request(
             'GET',
@@ -176,7 +188,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersNow + $numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfOrdersNow + $numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour,
+            $data['totalItems'],
+            'Wrong number of orders for filter pickUpTo plus two hour'
+        );
     }
 
     public function testFilterByPickUpToAndPickUpFrom(): void
@@ -220,7 +237,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersNow + $numbersOfOrdersPlusOneHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfOrdersNow + $numbersOfOrdersPlusOneHour,
+            $data['totalItems'],
+            'Wrong number of orders for filter pickUpFrom now and pickUpTo plus one hour'
+        );
 
         $client->request(
             'GET',
@@ -230,7 +252,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfOrdersPlusOneHour + $numbersOfOrdersPlusTwoHour,
+            $data['totalItems'],
+            'Wrong number of orders for filter pickUpFrom plus one hour and pickUpTo plus two hour'
+        );
     }
 
     public function testFilterByIsPickedUp(): void
@@ -256,7 +283,8 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?isPickedUp=true');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(self::NUMBERSOFORDERS, $data['totalItems'], 'Wrong number of orders for filter isPickedUp');
     }
 
     public function testFilterByIsValidatedByCustomer(): void
@@ -282,7 +310,12 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?isValidatedByCustomer=true');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for filter isValidatedByCustomer'
+        );
     }
 
     public function testFilterByIsValidatedByBusiness(): void
@@ -308,7 +341,12 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?isValidatedByBusiness=true');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for filter isValidatedByBusiness'
+        );
     }
 
     public function testFilterByCustomerFirstNameOrLastName(): void
@@ -343,12 +381,22 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?customerFirstName=John');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfJohnDoeOrders, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfJohnDoeOrders,
+            $data['totalItems'],
+            'Wrong number of orders for filter customerFirstName'
+        );
 
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?customerLastName=Boe');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount($numbersOfJaneBoeOrders, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            $numbersOfJaneBoeOrders,
+            $data['totalItems'],
+            'Wrong number of orders for filter customerLastName'
+        );
     }
 
     public function testOrderByPickUpDate(): void
@@ -368,7 +416,8 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?orderBy=pickUpDate');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(self::NUMBERSOFORDERS, $data['totalItems'], 'Wrong number of orders for orderBy pickUpDate');
 
         // Check if sorted ascending by pickUpDate
         $dates = array_column($data, 'pickUpDate');
@@ -379,7 +428,8 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?orderBy=pickUpDate&orderDir=desc');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(self::NUMBERSOFORDERS, $data['totalItems'], 'Wrong number of orders for orderBy pickUpDate');
 
         // Check if sorted descending by pickUpDate
         $dates = array_column($data, 'pickUpDate');
@@ -405,7 +455,12 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?orderBy=customerFirstName');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for orderBy customerFirstName'
+        );
 
         // Check if sorted ascending by customerFirstName
         $firstNames = array_column($data, 'customerFirstName');
@@ -423,7 +478,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for orderBy customerFirstName desc'
+        );
 
         // Check if sorted descending by customerFirstName
         $firstNames = array_column($data, 'customerFirstName');
@@ -453,7 +513,12 @@ class OrderCriteriaTest extends BaseTestCase
         $client->request('GET', '/api/businesses/' . $business->getId() . '/orders?orderBy=customerLastName');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for orderBy customerLastName'
+        );
 
         // Check if sorted ascending by customerLastName
         $lastNames = array_column($data, 'customerLastName');
@@ -471,7 +536,12 @@ class OrderCriteriaTest extends BaseTestCase
         );
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $data = $this->decodeResponse($client);
-        $this->assertCount(self::NUMBERSOFORDERS, $data);
+        $this->assertResponseIsPaginated($data);
+        $this->assertSame(
+            self::NUMBERSOFORDERS,
+            $data['totalItems'],
+            'Wrong number of orders for orderBy customerLastName desc'
+        );
 
         // Check if sorted descending by customerLastName
         $lastNames = array_column($data, 'customerLastName');

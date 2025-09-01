@@ -3,8 +3,8 @@
 namespace App\Service\Order;
 
 use App\Dto\Shared\Order\OrderUpdateInput;
+use App\Dto\Shared\PaginatedResultDto;
 use App\Dto\User\Business\Order\List\OrderCriteriaInput;
-use App\Dto\User\Business\Order\List\OrderListDto;
 use App\Dto\User\Business\Order\Show\OrderShowDto;
 use App\Entity\Business;
 use App\Entity\Order;
@@ -21,14 +21,16 @@ class OrderBusinessService
     ) {
     }
 
-    /**
-     * @return OrderListDto[]
-     */
-    public function listOrdersForBusiness(Business $business, OrderCriteriaInput $criteria): array
+    public function listOrdersForBusiness(Business $business, OrderCriteriaInput $criteria): PaginatedResultDto
     {
-        $orders = $this->orderFinder->listByBusiness($business->getId(), $criteria);
+        $paginatedOrders = $this->orderFinder->listByBusiness($business->getId(), $criteria);
 
-        return array_map([$this->orderDtoMapper, 'toListDto'], $orders);
+        /** @var Order[] $orders */
+        $orders = $paginatedOrders->items;
+
+        $paginatedOrders->items = array_map([$this->orderDtoMapper, 'toListDto'], $orders);
+
+        return $paginatedOrders;
     }
 
     public function findOrderForBusiness(int $orderId, Business $business): Order

@@ -32,7 +32,9 @@ class OrderAccessTest extends BaseTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $data = $this->decodeResponse($client);
-        $this->assertGreaterThanOrEqual(self::NUMBERSOFORDERS, count($data));
+        $this->assertResponseIsPaginated($data);
+        $this->assertIsArray($data['items']);
+        $this->assertGreaterThanOrEqual(self::NUMBERSOFORDERS, count($data['items']));
     }
 
     public function testUserCantListOrdersForOtherBusiness(): void
